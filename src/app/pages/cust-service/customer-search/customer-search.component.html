@@ -1,0 +1,291 @@
+<section class="container-fluid my-3 custRow ">
+  <div class="row ">
+    <div class="col-md-12 ">
+      <div class="whiteBg tabContent custRow">
+        <!-- <div class="col-md-12"> -->
+        <h4 id="CustomerHeading">Customer Search <a href="javascript:;" [ngbTooltip]="CollapesTooltip"
+            class="float-right" id="CollapesIcon" (click)="ToggleIcon($event)" aria-expanded="false"
+            data-toggle="collapse" data-target="#collapseCustomerSearch"><i class="fa fa-angle-double-down" id="iconId"
+              style="font-size: 30px;" aria-hidden="true"></i></a>
+        </h4>
+        <!-- </div> -->
+        <hr>
+        <form #baseForm="ngForm" class="form-horizontal" novalidate="novalidate">
+          <div class="collapse" id="collapseCustomerSearch">
+            <div class="content-box-inner ">
+              <div class="row align-items-center ">
+                <label class="ml-3">Search by :</label>
+                <div class="col-md-3 float-left ">
+                  <select name="searchBy" class="form-control custom-select"
+                    (change)="searchByKeword= $event.target.value">
+                    <option *ngFor="let search of searchBy" value="{{search.value}}">{{search.lable}}</option>
+                  </select>
+                </div>
+                <label class="col-md-2 text-right">Sort by :</label>
+                <div class="col-md-2 float-right ">
+                  <select name="searchBy" class="form-control custom-select" (change)="sortDataBy($event)"
+                    [(ngModel)]="sortModel">
+                    <option *ngFor="let sort of sortBy" value="{{sort.value}}">{{sort.lable}}</option>
+                  </select>
+                </div>
+                <label class="col-md-2 text-right">Data Limit :</label>
+                <div class="col-md-2 float-right ">
+                  <input type="text" class="form-control" name="LimitField" id="LimitField"
+                    (keyup)="DataLimitKeyUp($event)" [(ngModel)]="customerSearchModel.limit.value" value="100">
+                </div>
+              </div>
+              <hr class="borderBtm ">
+            </div>
+
+            <div class="group" *ngIf="searchByKeword==searchBy[0].value">
+              <div class="mb-2 text-danger" id="errorDiv" style="display:none">
+                <strong>*Atleast one field should be fill.</strong>
+              </div>
+              <div class="row ">
+                <div class="form-group col-md-4 ">
+                  <label for="LastName ">Last Name</label>
+                  <input name="lName" [(ngModel)]="customerSearchModel.lName.value" type="text" class="form-control ">
+                </div>
+                <div class="form-group col-md-4 ">
+                  <label for="FullName ">First Name</label>
+                  <input name="fName" [(ngModel)]="customerSearchModel.fName.value" type="text" class="form-control ">
+                </div>
+                <div class="form-group col-md-4 ">
+                  <label for="Initial ">Initial</label>
+                  <input name="initial" [(ngModel)]="customerSearchModel.initial.value" type="text"
+                    class="form-control ">
+                </div>
+              </div>
+
+            </div>
+            <div class="group" *ngIf="searchByKeword==searchBy[1].value">
+              <div class="row ">
+                <div class="form-group col-md-4 ">
+                  <label for="LastName ">Customer Number</label>
+                  <input name="customerId" (paste)="onPaste($event)" type="text" class="form-control "
+                    [(ngModel)]="customerSearchModel.customerId.value">
+                </div>
+              </div>
+              <div class="note ">
+                <small class="text-mute ">
+                  <em>
+                    <strong>
+                      Note :</strong> Enter a full customer number or enter a range such
+                    as 100-299.
+                  </em>
+                </small>
+              </div>
+            </div>
+            <div class="group" *ngIf="searchByKeword==searchBy[2].value">
+              <div class="row ">
+                <div class="form-group col-md-4 ">
+                  <label for="LastName ">Phone Number</label>
+                  <input name="phoneNumber" type="text" [(ngModel)]="customerSearchModel.phoneNumber.value"
+                    class="form-control" (change)="phoneNumberValidation($event)"
+                    (keydown)="onPhnSearchRestrict($event)" (keypress)="onPhnSearchRestrict($event)"
+                    (paste)="onPaste($event)">
+                </div>
+                <div class="form-group col-md-4 ">
+                  <label for="LastName ">Email</label>
+                  <input name="eMail" type="text" [(ngModel)]="customerSearchModel.eMail.value" class="form-control ">
+                </div>
+              </div>
+              <div class="note ">
+                <small class="text-mute ">
+                  <em>
+                    <strong>
+                      Note :</strong> Enter a full or partial telephone number or mail id.
+                  </em>
+                </small>
+              </div>
+            </div>
+            <div class="group" *ngIf="searchByKeword==searchBy[3].value">
+              <div class="row ">
+                <div class="form-group col-md-4 ">
+                  <label for="LastName ">Last Name</label>
+                  <input name="lName" type="text" class="form-control" [(ngModel)]="customerSearchModel.lName.value">
+                </div>
+                <div class="form-group col-md-4 ">
+                  <label for="Country">Country</label>
+                  <app-select name="Country" [(ngModel)]="customerSearchModel.country.value" [Data]="CountryList">
+                  </app-select>
+                </div>
+                <div class="form-group col-md-4 ">
+                  <label for="Initial">Postal Code</label>
+                  <input name="postalCode" type="text" class="form-control "
+                    [(ngModel)]="customerSearchModel.postalCode.value">
+                </div>
+              </div>
+              <div class="note ">
+                <small class="text-mute ">
+                  <em>
+                    <strong>
+                      Note :</strong> Enter last name or Zip/Postal detail.
+                  </em>
+                </small>
+              </div>
+            </div>
+
+            <div class="group" *ngIf="searchByKeword==searchBy[4].value">
+              <div class="row ">
+                <div class="form-group col-md-4 ">
+                  <label for="LastName ">Company Name</label>
+                  <input name="companyName" type="text" class="form-control"
+                    [(ngModel)]="customerSearchModel.companyName.value">
+                </div>
+                <div class="form-group col-md-4 ">
+                  <label for="Country">Last Name</label>
+                  <input name="lName" type="text" class="form-control " [(ngModel)]="customerSearchModel.lName.value">
+                </div>
+                <div class="form-group col-md-4 ">
+                  <label for="Initial">First Name</label>
+                  <input name="fName" type="text" class="form-control " [(ngModel)]="customerSearchModel.fName.value">
+                </div>
+              </div>
+              <div class="note ">
+                <small class="text-mute ">
+                  <em>
+                    <strong>
+                      Note :</strong> Enter company or name detail.
+                  </em>
+                </small>
+              </div>
+            </div>
+
+            <div class="group" *ngIf="searchByKeword==searchBy[5].value">
+              <div class="row ">
+                <div class="form-group col-md-4 ">
+                  <label for="LastName ">Check</label>
+                  <input name="cheque" type="text" class="form-control " [(ngModel)]="customerSearchModel.cheque.value">
+                </div>
+              </div>
+              <div class="note ">
+                <small class="text-mute ">
+                  <em>
+                    <strong>
+                      Note :</strong> Enter a check number. Use * for wildcard
+                  </em>
+                </small>
+              </div>
+            </div>
+            <div class="group" *ngIf="searchByKeword==searchBy[6].value">
+              <div class="row ">
+                <div class="form-group col-md-4 ">
+                  <label for="LastName ">Subscription Number</label>
+                  <input name="subscriptionNumber" type="text" class="form-control "
+                    [(ngModel)]="customerSearchModel.subscriptionNumber.value">
+                </div>
+              </div>
+              <div class="note ">
+                <small class="text-mute ">
+                  <em>
+                    <strong>
+                      Note :</strong> Enter a subscription number or a range of numbers.
+                  </em>
+                </small>
+              </div>
+            </div>
+            <div class="group" *ngIf="searchByKeword==searchBy[7].value">
+              <div class="row ">
+                <div class="form-group col-md-4 ">
+                  <label for="LastName ">Order Number</label>
+                  <input name="orderNumber" type="text" class="form-control "
+                    [(ngModel)]="customerSearchModel.orderNumber.value">
+                </div>
+              </div>
+              <div class="note ">
+                <small class="text-mute ">
+                  <em>
+                    <strong>
+                      Note :</strong> Enter an order number or range of order numbers.
+                  </em>
+                </small>
+              </div>
+            </div>
+            <div class="group" *ngIf="searchByKeword==searchBy[8].value">
+              <div class="row ">
+                <div class="form-group col-md-4 ">
+                  <label for="LastName ">Sales Invoice</label>
+                  <input name="salesInvoice" (paste)="onPaste($event)" type="text" class="form-control "
+                    [(ngModel)]="customerSearchModel.salesInvoice.value">
+                </div>
+                <div class="form-group col-md-4 ">
+                  <label for="FullName ">Agent Reference</label>
+                  <input name="agentReference" type="text" class="form-control "
+                    [(ngModel)]="customerSearchModel.agentReference.value">
+                </div>
+                <div class="form-group col-md-4 ">
+                  <label for="Initial">PO Number</label>
+                  <input name="poNumber" type="text" class="form-control "
+                    [(ngModel)]="customerSearchModel.poNumber.value">
+                </div>
+              </div>
+              <div class="row ">
+                <div class="form-group col-md-12 ">
+                  <label for="LastName ">Credit Note</label>
+                  <textarea name="creditNote" style="resize:none;height:100px" data-bvalidator="alphanumSpecial"
+                    class="form-control " [(ngModel)]="customerSearchModel.creditNote.value"></textarea>
+                </div>
+              </div>
+              <div class="note ">
+                <small class="text-mute ">
+                  <em>
+                    <strong>
+                      Note :</strong> Enter fields.
+                  </em>
+                </small>
+              </div>
+            </div>
+            <!-- <div id="AddressLookup" class="group">last block</div> -->
+            <div class="row ">
+              <div class="form-group col-md-12 text-right ">
+                <div class="right popup-border-btn col-md-12 ">
+                  <button type="button" class="btn btn-light " (click)="resetform();">
+                    <i class="fa fa-refresh " aria-hidden="true "></i> Reset
+                  </button>
+                  &nbsp;&nbsp;
+                  <button type="submit" class="btn btn-primary" (click)="onSubmit()">
+                    <i class="fa fa-search " aria-hidden="true "></i> Search Customer
+                  </button>
+                </div>
+                <hr>
+              </div>
+            </div>
+          </div>
+          <div>
+            <input type="hidden" name="_csrf" value="b2511daf-b275-4ca9-bcdb-d4a3ed88c994">
+          </div>
+        </form>
+        <div class="dataTables_wrapper no-footer">
+          <!-- <div class="dataTables_length" id="customerSearchTable_length">
+            <label>Show
+              <select name="customerSearchTable_length" aria-controls="customerSearchTable" class="">
+                <option value="10">10</option>
+                <option value="25">25</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+              </select> entries</label>
+          </div> -->
+          <!-- <div class="dataTables_filter">
+            <label>Search:
+              <input type="search" class="" placeholder="" aria-controls="customerSearchTable">
+            </label>
+          </div> -->
+          <div [ngStyle]="{
+            'display': showtable
+          }" class="agGridSize">
+            <app-ag-grid [name]="'documentreference'" [myGridOptions]="gridOptions"
+              (myGridReady)="doOnGridReadyCs($event)">
+            </app-ag-grid>
+          </div>
+          <!-- <div class="dataTables_info" id="customerSearchTable_info" role="status" aria-live="polite">Showing 0 to 0 of 0 entries</div>
+          <div class="dataTables_paginate paging_simple_numbers" id="customerSearchTable_paginate">
+            <a class="paginate_button previous disabled" aria-controls="customerSearchTable" data-dt-idx="0" tabindex="0" id="customerSearchTable_previous">Previous</a>
+            <span></span>
+            <a class="paginate_button next disabled" aria-controls="customerSearchTable" data-dt-idx="1" tabindex="0" id="customerSearchTable_next">Next</a>
+          </div> -->
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

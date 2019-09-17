@@ -1,0 +1,43 @@
+<!-- <button (click)="onShow()"> Show </button>
+
+<div *ngIf="show" [@showHide] (@showHide.done)="onContainerShown()" class="myLimitContainer">
+
+
+
+
+  <div [@popInLimit] *ngIf="showInput" class="myCommonSearhCss">
+
+
+    <div class="row  ">
+
+
+
+      <div class="col-3">
+        <input type="text" class="form-control" placeholder="Default limit is 1000" [disabled]="!addLimit" [(ngModel)]="limit" (change)="onChange()">
+      </div>
+
+
+      <div class="col-3">
+        <div class="custom-control custom-checkbox">
+          <input type="checkbox" class="custom-control-input" [id]="id" [(ngModel)]="addLimit" (change)="onChange()">
+          <label class="custom-control-label" [for]="id">Limit</label>
+        </div>
+      </div>
+
+
+    </div>
+  </div>
+
+</div> -->
+
+
+<div class="d-flex">
+
+  <input type="text" class="form-control mr-2" placeholder="Default limit is 1000" [disabled]="!addLimit" [(ngModel)]="limit" (change)="onChange()">
+
+  <div class="custom-control custom-checkbox mt-1">
+    <input type="checkbox" class="custom-control-input" [id]="id" [(ngModel)]="addLimit" (change)="onChange()">
+    <label class="custom-control-label" [for]="id">Data Limit</label>
+  </div>
+
+</div>

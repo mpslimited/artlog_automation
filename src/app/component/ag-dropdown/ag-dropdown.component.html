@@ -1,0 +1,16 @@
+<!-- <app-dropdown-with-description style="position: relative; z-index: 1000;" (change)="onChange($event)" [data]="data" name="test" [(ngModel)]="value" [basicSetting]="basicSetting">
+
+</app-dropdown-with-description> -->
+
+
+
+
+<div #myInput class="dropdowndisplay">
+  <div style="display: inline-block;" [class.width60Perc]="basicSetting.descriptionKey" [class.width100Perc]="!basicSetting.descriptionKey">
+    <input (mouseleave)="onMouseLeave()" (focus)="onFocus()" type="text" [value]="selectedValue[basicSetting.displayKey] || ''" class="form-control form-control-sm">
+  </div>
+
+  <div style="display: inline-block;" *ngIf="basicSetting.descriptionKey" class="width40Perc">
+    <input readonly class="form-control form-control-sm" [value]="selectedValue[basicSetting.descriptionKey]">
+  </div>
+</div>

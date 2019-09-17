@@ -1,0 +1,307 @@
+<div class="main-panel">
+  <div class="content-wrapper">
+    <div class="page-header">
+      <h3 class="page-title"> Art Log Automation </h3>
+      <nav aria-label="breadcrumb">
+        <!-- <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="#">Tables</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Basic tables</li>
+      </ol> -->
+      </nav>
+    </div>
+
+    <div class="row">
+      <div class="col-12">
+
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-lg-12 grid-margin stretch-card">
+        <div class="card">
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-3">
+                <h4 class="card-title">Art Log Automation</h4>
+              </div>
+              <div class="col-md-4 offset-md-4">
+                <div class="input-group">
+                  <input type="text" [(ngModel)]="artLogModel.jobkey.value" placeholder="Job Key (eg. SCI-1164)"
+                    class="form-control">
+                  <div class="input-group-append"><button (click)="searchByjobKey()" type="button"
+                      class="btn btn-secondary btn-sm">Search</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class=" row ">
+              <div class="col-md-3">
+                <div class="form-group">
+                  <label for="formGroupExampleInput2">Grade</label>
+                  <select [(ngModel)]="artLogModel.grade.value" class="form-control form-control-sm" id="usergroup">
+                    <option value="">All</option>
+                    <option *ngFor="let gd of Gdata" [value]="gd.ID.split('-').join('')"> G-{{ gd.label }}</option>
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="form-group">
+                  <label for="formGroupExampleInput2">Module</label>
+                  <select [(ngModel)]="artLogModel.module.value" class="form-control form-control-sm" id="usergroup">
+                    <option value="">All</option>
+                    <option *ngFor="let md of Mdata" [value]="md.ID.split('-').join('')"> M-{{ md.label }}</option>
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="form-group">
+                  <label for="formGroupExampleInput2">Batch</label>
+                  <input type="text" [(ngModel)]="artLogModel.batch.value" placeholder="Batch"
+                    class="form-control form-control-sm" />
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="form-group">
+                  <label for="formGroupExampleInput2">Workflow </label>
+                  <select [(ngModel)]="artLogModel.workflow.value" class="form-control form-control-sm" id="usergroup">
+                    <option value="">Any</option>
+                    <option *ngFor="let wd of Wdata"> {{ wd }}</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-3">
+                <div class="form-group">
+                  <label for="formGroupExampleInput2">Curriculum </label>
+                  <select [(ngModel)]="artLogModel.curricula.value" class="form-control form-control-sm" id="usergroup">
+                    <option value="ALL">All</option>
+                    <option *ngFor="let wd of WIPdata"> {{ wd }}</option>
+
+                    <!-- <option value="Title Editor"> Title Editor</option> -->
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="form-group">
+                  <label for="formGroupExampleInput2">Completion Status </label>
+
+                  <select [(ngModel)]="artLogModel.status.value" class="form-control form-control-sm" id="usergroup">
+                    <option value="ALL">All</option>
+                    <option *ngFor="let jdata of jobStatus"> {{ jdata.text }}</option>
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="form-group">
+                  <label for="formGroupExampleInput2">Current Responsible Team</label>
+                  <select [(ngModel)]="artLogModel.resTeam.value" class="form-control form-control-sm" id="usergroup">
+                    <option value="">All</option>
+                    <option *ngFor="let tdata of Tdata"> {{ tdata }}</option>
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-3 mt-3 pt-1">
+                <div class="form-group">
+                  <label for="formGroupExampleInput2"> &nbsp; </label>
+                  <button type="button" (click)="clearData()" class="btn btn-secondary">Clear</button>
+                  <button type="button" (click)="filterData()" class="btn btn-primary">Search</button>
+                </div>
+              </div>
+            </div>
+
+            
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-lg-12 grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body">
+      <!-- <p-table [value]="cartdata">
+        <ng-template pTemplate="header">
+          <tr>
+            <th [pSortableColumn]="dateCreated">dateCreated
+              <p-sortIcon [field]="dateCreated" ariaLabel="Activate to sort"
+                ariaLabelDesc="Activate to sort in descending order"
+                ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
+
+
+
+
+            </th>
+            <th [pSortableColumn]="jobID">jobID
+              <p-sortIcon [field]="jobID" ariaLabel="Activate to sort"
+                ariaLabelDesc="Activate to sort in descending order"
+                ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
+            </th>
+            <th [pSortableColumn]="totalage">totalage
+              <p-sortIcon [field]="totalage" ariaLabel="Activate to sort"
+                ariaLabelDesc="Activate to sort in descending order"
+                ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
+            </th>
+            <th [pSortableColumn]="name"> name
+              <p-sortIcon [field]="name" ariaLabel="Activate to sort"
+                ariaLabelDesc="Activate to sort in descending order"
+                ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
+            </th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-car>
+          <tr>
+            <td>{{car.dateCreated}}</td>
+            <td>{{car.jobID}}</td>
+            <td>{{car.totalage}}</td>
+            <td>{{car.name}}</td>
+          </tr>
+        </ng-template>
+      </p-table> -->
+
+
+
+      <p-table #dt [columns]="selectedColumn" [value]="cartdata" [paginator]="true" [rows]="10"
+        selectionMode="multiple" [(selection)]="selectedCars"  scrollable="true" scrollHeight="550px">
+        <ng-template pTemplate="colgroup" let-columns>
+          <colgroup>
+              <col *ngFor="let col of columns" style="width:250px">
+          </colgroup>
+      </ng-template>
+        <!-- stateStorage="session"
+stateKey="statedemo-session" -->
+
+
+        <!-- <ng-template pTemplate="caption">
+          <div style="text-align:left">
+            <p-multiSelect [options]="cols" [(ngModel)]="selectedColumn" optionLabel="header"
+              selectedItemsLabel="{0} columns selected" [style]="{minWidth: '200px'}"
+              defaultLabel="Choose Columns">
+            </p-multiSelect>
+          </div>
+        </ng-template> -->
+
+
+        <ng-template pTemplate="caption">
+          <div class="ui-helper-clearfix">
+            <button type="button" pButton icon="fa fa-file-o" iconPos="left" label="All Data"
+              (click)="dt.exportCSV()" style="float:left"></button>
+            <button type="button" pButton icon="fa fa-file" iconPos="left" label="Selection Only"
+              (click)="dt.exportCSV({selectionOnly:true})" style="float:right"></button>
+          </div>
+
+          <div style="text-align:left">
+            <p-multiSelect [options]="cols" [(ngModel)]="selectedColumn" optionLabel="header"
+              selectedItemsLabel="{0} columns selected" [style]="{minWidth: '200px'}"
+              defaultLabel="Choose Columns">
+            </p-multiSelect>
+          </div>
+
+
+        </ng-template>
+        <ng-template pTemplate="header" let-columns>
+
+          <tr>
+            <th *ngFor="let col of columns" [pSortableColumn]="col.field" [ngSwitch]="col.field">
+              {{col.header}}
+
+              <p-sortIcon [field]="col.field" ariaLabel="Activate to sort"
+                ariaLabelDesc="Activate to sort in descending order"
+                ariaLabelAsc="Activate to sort in ascending order">
+              </p-sortIcon>
+            </th>
+          </tr>
+
+          <tr>
+            <th *ngFor="let col of columns" [ngSwitch]="col.field">
+
+
+              <!-- <input *ngSwitchCase="'dateCreated'" pInputText type="text"
+                (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)"> -->
+
+              <!-- <div *ngSwitchCase="'totalage'">
+                Value < {{yearFilter}} <i class="fa fa-close"
+                  (click)="yearFilter=null;dt.filter(null, col.field, col.filterMatchMode)"
+                  style="cursor:pointer" *ngIf="yearFilter">
+                  </i>
+                  <p-slider [style]="{'width':'100%','margin-top':'8px'}" [(ngModel)]="yearFilter" [min]="0"
+                    [max]="1500" (onChange)="onYearChange($event, dt)"></p-slider>
+              </div> -->
+
+
+              <!-- <div *ngSwitchCase="'totalage'">
+                Value < {{yearFilter}} <i class="fa fa-close"
+                  (click)="yearFilter=null;dt.filter(null, col.field, col.filterMatchMode)"
+                  style="cursor:pointer" *ngIf="yearFilter">
+                  </i>
+                  <p-slider [style]="{'width':'100%','margin-top':'8px'}" [(ngModel)]="yearFilter" [min]="0"
+                    [max]="400" (onChange)="onYearChange($event, dt)"></p-slider>
+              </div> -->
+
+
+
+              <!-- <p-dropdown *ngSwitchCase="'totalage'" [options]="totalage" [style]="{'width':'100%'}"
+                (onChange)="dt.filter($event.value, col.field, 'equals')"></p-dropdown> -->
+
+
+              <p-multiSelect *ngSwitchCase="'lession'" [options]="lessions" defaultLabel="All Lessions"
+                (onChange)="dt.filter($event.value, col.field, 'in')"></p-multiSelect>
+              <p-multiSelect *ngSwitchCase="'component'" [options]="components" defaultLabel="All Components"
+                (onChange)="dt.filter($event.value, col.field, 'in')"></p-multiSelect>
+              <p-multiSelect *ngSwitchCase="'module'" [options]="modules" defaultLabel="All Module"
+                (onChange)="dt.filter($event.value, col.field, 'in')"></p-multiSelect>
+              <p-multiSelect *ngSwitchCase="'grade'" [options]="grades" defaultLabel="All Greads"
+                (onChange)="dt.filter($event.value, col.field, 'in')"></p-multiSelect>
+              
+
+
+
+            </th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-rowData let-columns="columns">
+          <tr [pSelectableRow]="rowData">
+            <td *ngFor="let col of columns">
+              {{rowData[col.field]}}
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+
+
+
+      <!-- backup -->
+
+      <!-- <p-table [columns]="cols" [value]="cartdata" [paginator]="true" [rows]="10">
+          <ng-template pTemplate="header" let-columns>
+            <tr>
+              <th *ngFor="let col of columns" [pSortableColumn]="col.field">
+                {{col.header}}
+                
+                <p-sortIcon *ngSwitchCase="'name'" [field]="col.field" ariaLabel="Activate to sort"
+                  ariaLabelDesc="Activate to sort in descending order" ariaLabelAsc="Activate to sort in ascending order">
+        
+        
+                </p-sortIcon>
+              </th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-rowData let-columns="columns">
+            <tr>
+              <td *ngFor="let col of columns">
+                {{rowData[col.field]}}
+              </td>
+            </tr>
+          </ng-template>
+        </p-table> -->
+    </div>
+  </div>
+</div>
+    </div>
+  </div>
+
+  <app-custom-modal-pop-up [basicSetting]="editSetting" [template]="editPopup"></app-custom-modal-pop-up>
+  <ng-template #editPopup>
+    <app-editjob [jobdataid]="jobID">
+    </app-editjob>
+
+  </ng-template>

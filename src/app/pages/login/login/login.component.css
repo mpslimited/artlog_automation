@@ -1,0 +1,268 @@
+/************************
+Designed by : http://responsivewebinc.com
+************************/
+/* Open Sans  */
+@import url('http://fonts.googleapis.com/css?family=Open+Sans:300,400italic,400,600');
+/* General */
+html, body {
+    height: 100%;
+}
+body {
+	color: #666666;
+	font-size: 13px;
+	height: 100vh !important;
+	background: #fff;
+	font-family: 'Open Sans', sans-serif;
+	-webkit-font-smoothing: antialiased;
+}
+
+
+/* UI X */
+a{transition:0.4s all; color:#853b86}
+a:hover {
+    color: #680f69;
+    text-decoration: none;
+   
+}
+.body-class{
+	background-attachment: fixed !important;
+	background-size: cover !important;
+	background: #853b86;	}
+
+.ui-150{
+	margin:50px 0px;
+}
+.ui-150 .ui-user-form {
+    max-width: 950px;
+    margin: 0px auto;
+    margin-top: 15px;
+    background: rgba(255,255,255,0.2);
+    padding: 30px 25px;
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 5px;
+    box-shadow: 0px 0px 10px rgba(255,255,255,0.05);
+         
+}
+.ui-150 .ui-user-form h3{
+	font-size:24px;
+	line-height:13px;
+	margin:15px 0px 25px 0px;
+	text-transform:uppercase;
+	color:#fff;
+}
+
+
+.ui-form{
+	max-width:500px;
+	margin:30px auto;
+	 margin-top:0px;
+	background:rgba(255,255,255,0.2);
+	padding:30px 25px;
+	border:1px solid rgba(255,255,255,0.2);
+	border-radius:5px;
+	box-shadow:0px 0px 10px rgba(255,255,255,0.05);
+}
+.loginBg{background:url('https://manuscript.jaypeejournals.com/manuScriptSystem/webresources/img/loginBg.png')no-repeat;background-position: -409px;}
+.ui-form h3{
+	font-size:24px;
+	line-height:13px;
+	margin:15px 0px 25px 0px;
+	text-transform:uppercase;
+	color:#fff;
+}
+
+.ui-150 .social a{
+	display:block;
+	margin-bottom:15px;
+	color:#fff;
+	padding:8px 20px;
+	border-radius:25px;
+	text-align:center;
+	font-size:12px;
+	text-transform:uppercase;
+	font-weight:600;
+}
+
+.login-heading{
+    font-size: 16px;
+    color: #d7e8f9;
+}
+
+.center-box{
+ position: fixed;
+  top: 50%;
+  left: 50%;
+  /* bring your own prefixes */
+  transform: translate(-50%, -50%);	
+ width:100%;	
+	}
+	
+/* .trans{
+	box-shadow: none !important;
+    padding: 6px 5px;
+    color: #fff; !important;
+    border: 0px;
+    border-bottom: 1px solid rgba(255,255,255,0.5);
+    background: transparent;
+    border-radius: 0px;
+} 
+.trans-border{
+	box-shadow: none !important;
+    padding: 6px 5px !important;
+    color: #fff !important;
+    background: transparent !important;
+    border-radius: 0px !important;
+}
+.trash-btn{
+	position:absolute;
+	right:0;
+	top:5px;
+	z-index:9;
+	right:5px;
+}*/
+.sign-up-btn {
+    display: block;
+    margin-bottom: 15px;
+    color: #fff;
+    padding: 8px 20px;
+    border-radius: 25px;
+    text-align: center;
+    font-size: 12px;
+    text-transform: uppercase;
+    font-weight: 600;
+    background: rgba(0,0,0,.7);
+    margin-top: 10px;
+	transition:.4s all;
+}
+.sign-up-btn:hover {
+    display: block;
+   text-decoration:none;
+   color: #fff;
+   background: rgba(0,0,0,.5);
+}	
+.mar-tb20{margin-top:20px;margin-bottom:20px;}
+	
+	/*----------------responsive media  start------------------*/
+	
+	@media only screen and (max-width: 500px) {
+    .center-box{
+ 
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  /* bring your own prefixes */
+  transform: translate(-50%, -50%);	
+  width:100%;
+	
+	}
+	
+}
+
+/*select css*/
+select {
+	padding:6px 2px;
+	color:rgba(255,255,255,0.5);
+	border:0px;
+	border-bottom:1px solid rgba(255,255,255,0.5);
+	background:transparent;
+	border-radius:0px;
+	width: 100%;
+   font-size: 13px;
+ }
+select  option{color:#fff;}
+/* Remove focus */
+select:focus {
+  outline: none;
+}
+
+/* Hide label */
+.mdl-selectfield label {
+  display: none;
+}
+
+/* Use custom arrow */
+.mdl-selectfield select {
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none;
+}
+
+.mdl-selectfield {
+   
+  position: relative;
+}
+.mdl-selectfield:after {
+  position: absolute;
+  top: 1.5em;
+  right: 0.5em;
+  /* Styling the down arrow */
+  width: 0;
+  height: 0;
+  padding: 0;
+  content: '';
+  border-left: .25em solid transparent;
+  border-right: .25em solid transparent;
+  border-top: 0.375em solid #fff;
+  pointer-events: none;
+}
+.trans option{color:#000;}
+.key-input{padding-right: 22px !important}
+.keyword-trash{color: #fff;
+    font-size: 18px;}
+.custom-checkbox .custom-control-input:checked~.custom-control-label::before{    background-color: #000;}
+.custom-control-input:focus~.custom-control-label::before {
+    box-shadow: 0 0 0 1px #fff, 0 0 0 0.2rem rgba(0, 0, 0, 0.25);
+}
+.errorMessage{margin:0;padding:0;}
+.errorMessage li{list-style:none;}
+.ui-150 .form-control{padding: .25rem .35rem; font-size: 0.8rem;}
+ select.form-control:not([size]):not([multiple]){height:auto !important}
+ .nav-tabs .nav-item.show .nav-link, .nav-tabs .nav-link.active{font-weight:600;box-shadow: inset 0px 3px 0 0 #853b86;}
+ .nav-tabs {
+    border: 1px solid #dcdcdc;
+    
+    background: #fafafa;
+    padding: 0;
+}
+.nav-tabs .nav-link{border-radius:0;border-radius: 0;    margin-right: 5px;    margin-top: -1px;}
+.nav-tabs .nav-item {
+   
+    margin-left: -1px;
+}
+ 
+/* width */
+.has-scrollbar::-webkit-scrollbar {
+    width: 5px;
+}
+
+/* Track */
+.has-scrollbar::-webkit-scrollbar-track {
+    background: #f1f1f1; 
+}
+ 
+/* Handle */
+.has-scrollbar::-webkit-scrollbar-thumb {
+    background: #888; 
+}
+
+/* Handle on hover */
+.has-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #555; 
+}
+.has-scrollbar{
+    height: 271px;
+    overflow-y: hidden;
+}
+.has-scrollbar:hover{ overflow-y: scroll;}
+ .btn.focus, .btn:focus {
+    box-shadow: 0 0 0 0.2rem rgba(230, 198, 230, 0.5);
+}
+
+.top-logo {  position: absolute; right:30px; bottom: 30px; width: 84px; text-align: right;}
+
+.color-theme {color: #853b86}
+
+#accordionExample a[aria-expanded="false"]:after  {    content: '\002B';    color: #777;    font-weight: bold;    float: right;    margin-left: 5px; position: relative;    right: 0px; } 
+#accordionExample a[aria-expanded="true"]:after {    content: "\2212";    color: #777;    font-weight: bold;    float: right;    margin-left: 5px; position: relative;    right: 0px; } 
+
+

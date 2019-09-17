@@ -1,0 +1,36 @@
+.dropdownCls {
+  z-index: 2001;
+  height: 300px;
+  overflow: scroll;
+}
+
+/* .slimScrollDiv {
+  background: #fdfdfd;
+  padding: 10px;
+  border: 1px solid #f1f1f1;
+  borx-shadow: unset;
+  -webkit-box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.75);
+  box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.75);
+} */
+
+.completeBox {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1050;
+  display: none;
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+  -webkit-overflow-scrolling: touch;
+  outline: 0;
+  background: #202326;
+  opacity: 0.5;
+}
+
+.innerCompleteBox {
+  opacity: 1;
+}

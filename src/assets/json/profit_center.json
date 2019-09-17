@@ -1,0 +1,62 @@
+[
+  {
+    "profit_center": "2.prof",
+    "description": "2.prof",
+    "incl_tax_liab": 1,
+    "incl_del_liab": 1,
+    "incl_com_liab": 1,
+    "incl_tax_ar": 1,
+    "incl_del_ar": 1,
+    "incl_com_ar": 1,
+    "mru_profit_center_calendar_seq": 24,
+    "row_version": "0x00000000001F9C6C"
+  },
+  {
+    "profit_center": "AutoPC",
+    "description": "Automation Profit Center",
+    "incl_tax_liab": 0,
+    "incl_del_liab": 0,
+    "incl_com_liab": 0,
+    "incl_tax_ar": 0,
+    "incl_del_ar": 0,
+    "incl_com_ar": 0,
+    "mru_profit_center_calendar_seq": 23,
+    "row_version": "0x00000000001F9C99"
+  },
+  {
+    "profit_center": "cust dep",
+    "description": "Customer Deposit",
+    "incl_tax_liab": 0,
+    "incl_del_liab": 0,
+    "incl_com_liab": 0,
+    "incl_tax_ar": 0,
+    "incl_del_ar": 0,
+    "incl_com_ar": 0,
+    "mru_profit_center_calendar_seq": 24,
+    "row_version": "0x00000000001F9CCA"
+  },
+  {
+    "profit_center": "none",
+    "description": "No Accounting Profit Center",
+    "incl_tax_liab": 0,
+    "incl_del_liab": 0,
+    "incl_com_liab": 0,
+    "incl_tax_ar": 0,
+    "incl_del_ar": 0,
+    "incl_com_ar": 0,
+    "mru_profit_center_calendar_seq": 22,
+    "row_version": "0x00000000001F9CF7"
+  },
+  {
+    "profit_center": "ts ship",
+    "description": "Ship Profit Center",
+    "incl_tax_liab": 0,
+    "incl_del_liab": 0,
+    "incl_com_liab": 0,
+    "incl_tax_ar": 0,
+    "incl_del_ar": 0,
+    "incl_com_ar": 0,
+    "mru_profit_center_calendar_seq": 24,
+    "row_version": "0x00000000001F9D29"
+  }
+]

@@ -1,0 +1,10 @@
+<div [ngClass]="(show) ? '': 'loader-hidden'">
+  <div class="loader-overlay">
+    <i [ngStyle]="{'font-size': loaderSize}" class="fa fa-spinner fa-pulse" id="loading-indicator"></i>
+    <span class="sr-only">Loading...</span>
+  </div>
+</div>
+
+<!-- <div style="position: relative; z-index: 10000; font-size: 32px">
+  {{name}}
+</div> -->

@@ -1,0 +1,46 @@
+ .slimScrollDiv {
+   background: #fdfdfd;
+   padding: 10px;
+   border: 1px solid #f1f1f1;
+   borx-shadow: unset;
+   -webkit-box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.75);
+   -moz-box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.75);
+   box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.75);
+ }
+
+ .dropdowndisplay {
+   display: flex;
+ }
+
+ .dropdownCaret {
+   position: absolute;
+   top: 10px;
+   right: 10px;
+ }
+
+ .dropDownSlim table tr td {
+   padding: 3px 0.75rem
+ }
+
+ .shortIt {
+
+   height: 0px;
+ }
+
+ tr {
+   height: 28px;
+ }
+
+ .dropdowndiscCls {
+   /* position: absolute; */
+   z-index: 9999;
+   /* width: 100%;
+   left: 0;
+   right: 0; */
+ }
+
+ /* .custom-dd {
+   max-width: 300px;
+   overflow-x: auto;
+   max-height: 200px;
+ } */

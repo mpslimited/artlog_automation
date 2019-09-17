@@ -1,0 +1,20 @@
+<ul class="nav nav-tabs custTabs">
+  <li *ngFor="let tab of tabs" (click)="(tab.disabled)?'':selectTab(tab)" [class.active]="tab.active">
+    <a class='nav-link' href="javascript:;" [class.active]="tab.active" [ngClass]="{
+            'disabled':tab.disabled
+          }">
+      <span>{{tab.title}}</span>
+    </a>
+  </li>
+  <!-- dynamic tabs -->
+  <li *ngFor="let tab of dynamicTabs" (click)="(tab.disabled)?'':selectTab(tab)" [class.active]="tab.active">
+    <a class='nav-link' href="javascript:;" [class.active]="tab.active" [ngClass]="{
+            'disabled':tab.disabled
+          }">
+      <span>{{tab.title}}</span>
+      <!-- <span class="tab-close" *ngIf="tab.isCloseable" (click)="closeTab(tab)">x</span> -->
+    </a>
+  </li>
+</ul>
+<ng-content></ng-content>
+<ng-template dynamic-tabs #container></ng-template>

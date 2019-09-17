@@ -1,0 +1,55 @@
+/* You can add global styles to this file, and also import other style files */
+app-cust-desktop{ width: 100%}
+.ui-multiselect-open{ position: absolute !important;}
+dashboard{ width:100%; }
+.width60Perc {
+  width: 60%;
+}
+
+.width40Perc {
+  width: 40%;
+}
+
+.width50Perc {
+  width: 50%;
+}
+
+.width100Perc {
+  width: 100%;
+}
+
+.ag-cell {
+  overflow: initial !important;
+}
+
+.ag-paging-panel>span:last-child {
+  display: none !important;
+}
+
+.ag-paging-panel>span:first-child {
+  padding: 0;
+}
+
+.ag-paging-panel {
+  position: absolute;
+  float: left;
+  padding: 0 !important;
+  bottom: -35px;
+}
+
+.ag-paging-panel {
+  font-size: medium;
+}
+
+.iconColor {
+  color: #000;
+  font-size: 16px;
+}
+
+.ag-theme-balham .ag-cell-focus {
+  border: none;
+}
+
+.ag-icon-menu svg path {
+  stroke: #fff !important;
+}

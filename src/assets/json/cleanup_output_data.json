@@ -1,0 +1,15 @@
+[{
+    "cleanup_def": "Address_Corr",
+    "descripton": "Address_Corr"
+  }, {
+    "cleanup_def": "AEDITTRL",
+    "descripton": "Auto-Edit Trail Cleanup Def - All"
+  }, {
+    "cleanup_def": "ASTRSTOP",
+    "descripton": "Auto-Start/Stop Cleanup Def - 2"
+  },
+  {
+    "cleanup_def": "AWORKTBL",
+    "descripton": "Auto-Work Table Cleanup Def - 1"
+  }
+]

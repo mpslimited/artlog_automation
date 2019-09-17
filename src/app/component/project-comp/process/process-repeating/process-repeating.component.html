@@ -1,0 +1,16 @@
+<div class="row">
+  <div class="col-md-6">
+    <div _ngcontent-c6="" class="form-group">
+      <label _ngcontent-c6="" for="user">Interval Unit test</label>
+      <app-dropdown-with-description [is_editAble]="is_edit" myName="test111" [(ngModel)]="dropDown" [basicSetting]="basicSetting">
+      </app-dropdown-with-description>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div _ngcontent-c6="" class="form-group">
+      <label _ngcontent-c6="" for="user"># of Interval Units</label>
+      <input [disabled]="is_edit" type="number" min="0" step=" 1 " class="form-control " [(ngModel)]="notification1 " onkeypress='return event.charCode >= 48 && event.charCode <= 57' title="Numbers only" #notification name="notification " id="notification "
+        required>
+    </div>
+  </div>
+</div>

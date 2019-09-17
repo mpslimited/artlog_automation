@@ -1,0 +1,17 @@
+.page-link:focus,
+.page-link:hover {
+  border: 0px solid #fff !important;
+  border-radius: 4px;
+  color: #000
+}
+
+.page-link {
+  margin: 0 1px;
+  color: #272727
+}
+
+.page-item.active .page-link {
+  color: #fff !important;
+  border: 0px solid #ddd !important;
+  border-radius: 4px;
+}

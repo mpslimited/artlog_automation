@@ -1,0 +1,87 @@
+<!-- <div style="width: 100%; height: 100%;" [style.display]="showGrid"> -->
+
+<div style="width: 100%; height: 100%;">
+
+  <div *ngIf="showHeader" class="row   mt-3">
+    <div class="col-2 pt-2 ">
+      <div class="d-flex">
+        <select #page_size (change)="onPageSizeChanged(page_size.value)" id="page-size" class="form-control mr-2">
+          <option *ngFor="let rows of rowsToShowArray"> {{rows}} </option>
+        </select>
+        <span class="mt-1">entries</span>
+      </div>
+    </div>
+
+
+    <div class="col-3 pt-2 mr-auto ">
+      <app-common-search-cs *ngIf="searchModel" [searchModel]="searchModel"></app-common-search-cs>
+    </div>
+    <div class="  col-5 d-flex flex-row-reverse">
+      <!-- <span *ngIf="export" class="ml-1">
+      <button class="btn btn-primary" (click)="onBtExport()">
+        <i class="fa fa-download"></i>
+      </button>
+    </span> -->
+      <!-- <span class="ml-1">
+      <button   class="btn btn-primary">
+        <i class="fa fa-bars"></i>
+      </button>
+    </span> -->
+      <div class="d-flex">
+        <label class="pr-2 pt-2">Search</label>
+        <input (keyup)="onQuickFilterChanged($event)" id="quickFilterInput" style="width: 175px" class="form-control" placeholder="Type text to search..." />
+
+      </div>
+
+
+    </div>
+
+  </div>
+  <ag-grid-angular suppressColumnVirtualisation=true [getRowHeight]="getRowHeight" [context]="context" [frameworkComponents]="frameworkComponents" paginationSetPageSize=true
+    [pagination]="showHeader" style="width: 100%; height: 88%;" animateRows="true" enableColResize="true" class="ag-theme-balham my-1" enableSorting="true" [rowSelection]="rowSelection"
+    enableFilter="true" [headerHeight]="headerHeight" [gridOptions]="gridOptions" (filterChanged)="onFilterChanged($event)" (rowDataChanged)="onRowDataChanged($event)"
+    (rowDataUpdated)="onRowDataUpdated($event)" (sortChanged)="onSortChanged($event)" (gridReady)="onGridReady($event)" (modelUpdated)="onModelUpdated($event)">
+  </ag-grid-angular>
+
+
+  <div class="clearfix"></div>
+
+  <div *ngIf="showFooter">
+    <app-pagination *ngIf="paging" [pageSize]="pageSize" [totalEntries]="totalEntries" [newSetup]="newSetup" (pageChanged)="onPageChanged($event)">
+    </app-pagination>
+  </div>
+
+</div>
+
+<!-- <app-pagination [newSetup]="newSetup" (pageChanged)="onPageChanged($event)"> -->
+
+
+<!-- </app-pagination> -->
+
+<!-- <nav aria-label="...">
+  <ul class="pagination">
+    <li (click)="onPageClick('first', firstPage)" #firstPage class="page-item">
+      <a class="page-link">First</a>
+    </li>
+
+
+    <li (click)="onPageClick('prev', prePage)" #prePage class="page-item ">
+      <a class="page-link">Previous</a>
+    </li>
+
+    <ng-container *ngFor="let pageNum of pagesArray">
+      <li (click)="onPageClick(pageNum, me)" #me class="page-item">
+        <a class="page-link">{{pageNum}}</a>
+      </li>
+    </ng-container>
+
+    <li (click)="onPageClick('next', nextPage)" #nextPage class="page-item">
+      <a class="page-link">Next</a>
+    </li>
+
+    <li (click)="onPageClick('last', lastPage)" #lastPage class="page-item ">
+      <a class="page-link">Last</a>
+    </li>
+
+  </ul>
+</nav> -->

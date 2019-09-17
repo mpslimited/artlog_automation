@@ -1,0 +1,4 @@
+<div class="custom-control custom-checkbox">
+  <input type="checkbox" class="custom-control-input" [id]="id" [disabled]="!isReadonly" [(ngModel)]="value" (change)="onChange()">
+  <label style="display: block; position: relative" class="custom-control-label" [for]="id"></label>
+</div>

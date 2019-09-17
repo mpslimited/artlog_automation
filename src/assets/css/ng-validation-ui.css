@@ -1,0 +1,14 @@
+.v-invalid {
+  border-color: #e01010;
+  box-shadow: 0 0 0 0.2rem #ff001859;
+}
+
+.v-invalid:focus {
+  border-color: #e01010 !important;
+  box-shadow: 0 0 0 0.2rem #ff001859 !important;
+}
+
+.v-error-box {
+  color: #dd1037;
+  margin-left: 4px;
+}

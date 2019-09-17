@@ -1,0 +1,28 @@
+<div id="tempID" #me class="innerCompleteBox">
+
+
+  <div *ngIf="show">
+    <div [style.width]="listWidth + 'px'" class=" dropdownCls dropDownSlim " (mouseenter)="onMouseEnter()" (mouseleave)="onMouseLeave()">
+      <table class="table table-bordered table-hover  table-light table-sm table-striped ">
+
+        <thead>
+          <tr>
+            <ng-container *ngFor="let listDisplayKeys of  basicSetting.ListDisplayKeys">
+              <th>{{listDisplayKeys.headerName}}</th>
+            </ng-container>
+          </tr>
+        </thead>
+
+        <ng-container *ngFor="let list of listData">
+          <tr>
+            <ng-container *ngFor="let listDisplayKeys of  basicSetting.ListDisplayKeys">
+              <td (click)="onShownBodyClick(list)">{{list[listDisplayKeys.displayKey]}}</td>
+            </ng-container>
+          </tr>
+        </ng-container>
+      </table>
+    </div>
+  </div>
+
+</div>
+<div class="completeBox" (click)="show = false" [style.display]="show? 'block': 'none'"></div>

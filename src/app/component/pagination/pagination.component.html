@@ -1,0 +1,52 @@
+<div class="agPagination float-left col-12 px-0 d-flex justify-content-end ">
+  <div class="col-md-2 position-relative p-0">
+    <label class="float-left pt-1">Jump to:</label>
+    <input class="form-control form-control-sm float-left mr-1" style="width:80px;" [(ngModel)]="jumpTo" placeholder="Page no."
+      type="text" (keyup)="onJumpTo();">
+    <span class="position-absolute text-danger mt-4 pt-2" style="left:0;">{{pageMsg}}</span>
+  </div>
+
+  <!-- <div class="pt-2 mr-auto mb-0">
+
+    <span class="ag-paging-row-summary-panel">
+      Showing
+      <span>{{showingStart}}</span> to
+      <span>{{showingEnd}}</span> of
+      <span>{{totalEntries}}</span> entries
+    </span>
+  </div> -->
+  <ul class="pagination mt-0 ">
+    <li (click)="onPageClick('first', firstPage)" #firstPage [class.disabled]="enablePre" class="page-item">
+      <a href="javascript:;" class="page-link">
+        <i class="fa fa-backward" aria-hidden="true"></i>
+      </a>
+    </li>
+
+    <li (click)="onPageClick('prev', prePage)" #prePage [class.disabled]="enablePre" class="page-item ">
+      <a href="javascript:;" class="page-link">
+        <i class="fa fa-caret-left" aria-hidden="true "></i>
+      </a>
+    </li>
+
+    <ng-container *ngFor="let pageNum of pagesArray ">
+      <li (click)="onPageClick(pageNum, me) " #me class="page-item ">
+        <a href="javascript:;" class="page-link ">{{pageNum}}</a>
+      </li>
+    </ng-container>
+
+    <li (click)="onPageClick( 'next', nextPage) " #nextPage [class.disabled]="enableNext " class="page-item ">
+      <a href="javascript:;" class="page-link ">
+        <i class="fa fa-caret-right" aria-hidden="true "></i>
+      </a>
+    </li>
+
+    <li (click)="onPageClick( 'last', lastPage) " #lastPage [class.disabled]="enableNext " class="page-item ">
+      <a href="javascript:;" class="page-link ">
+        <i class="fa fa-forward " aria-hidden="true "></i>
+      </a>
+    </li>
+  </ul>
+
+
+
+</div>
