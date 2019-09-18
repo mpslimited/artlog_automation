@@ -46,7 +46,7 @@ export class DashboardComponent extends BaseComponent implements OnInit {
     { field: 'module', header: 'Module'},
     { field: 'grade', header: 'Grade' },
     { field: 'batch', header: 'Batch' },
-    { field: '', header: 'Workflow' }
+    { field: 'workflow', header: 'Workflow' }
   ];
   dropdownList = [];
   selectedItems = [];
@@ -96,8 +96,12 @@ export class DashboardComponent extends BaseComponent implements OnInit {
 
         
         debugger;
+        let jobkeys=data.artLogData.map(d=> d.job_key).filter(d=>d!='');
+        this.jobkeys= jobkeys.filter((v,i) => jobkeys.indexOf(v) === i).map(d=> ({label: d, value: d}));
+
         let lessions=data.artLogData.map(d=> d.lession).filter(d=>d!='');
         this.lessions = lessions.filter((v,i) => lessions.indexOf(v) === i).map(d=> ({label: d, value: d}));
+
         let components=data.artLogData.map(d=> d.component).filter(d=>d!='');
         this.components = components.filter((v,i) => components.indexOf(v) === i).map(d=> ({label: d, value: d}));
         let grades=data.artLogData.map(d=> d.grade).filter(d=>d!='');
