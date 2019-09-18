@@ -9,6 +9,7 @@ th .ui-multiselect-open{ position: absolute !important;top:39px!important;}
   border: 1px solid #a6a6a6!important;
   transition: border-color 0.2s;
 }
+/*test*/
 .navbar-brand-wrapper .brand-logo img{
     width: 100%!important;
     max-width: 100%!important;
