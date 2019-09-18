@@ -3714,12 +3714,12 @@ textarea.form-control {
       display: -webkit-box;
       display: -ms-flexbox;
       display: flex;
-      -webkit-box-align: center;
-      -ms-flex-align: center;
-      align-items: center;
-      -webkit-box-pack: center;
-      -ms-flex-pack: center;
-      justify-content: center;
+      -webkit-box-align: left!important;
+      -ms-flex-align: left;
+      align-items: left!important;
+      -webkit-box-pack: left;
+      -ms-flex-pack: left;
+      justify-content: left!important;
       margin-bottom: 0; }
     .form-inline .form-group {
       display: -webkit-box;
@@ -5165,7 +5165,7 @@ input[type="button"].btn-block {
   -webkit-box-pack: justify;
   -ms-flex-pack: justify;
   justify-content: space-between;
-  padding: 0.5rem 1rem; }
+  padding: 0 1rem; }
   .navbar > .container,
   .navbar > .container-fluid {
     display: -webkit-box;
@@ -11888,7 +11888,8 @@ code {
   border: 0;
   background: #fff; }
   .card .card-body {
-    padding: 2.5rem 1.25rem; }
+    padding: 1rem 1.25rem;
+}
     .card .card-body + .card-body {
       padding-top: 1rem; }
   .card .card-title {
@@ -12708,8 +12709,8 @@ dl {
     -moz-transition: width 0.25s ease;
     -ms-transition: width 0.25s ease;
     color: #9c9fa6;
-    padding-left: 24px;
-    padding-right: 24px;
+    padding-left: 0;
+    padding-right: 0;
     width: calc(100% - 260px);
     height: 70px; }
     @media (max-width: 991px) {
