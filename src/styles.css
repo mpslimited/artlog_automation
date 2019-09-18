@@ -1,6 +1,23 @@
 /* You can add global styles to this file, and also import other style files */
 app-cust-desktop{ width: 100%}
-.ui-multiselect-open{ position: absolute !important;}
+th .ui-multiselect-open{ position: absolute !important;top:39px!important;}
+.custom-btn-dropdown{
+  padding: 8px!important;
+  color: #333333!important;
+  font-size: 12px!important;
+  background: #ffffff!important;
+  border: 1px solid #a6a6a6!important;
+  transition: border-color 0.2s;
+}
+.navbar-brand-wrapper .brand-logo img{
+    width: 100%!important;
+    max-width: 100%!important;
+    height: 65px!important;
+}
+h4.nav-link{
+  font-size:18px!important;
+  font-weight: 300;
+}
 dashboard{ width:100%; }
 .width60Perc {
   width: 60%;
