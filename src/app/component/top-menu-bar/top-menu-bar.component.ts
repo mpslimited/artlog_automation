@@ -39,6 +39,7 @@ export class TopMenuBarComponent extends BaseComponent implements OnInit {
   readytoGo1: any;
   newProcessType: DropdownDataModel;
   docRefFlag: boolean;
+  jobkey: any;
 
 
 
@@ -56,8 +57,10 @@ export class TopMenuBarComponent extends BaseComponent implements OnInit {
     this.docRefFlag = true;
   }
  
-  
-
+  searchByjobKey(evt: any) {
+debugger
+   SessionObject.setJobKey(this.jobkey);
+  }
   initSearchModels() {
     this.topMenuBarModel = new TopMenuBarModel();
   }

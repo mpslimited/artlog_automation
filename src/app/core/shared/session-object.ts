@@ -41,6 +41,13 @@ export class SessionObject {
         localStorage.removeItem('UserDetails');
     }
 
+    public static setJobKey(sessionObject: any) {
+        localStorage.setItem('JobKey', JSON.stringify(sessionObject));
+    }
+
+    public static getJobKey(): any {
+        return JSON.parse(localStorage.getItem('JobKey'));
+    }
     public static setRefID(sessionObject: any) {
         localStorage.setItem('RefID', JSON.stringify(sessionObject));
     }

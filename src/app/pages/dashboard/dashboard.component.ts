@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnChanges } from '@angular/core';
 import { HttpService } from '../../core/services/http.service';
 import { BaseComponent } from '../../core/base/base.component';
 import { BaseService } from '../../core/base/base.service';
@@ -9,14 +9,17 @@ import { CustomModalPopUpModel } from '../../component/custom-modal-pop-up/custo
 import { CustomerServicesUrls } from '../../core/shared/constant/url-constants/customer-services.constants';
 import { Router } from '@angular/router';
 import { GridAPII } from '../../core/base/base.component';
+import {SessionObject} from '../../core/shared';
 import { ColDef } from 'ag-grid';
 @Component({
   selector: 'dashboard',
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css']
 })
-export class DashboardComponent extends BaseComponent implements OnInit {
+export class DashboardComponent extends BaseComponent implements OnInit, OnChanges {
   //@Input() jobId: string;
+
+  clonedArtLog: { [s: string]: any; } = {};
   yearFilter: number;
   selectedColumn: any;
   yearTimeout: any;
@@ -24,14 +27,17 @@ export class DashboardComponent extends BaseComponent implements OnInit {
   jobID: any;
   totalage: any = [
   ];
+  clonedCars: { [s: string]: any; } = {};
   colors = [ ];
   jobkeys =[ ];
   lessions =[];
   components= [];
   grades =[];
   modules=[];
+  artcomplexs=[];
+  artassions=[]; risks=[]; impacts=[]; workflows=[];
   cols = [
-    { field: 'jobID', header: 'JobID' },
+    { field: '', header: 'Opt.' },
     { field: 'job_key', header: 'JobKey'},
     { field : 'lession', header : 'Lession'},
     { field : 'component', header : 'Component'},
@@ -41,7 +47,7 @@ export class DashboardComponent extends BaseComponent implements OnInit {
     {field: 'tags', header: 'Tag Entry'},
     {field: 'artcomplex', header: 'Art-Complexity'},
     { field: 'artassion', header: 'Art-Assignment'},
-    {field: 'risk', header: 'Permission-Risk'},
+    { field: 'risk', header: 'Permission-Risk'},
     { field: 'impact', header: 'Permission-Impact'},
     { field: 'module', header: 'Module'},
     { field: 'grade', header: 'Grade' },
@@ -65,6 +71,7 @@ export class DashboardComponent extends BaseComponent implements OnInit {
   gridData: any;
   jobmeta: any;
   Editdata: any;
+  search = { };
   //@Input("edit-jobs") editJobID: string;
 
   constructor(protected baseServices: BaseService,
@@ -73,31 +80,56 @@ export class DashboardComponent extends BaseComponent implements OnInit {
     protected customModalPopService: CustomModalPopUpService) {
     super(baseServices, router);
     //this.gridOptions.onCellClicked=this.agCellClicked;
-
-    this.getMetaData();
+    let obj={};
+    this.getMetaData(obj);
     this.gridOptions.onCellValueChanged = this.agCellClicked;
     this.editSetting = new CustomModalPopUpModel('Edit Job');
+  }
+  clearData() {
 
   }
 
-  onYearChange(event, dt) {
-    if (this.yearTimeout) {
-      clearTimeout(this.yearTimeout);
-    }
+ngOnChanges(){
+  debugger
+  this.artLogModel.jobkey.value = this.baseService.getMessage();
+  let obj={};
+  this.getMetaData(obj);
+}
 
-    this.yearTimeout = setTimeout(() => {
-      dt.filter(event.value, 'year', 'gt');
-    }, 1250);
+  searchByjobKey() {
+    
   }
-  getMetaData() {
+  filterData() {
+    this.getMetaData( this.search );
+  }
+  getMetaData(Obj: any) {
+   // debugger
     var self = this;
+    //this.artLogModel.jobkey.value = SessionObject.getJobKey();
     return new Promise(resolve => {
-      this.httpService.extractPostData(CustomerServicesUrls.JOBSMETA_DATA1, null, null).subscribe((data) => {
+      this.loadDataFromApi(this.NAME_ARTLOG).subscribe((data) => {
+     // this.httpService.extractPostData(CustomerServicesUrls.JOBSMETA_DATA1, null, null).subscribe((data) => {
+        debugger
+        if ( data.hasOwnProperty('Grade') && data.Grade.length > 0 && data.Grade[0].hasOwnProperty('options')) {
+        this.Gdata = data.Grade[0].options;
+        this.Gdata = this.Gdata.map(d=>({'value':d.ID.split("-").join(''), label: d.label}));
+       }
+       if ( data.hasOwnProperty('module') && data.module.length > 0 && data.module[0].hasOwnProperty('options') ) {
+        this.Mdata = data.module[0].options;
+        this.Mdata = this.Mdata.map(d=>({'value':d.ID.split("-").join(''), label: d.label}));
+       }
+       if ( data.hasOwnProperty('CurriculaWIP') && data.CurriculaWIP.length > 0 && data.CurriculaWIP[0].hasOwnProperty('options') ) {
+        this.WIPdata = data.CurriculaWIP[0].options;
+       }
 
+        let jobkeys = data.artLogData.map( d => d.job_key).filter(d => d != '');
+        this.jobkeys = jobkeys.filter((v,i) => jobkeys.indexOf(v) === i).map( d=> ({label: d, value: d}));
         
-        debugger;
-        let jobkeys=data.artLogData.map(d=> d.job_key).filter(d=>d!='');
-        this.jobkeys= jobkeys.filter((v,i) => jobkeys.indexOf(v) === i).map(d=> ({label: d, value: d}));
+        let artcomplexs = data.artLogData.map( d => d.artcomplex);
+        this.artcomplexs = artcomplexs.filter((v,i) => artcomplexs.indexOf(v) === i).map( d=> ({label: d, value: d}));
+
+        let artassions = data.artLogData.map( d => d.artassion);
+        this.artassions = artassions.filter((v,i) => artassions.indexOf(v) === i).map( d=> ({label: d, value: d}));
 
         let lessions=data.artLogData.map(d=> d.lession).filter(d=>d!='');
         this.lessions = lessions.filter((v,i) => lessions.indexOf(v) === i).map(d=> ({label: d, value: d}));
@@ -108,37 +140,54 @@ export class DashboardComponent extends BaseComponent implements OnInit {
         this.grades = grades.filter((v,i) => grades.indexOf(v) === i).map(d=> ({label: d, value: d}));
         let modules=data.artLogData.map(d=> d.module).filter(d=>d!='');
         this.modules = modules.filter((v,i) => modules.indexOf(v) === i).map(d=> ({label: d, value: d}));
+        
         data.artLogData.forEach(element => {
-          
           this.colors.push({ label: element.name, value: element.name })
           if (!element.totalage) {
             element.totalage = 0
           }
-
           this.totalage.push({ label: element.totalage, value: element.totalage })
         });
         self.cartdata = data.artLogData;
 
-
-
         self.selectedColumn = this.cols;
-        // let modules = data.filter((d) => d.ID == "c0ac0a86e65f4f7ebd88dbd7e77965ef");
-
-        // if (modules.length > 0) {
-
-        //   let modOptions = modules.map(d => d.options).map(d => d.label);
-        //   this.Editdata.Gradlabels = modOptions[0].map(d => d.label);
-
-        // }
         resolve(data);
-        // debugger
-        // this.jobmeta=data;
       });
     });
   }
+  onRowEditInit(artdt: any, editing) {
+    debugger
+     editing = !editing;
+    this.clonedArtLog[artdt.jobId] = { ...artdt };
+  }
+
+  onRowEditSave(artdt: any) {
+    // if (car.year > 0) {
+    //   delete this.clonedCars[car.vin];
+    //   this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Car is updated' });
+    // }
+    // else {
+    //   this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Year is required' });
+    // }
+  }
+
+  onRowEditCancel(artdt: any, index: number) {
+    // this.cars2[index] = this.clonedCars[car.vin];
+    delete this.clonedArtLog[artdt.jobId];
+  }
+  onYearChange(event, dt) {
+    if (this.yearTimeout) {
+      clearTimeout(this.yearTimeout);
+    }
+    this.yearTimeout = setTimeout(() => {
+      dt.filter(event.value, 'year', 'gt');
+    }, 1250);
+  }
   ngOnInit() {
     this.Wdata = ['Clip Art', 'Created Image', 'Permission', 'Shutterstock'];
-    this.jobStatus = ['Active', 'NeedsChanges', 'Overdue', 'Approved', 'Closed'];
+    this.jobStatus = ['Active', 'NeedsChanges', 'Approved', 'Closed'];
+    this.jobStatus = this.jobStatus.map( d=> ({field: d, header: d}));
+    this.workflows = this.Wdata.map( d=> ({field: d, label: d}));
   }
   initSearchModels() {
     this.artLogModel = new ArtLogModel();
@@ -156,18 +205,7 @@ export class DashboardComponent extends BaseComponent implements OnInit {
       return CustomerServicesUrls.ARTLOG_DATA;
     }
   }
-  clearData() {
-
-  }
-  searchByjobKey() {
-    console.log(this.NAME_ARTLOG);
-    //this.OnSubmit(this.NAME_ARTLOG);
-  }
-  filterData() {
-    debugger
-    //console.log("artFilter data:", this.artLogModel);
-    this.OnSubmit(this.NAME_ARTLOG);
-  }
+ 
   getNonSearchModelParams(name: string) {
     if (name === this.NAME_ARTLOG) {
       const obj = { searchBy: 'test' };

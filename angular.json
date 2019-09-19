@@ -156,7 +156,7 @@
       }
     }
   },
-  "defaultProject": "think-process",
+  "defaultProject": "Artlog-Automation",
   "schematics": {
     "@schematics/angular:component": {
       "prefix": "app",
