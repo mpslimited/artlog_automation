@@ -106,11 +106,14 @@
             <div class="form-inline">
                 <div class="form-group">
                   <label for="staticEmail" class="col-sm-2 col-form-label">Choose Columns</label>
-                  <div class="col-sm-10">
+                  <div class="col-sm-4">
                       <p-multiSelect [options]="cols" [(ngModel)]="selectedColumn" optionLabel="header"
                       selectedItemsLabel="{0} columns selected" [style]="{minWidth: '200px'}"
                       defaultLabel="Choose Columns">
                     </p-multiSelect>
+                  </div>
+                  <div class="col-sm-4 ml-5"> 
+                  <button type="button" pButton icon="fa fa-plus" (click)="showDialogToAdd()" label="Add"></button>
                   </div>
                 </div>
                 <div class="form-group">
@@ -149,13 +152,13 @@
               <p-multiSelect *ngSwitchCase="'component'" [options]="components" defaultLabel="All Components"
                 (onChange)="dt.filter($event.value, col.field, 'in')"></p-multiSelect>
 
-              <p-multiSelect *ngSwitchCase="'artcomplex'" [options]="modules" defaultLabel="All Art-Comp."
+              <p-multiSelect *ngSwitchCase="'artcomplex'" [options]="artComplexcityOPT" defaultLabel="All Art-Comp."
                 (onChange)="dt.filter($event.value, col.field, 'in')"></p-multiSelect>
-              <p-multiSelect *ngSwitchCase="'artassion'" [options]="modules" defaultLabel="All Art-Assi."
+              <p-multiSelect *ngSwitchCase="'artassion'" [options]="artAssignmentOPT" defaultLabel="All Art-Assi."
                 (onChange)="dt.filter($event.value, col.field, 'in')"></p-multiSelect>
-              <p-multiSelect *ngSwitchCase="'risk'" [options]="modules" defaultLabel="All Risk"
+              <p-multiSelect *ngSwitchCase="'risk'" [options]="MetaRiskOPT" defaultLabel="All Risk"
                 (onChange)="dt.filter($event.value, col.field, 'in')"></p-multiSelect>
-              <p-multiSelect *ngSwitchCase="'impact'" [options]="modules" defaultLabel="All Impact"
+              <p-multiSelect *ngSwitchCase="'impact'" [options]="MetaImpactOPT" defaultLabel="All Impact"
               (onChange)="dt.filter($event.value, col.field, 'in')"></p-multiSelect>
               
 
@@ -163,8 +166,8 @@
                 (onChange)="dt.filter($event.value, col.field, 'in')"></p-multiSelect>
               <p-multiSelect *ngSwitchCase="'grade'" [options]="grades" defaultLabel="All Grades"
                 (onChange)="dt.filter($event.value, col.field, 'in')"></p-multiSelect>
-              <p-multiSelect *ngSwitchCase="'batch'" [options]="modules" defaultLabel="All Batch"
-              (onChange)="dt.filter($event.value, col.field, 'in')"></p-multiSelect>
+              <!-- <p-multiSelect *ngSwitchCase="'batch'" [options]="modules" defaultLabel="All Batch"
+              (onChange)="dt.filter($event.value, col.field, 'in')"></p-multiSelect> -->
               <p-multiSelect *ngSwitchCase="'workflow'" [options]="modules" defaultLabel="All Workflow"
               (onChange)="dt.filter($event.value, col.field, 'in')"></p-multiSelect>
             </th>
@@ -198,15 +201,8 @@
                   <button *ngIf="editing" pButton type="button" pCancelEditableRow icon="pi pi-times"
                     class="ui-button-danger" (click)="onRowEditCancel(rowData, ri)"></button>
                 </div>
-                <div *ngSwitchCase="'job_key'" >
-                  <p-cellEditor>
-                    <ng-template pTemplate="input">
-                      <input pInputText type="text" [(ngModel)]="rowData.job_key" required>
-                    </ng-template>
-                    <ng-template pTemplate="output">
-                      {{rowData[col.field]}}
-                    </ng-template>
-                  </p-cellEditor>
+                <div *ngSwitchCase="'job_key'">
+                  {{rowData[col.field]}}
                 </div>
                 <div *ngSwitchCase="'lession'" >
                     <p-cellEditor>
@@ -235,103 +231,141 @@
                     {{rowData[col.field]}}
                 </div>
                 <div *ngSwitchCase="'tags'" >
-                    {{rowData[col.field]}}
+                    <p-cellEditor>
+                        <ng-template pTemplate="input">
+                          <textarea pInputTextarea type="text" [(ngModel)]="rowData.tags" required></textarea>
+                        </ng-template>
+                        <ng-template pTemplate="output">
+                          {{rowData[col.field]}}
+                        </ng-template>
+                      </p-cellEditor>
                 </div>
                 <div *ngSwitchCase="'artcomplex'" >
-                    {{rowData[col.field]}}
+                  <p-cellEditor>
+                      <ng-template pTemplate="input">
+                      <p-dropdown [options]="artComplexcityOPT" [(ngModel)]="rowData.artcomplex" [style]="{'width':'100%'}">
+                        </p-dropdown>
+                     </ng-template>
+                      <ng-template pTemplate="output">
+                        {{rowData[col.field]}}
+                      </ng-template>
+                    </p-cellEditor>
                 </div>
                 <div *ngSwitchCase="'artassion'" >
-                    {{rowData[col.field]}}
+                    <p-cellEditor>
+                        <ng-template pTemplate="input">
+                        <p-dropdown [options]="artAssignmentOPT" [(ngModel)]="rowData.artassion" [style]="{'width':'100%'}">
+                          </p-dropdown>
+                       </ng-template>
+                        <ng-template pTemplate="output">
+                          {{rowData[col.field]}}
+                        </ng-template>
+                      </p-cellEditor>
                 </div>
                 <div *ngSwitchCase="'risk'" >
-                    {{rowData[col.field]}}
+                    <p-cellEditor>
+                      <ng-template pTemplate="input">
+                        <p-dropdown [options]="MetaRiskOPT" [(ngModel)]="rowData.risk" [style]="{'width':'100%'}">
+                        </p-dropdown>
+                      </ng-template>
+                      <ng-template pTemplate="output">
+                          {{rowData[col.field]}}
+                      </ng-template>
+                    </p-cellEditor>
                 </div>
                 <div *ngSwitchCase="'impact'" >
-                    {{rowData[col.field]}}
+                    <p-cellEditor>
+                      <ng-template pTemplate="input">
+                        <p-dropdown [options]="MetaImpactOPT" [(ngModel)]="rowData.impact" [style]="{'width':'100%'}">
+                        </p-dropdown>
+                      </ng-template>
+                      <ng-template pTemplate="output">
+                          {{rowData[col.field]}}
+                      </ng-template>
+                    </p-cellEditor>
                 </div>
                 <div *ngSwitchCase="'module'" >
-                    {{rowData[col.field]}}
+                    <p-cellEditor>
+                      <ng-template pTemplate="input">
+                        <p-dropdown [options]="modules" [(ngModel)]="rowData.module" [style]="{'width':'100%'}">
+                        </p-dropdown>
+                      </ng-template>
+                      <ng-template pTemplate="output">
+                          {{rowData[col.field]}}
+                      </ng-template>
+                    </p-cellEditor>
                 </div>
                 <div *ngSwitchCase="'grade'" >
-                    {{rowData[col.field]}}
+                    <p-cellEditor>
+                      <ng-template pTemplate="input">
+                        <p-dropdown [options]="grades" [(ngModel)]="rowData.grade" [style]="{'width':'100%'}">
+                        </p-dropdown>
+                      </ng-template>
+                      <ng-template pTemplate="output">
+                          {{rowData[col.field]}}
+                      </ng-template>
+                    </p-cellEditor>
                 </div>
                 <div *ngSwitchCase="'batch'" >
                     {{rowData[col.field]}}
                 </div>
                 <div *ngSwitchCase="'workflow'" >
-                    {{rowData[col.field]}}
+                    <p-cellEditor>
+                      <ng-template pTemplate="input">
+                        <p-dropdown [options]="Wdata" [(ngModel)]="rowData.workflow" [style]="{'width':'100%'}">
+                        </p-dropdown>
+                      </ng-template>
+                      <ng-template pTemplate="output">
+                          {{rowData[col.field]}}
+                      </ng-template>
+                    </p-cellEditor>
                 </div> 
               
               </td>
             
           </tr>
         </ng-template>
-        <!-- <ng-template pTemplate="body" let-rowData let-editing="editing" let-ri="rowIndex">
-            <tr [pEditableRow]="rowData">
-               <td>
-                {{rowData.dateCreated}}
-    
-              </td>  -->
-
-
-              <!-- <td>
-                <p-cellEditor>
-                  <ng-template pTemplate="input">
-                    <input pInputText type="text" [(ngModel)]="rowData.jobID" required>
-                  </ng-template>
-                  <ng-template pTemplate="output">
-                    {{rowData.dateCreated}}
-                  </ng-template>
-                </p-cellEditor>
-              </td>
-              <td>
-                <p-cellEditor>
-                  <ng-template pTemplate="input">
-                    <input pInputText type="text" [(ngModel)]="rowData.jobID" required>
-                  </ng-template>
-                  <ng-template pTemplate="output">
-                    {{rowData.jobID}}
-                  </ng-template>
-                </p-cellEditor>
-              </td>
-              <td>
-                <p-cellEditor>
-                  <ng-template pTemplate="input">
-                    <p-dropdown [options]="totalage" [(ngModel)]="rowData.totalage" [style]="{'width':'100%'}">
-                    </p-dropdown>
-                  </ng-template>
-                  <ng-template pTemplate="output">
-                    {{rowData.totalage}}
-                  </ng-template>
-                </p-cellEditor>
-              </td>
-              <td>
-                <p-cellEditor>
-                  <ng-template pTemplate="input">
-                    <p-multiSelect [options]="colors" [(ngModel)]="rowData.name" [style]="{'width':'100%'}">
-                    </p-multiSelect>
-                  </ng-template>
-                  <ng-template pTemplate="output">
-                    {{rowData.name}}
-                  </ng-template>
-                </p-cellEditor>
-              </td>
-              <td style="text-align:center">
-                <button *ngIf="!editing" pButton type="button" pInitEditableRow icon="pi pi-pencil"
-                  class="ui-button-info" (click)="onRowEditInit(rowData,editing)"></button>
-                <button *ngIf="editing" pButton type="button" pSaveEditableRow icon="pi pi-check"
-                  class="ui-button-success" style="margin-right: .5em" (click)="onRowEditSave(rowData)"></button>
-                <button *ngIf="editing" pButton type="button" pCancelEditableRow icon="pi pi-times"
-                  class="ui-button-danger" (click)="onRowEditCancel(rowData, ri)"></button>
-      </td> 
-    </tr>
-  </ng-template>-->
       </p-table>
     </div>
   </div>
 </div>
 </div>
 </div>
+
+<p-dialog header="Art-log Jobs" [(visible)]="displayDialog" [responsive]="true" showEffect="fade" [modal]="true"  [style]="{width: '300px'}">
+    <div class="ui-g ui-fluid" >
+        <!-- <div class="ui-g-12">
+            <div class="ui-g-4">
+                <label for="vin">Job Key </label>
+            </div>
+            <div class="ui-g-8">
+                <input pInputText id="vin"  />
+            </div>
+        </div>
+        <div class="ui-g-12">
+            <button type="button" pButton icon="fa fa-plus" (click)="showDialogToAdd()" label="Add More"></button>
+        </div> -->
+   
+    <!-- <form [formGroup]="productForm">>
+        <div formArrayName="selling_points">
+            <div *ngFor="let item of addForm.controls; let pointIndex=index" [formGroupName]="pointIndex">
+            <label>
+              Job Key: <input formControlName="point" />
+            </label>
+            <button type="button" (click)="deleteFrmCpm(pointIndex)">Delete Selling Point</button>
+            </div>
+            <button type="button" (click)="addFrmCpm()">Add Selling Point</button>
+          </div>
+     </form>
+     {{ this.productForm.value | json }} -->
+    </div>
+    <p-footer>
+        <div class="ui-dialog-buttonpane ui-helper-clearfix">
+            <button type="button" pButton icon="fa fa-close" label="Delete"></button>
+            <button type="button" pButton icon="fa fa-check"  label="Save"></button>
+        </div>
+    </p-footer>
+</p-dialog>
 
 <app-custom-modal-pop-up [basicSetting]="editSetting" [template]="editPopup"></app-custom-modal-pop-up>
 <ng-template #editPopup>

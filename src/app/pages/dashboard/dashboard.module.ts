@@ -12,6 +12,8 @@ import { AccordionModule } from 'primeng/accordion';
 import { MenuItem } from 'primeng/api';                 //api
 import { TableModule } from 'primeng/table';
 import { InputTextModule } from 'primeng/inputtext';
+import {InputTextareaModule} from 'primeng/inputtextarea';
+
 import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
 import { ScrollingModule } from '@angular/cdk/scrolling';
@@ -19,6 +21,7 @@ import { DropdownModule } from 'primeng/dropdown';
 // import { ChartModule } from 'primeng/chart';
 import { MultiSelectModule } from 'primeng/multiselect';
 // import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { ReactiveFormsModule } from '@angular/forms';
 import { SliderModule } from 'primeng/slider';
 @NgModule({
       imports: [
@@ -30,13 +33,15 @@ import { SliderModule } from 'primeng/slider';
             DialogModule,
             TableModule,
             InputTextModule,
+            InputTextareaModule,
             ButtonModule,
             SliderModule,
             // BrowserAnimationsModule,
             // ChartModule,
             RootSharedModule,
             MultiSelectModule,
-            DropdownModule
+            DropdownModule,
+            ReactiveFormsModule
       ], exports: [DashboardComponent],
       declarations: [
             DashboardComponent,
