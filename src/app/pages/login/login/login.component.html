@@ -1,125 +1,48 @@
-<div class="body-class h-100" id="login1">
-  <div class="d-flex align-items-stretch h-100 flex-sm-column flex-md-row flex-column">
-         <div class="col-md-6 col-sm-12 bg-white d-flex loginBg h-100">
- 
-            <div class="col-12 align-self-center text-center">
-              
-              <img class="" style="max-width: 70%; width: 100%;" src="./assets/images/brand-logo-home.svg" alt="Bynder Smartsheet Login"> </div>
-         </div>
-         <div class="col-md-6 col-sm-12 align-self-center mt-3">
-            <div class="ui-form">
-               <h3 class="text-center">Sign In</h3>
-               <div id="errorMsg"></div>
-               <form id="login" class="form-horizontal" class="loginForm" #f="ngForm" novalidate>
-                  <div class="form-group">
-                    <input class="form-control" placeholder="Username" aria-describedby="sizing-addon1" name="username"
-                    placeholder="Enter email/username" type="text" required [(ngModel)]="loginModel.email.value"
-                    #username1="ngModel">
-                  <div *ngIf="f.submitted && !username1.valid" class="help-block">Username is required</div>
-                     
-                  </div>
-                  <div class="form-group">
-                     <input class="form-control" placeholder="Password" type="password" aria-describedby="sizing-addon1"
-                    name="password" [(ngModel)]="loginModel.password.value" #password1="ngModel" required>
-                  <div *ngIf="f.submitted && !password1.valid" class="help-block">Password is required</div>
-                  </div>
-                  <div class="d-flex">
-                     <div class="custom-control custom-checkbox text-white mr-auto">
-                        <input type="checkbox" class="custom-control-input" id="customControlAutosizing">
-                        <label class="custom-control-label" for="customControlAutosizing">Remember me</label>
-                     </div>
-                  </div>
-                  <input type="hidden" name="roleId" value="" id="roleId">
-                  <button class="btn btn-success" [disabled]="!f.form.valid" (click)="onLogin()"> Login</button>
-                <div *ngIf="loginMsg" class="alert alert-danger" role="alert"
-                  style="width: 100%;text-align: center; margin-top: 15px;">
-                  <div>
-                    <strong>{{loginMsg}}</strong>
-                  </div>
-                </div>
-                  <!-- <button type="button" class="btn btn-block sign-up-btn">Sign In</button> -->
-                  <!-- <p class="text-white text-center">Don't have an account?
-                     <a href="#"  class="text-warning">Sign up as an Author</a></p>-->
-               </form>
-            </div>
-         </div>
-      </div>
-  <!-- <div class="circle"> 7.6
-    <span>Version</span>
-  </div> -->
-<!--   
-  <header>
-    <div class="container">
-      <div class="row">
-        <div class="col-md-12 text-center float-left">
-          <img src="./assets/images/login-think.png" class="py-2" alt="THINK">
-        </div>
-      </div>
-    </div>
-
-  </header>
-  <section class="container ">
-    <div class="custRow my-3">
-      <div class="row justify-content-md-center">
-        <div class="col-md-8 mt-5 mb-3">
-
-          <div class="loginBox">
-            <h4 class="loginBgHeading">Customer Service</h4>
-            <h4 class="loginHeading">Customer Service</h4>
-            <div class="text-right loginIcon">
-              <img src="./assets/images/login-Icon.png">
-            </div>
-            <div class="col-md-6 mb-2">
-              <form class="loginForm" #f="ngForm" novalidate>
-                <div class="form-group">
-                  <label for="exampleInputEmail1" class="text-white">User Name/Email</label>
-                  <input class="form-control" placeholder="Username" aria-describedby="sizing-addon1" name="username"
-                    placeholder="Enter email/username" type="text" required [(ngModel)]="loginModel.username.value"
-                    #username1="ngModel">
-                  <div *ngIf="f.submitted && !username1.valid" class="help-block">Username is required</div>
-                </div>
-
-                <div class="form-group">
-                  <label for="exampleInputPassword1" class="text-white">Password</label>
-                  <input class="form-control" placeholder="Password" type="password" aria-describedby="sizing-addon1"
-                    name="password" [(ngModel)]="loginModel.password.value" #password1="ngModel" required>
-                  <div *ngIf="f.submitted && !password1.valid" class="help-block">Password is required</div>
-                </div>
-
-                <div class="custom-control custom-checkbox mb-3 mr-sm-2 text-white">
-                  <input type="checkbox" class="custom-control-input" id="customControlAutosizing">
-                  <label class="custom-control-label" for="customControlAutosizing">Remember me</label>
-                </div>
-
-                <button class="btn btn-success" [disabled]="!f.form.valid" (click)="onLogin()"> Login</button>
-                <div *ngIf="loginMsg" class="alert alert-danger" role="alert"
-                  style="width: 100%;text-align: center; margin-top: 15px;">
-                  <div>
-                    <strong>{{loginMsg}}</strong>
-                  </div>
-                </div>
-
-              </form>
-
-
-
-            </div>
+<div class="limiter" id="login1">
+    <div class="container-login100">
+      <div class="wrap-login100 p-l-50 p-r-50 p-t-77 p-b-30">
+        <form class="login100-form validate-form" id="login" #f="ngForm" novalidate>
+          <span class="login100-form-title p-b-55">
+            Login
+          </span>
+  
+          <div class="wrap-input100 validate-input m-b-16" data-validate = "Valid email is required: ex@abc.xyz">
+            <input class="input100" placeholder="Username" aria-describedby="email" name="username"
+                      placeholder="Enter email/username" type="text" required [(ngModel)]="loginModel.email.value"
+                      #username1="ngModel">
+                    <div *ngIf="f.submitted && !username1.valid" class="help-block">Username is required</div>
+            <span class="focus-input100"></span>
+            <span class="symbol-input100">
+              <i class="fa fa-envelope"></i>
+            </span>
           </div>
-          <p class="custRow text-right mt-2 ">
-            <img style="max-width:150px;" src="./assets/images/loginLogoFooter.png ">
-          </p>
-        </div>
+  
+          <div class="wrap-input100 validate-input m-b-16" data-validate = "Password is required">
+            <input class="input100" placeholder="Password" type="password" aria-describedby="sizing-addon1"
+            name="password" [(ngModel)]="loginModel.password.value" #password1="ngModel" required>
+          <div *ngIf="f.submitted && !password1.valid" class="help-block">Password is required</div>
+            <span class="focus-input100"></span>
+            <span class="symbol-input100">
+              <i class="fa fa-lock"></i>
+            </span>
+          </div>
+  
+          <div class="contact100-form-checkbox m-l-4">
+            <input class="input-checkbox100" id="ckb1" type="checkbox" name="remember-me">
+            <label class="label-checkbox100" for="ckb1">
+              Remember me
+            </label>
+          </div>
+          
+          <div class="container-login100-form-btn p-t-25">
+              <input type="hidden" name="roleId" value="" id="roleId">
+              <button class="login100-form-btn" [disabled]="!f.form.valid" (click)="onLogin()"> Login</button>
+            </div>
+            <div>
+                <strong>{{loginMsg}}</strong>
+              </div>      
+        </form>
       </div>
     </div>
-  </section>
-  <footer class="fixed-bottom ">
-    <div class="container ">
-      <div class="row ">
-        <div class="col-md-12 text-center float-left ">
-          <p>Copyright © 1997-2017 Bynder - All Rights Reserved</p>
-        </div>
-      </div>
-    </div>
-  </footer> -->
-
-</div>
+  </div>
+  
