@@ -1,5 +1,5 @@
 import { Component, OnInit, OnChanges } from '@angular/core';
-import { FormBuilder, FormGroup, FormArray, FormControl } from '@angular/forms';
+import { FormBuilder, FormGroup, FormArray, FormControl, Validators } from '@angular/forms';
 import { HttpService } from '../../core/services/http.service';
 import { BaseComponent } from '../../core/base/base.component';
 import { BaseService } from '../../core/base/base.service';
@@ -11,8 +11,9 @@ import { CustomerServicesUrls } from '../../core/shared/constant/url-constants/c
 import { Router } from '@angular/router';
 import { GridAPII } from '../../core/base/base.component';
 import {SessionObject} from '../../core/shared';
-
+import { MenuItem } from 'primeng/api';
 import { ColDef } from 'ag-grid';
+import { HttpHeaders, HttpParams } from '@angular/common/http';
 @Component({
   selector: 'dashboard',
   templateUrl: './dashboard.component.html',
@@ -38,9 +39,9 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
   modules=[];
   artComplexcityOPT=[]; artAssignmentOPT=[]; MetaRiskOPT=[]; MetaImpactOPT=[];
   artcomplexs=[];
-  artassions=[]; risks=[]; impacts=[]; workflows=[];
+  artassions=[]; risks=[]; impacts=[]; workflows=[]; items: MenuItem[];
   cols = [
-    { field: '', header: 'Opt.' },
+    { field: '', header: 'Action' },
     { field: 'job_key', header: 'JobKey'},
     { field : 'lession', header : 'Lession'},
     { field : 'component', header : 'Component'},
@@ -76,13 +77,11 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
   Editdata: any;
   search = { };
   displayDialog : boolean;
+  frmdt :any;
   //@Input("edit-jobs") editJobID: string;
-  demoForm: FormGroup;
-  arrayItems: {
-     id: number;
-     title: string;
-   }[];
-   productForm: FormGroup;
+  public form: FormGroup;
+  public contactList: FormArray;
+
   constructor(protected baseServices: BaseService,
     protected router: Router,
     protected httpService: HttpService,
@@ -94,16 +93,25 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
     this.getMetaData(obj);
     this.gridOptions.onCellValueChanged = this.agCellClicked;
     this.editSetting = new CustomModalPopUpModel('Edit Job');
-    this.demoForm = this.fb.group({
-      demoArray: this.fb.array([])
-    });
+
+
+
   }
   clearData() {
 
   }
+  createContact(): FormGroup {
+    return this.fb.group({
+      grade: [ null, Validators.compose([Validators.required])],
+      module: [ null, Validators.compose([Validators.required])],
+     // type: ['email', Validators.compose([Validators.required])],
+     jobkey: [null, Validators.compose([Validators.required])],
+     // value: [null, Validators.compose([Validators.required, Validators.email])]
+    });
+  }
 
 ngOnChanges(){
-  debugger
+  //debugger
   this.artLogModel.jobkey.value = this.baseService.getMessage();
   let obj={};
   this.getMetaData(obj);
@@ -139,7 +147,7 @@ showDialogToAdd(){
          this.artAssignmentOPT.push({ value:'', label:'Select Assignment'})
         }
       //"309909b0de3f4eb9b5674efe59bee8b9" Permission Risk Rating 
-        debugger
+        //debugger
         let MetaRisk = data.WorkFlowJobsMetaData.filter(d => d.tempId ==  "309909b0de3f4eb9b5674efe59bee8b9");
         if(MetaRisk.length > 0 && MetaRisk[0].hasOwnProperty('options')){
          this.MetaRiskOPT=  MetaRisk[0].options.map(d=>({value:d.ID.split('-').join(''), label:d.label}));
@@ -154,7 +162,7 @@ showDialogToAdd(){
         }
       }
 
-        debugger
+        //debugger
         if ( data.hasOwnProperty('Grade') && data.Grade.length > 0 && data.Grade[0].hasOwnProperty('options')) {
         this.Gdata = data.Grade[0].options;
         this.Gdata = this.Gdata.map(d=>({'value':d.ID.split("-").join(''), label: d.label}));
@@ -204,7 +212,7 @@ showDialogToAdd(){
     });
   }
   onRowEditInit(artdt: any, editing) {
-    debugger
+    //debugger
      editing = !editing;
     this.clonedArtLog[artdt.jobId] = { ...artdt };
   }
@@ -231,20 +239,54 @@ showDialogToAdd(){
       dt.filter(event.value, 'year', 'gt');
     }, 1250);
   }
-  get demoArray() {
-    return this.demoForm.get('demoArray') as FormArray;
- }
- addItem(item) {
-    this.arrayItems.push(item);
-    this.demoArray.push(this._formBuilder.control(false));
- }
- removeItem() {
-    this.arrayItems.pop();
-    this.demoArray.removeAt(this.demoArray.length - 1);
- }
-
+  // add a contact form group
+addContact() {
+  this.contactList.push(this.createContact());
+}
+// remove contact from group
+removeContact(index) {
+  this.contactList.removeAt(index);
+}
+get contactFormGroup() {
+  return this.form.get('jobAdd') as FormArray;
+}
+getContactsFormGroup(index): FormGroup {
+  this.contactList = this.form.get('jobAdd') as FormArray;
+  const formGroup = this.contactList.controls[index] as FormGroup;
+  return formGroup;
+}
+submit() {
+  debugger
+  console.log(this.form.value);
+  const myheader = new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded')
+  let body = new HttpParams();
+  //this.form.value.hasOwnProperty('jobAdd')
+  body = body.set('jobAdd', JSON.stringify(this.form.value.jobAdd));
+  //body = body.set('module', '');
+  //body = body.set('jobKey','');
+  let self=this;
+  this.httpService.extractPostData(CustomerServicesUrls.ARTLOG_JOBADD, body, {headers: myheader}).subscribe((data) => {
+     debugger 
+     console.log("added Responce Dadata ==>", data);
+     //data= JSON.parse(data);
+    for(let dt of data){
+      self.cartdata.push(dt);
+    } 
+     //cartdata
+  });
+}
   ngOnInit() {
-    this.arrayItems = [];
+    this.frmdt={ grade:'',moduge:'',status:''}
+    this.form = this.fb.group({
+      grade: [null , Validators.compose([Validators.required])],
+      module: [null , Validators.compose([Validators.required])],
+      jobkey: [null, Validators.compose([Validators.required])],
+      jobAdd: this.fb.array([this.createContact()])
+    });
+  
+  // set contactlist to the form control containing jobAdd
+    this.contactList = this.form.get('jobAdd') as FormArray;
+    
     this.Wdata = ['Clip Art', 'Created Image', 'Permission', 'Shutterstock'];
     this.jobStatus = ['Active', 'NeedsChanges', 'Approved', 'Closed'];
     this.jobStatus = this.jobStatus.map( d=> ({field: d, header: d}));
@@ -256,6 +298,16 @@ showDialogToAdd(){
 
   getSearchModel(name: string) {
     if (name === this.NAME_ARTLOG) {
+      try{
+        if(this.frmdt.grade.length > 0){
+          this.artLogModel.grade.value=this.frmdt.grade.map(a=> a.value);
+        }
+        if(this.frmdt.module.length > 0){
+           this.artLogModel.module.value=this.frmdt.module.map(a=> a.value);
+        }
+      }catch(err){
+       // console.log(err)
+      }
       return this.artLogModel;
     }
   }
@@ -292,7 +344,7 @@ showDialogToAdd(){
     // }
   }
   agCellClicked = (event) => {
-    debugger
+    //debugger
     console.log(event)
     this.jobID = event.data;
     // this.customModalPopService.show(this.editSetting);
@@ -304,7 +356,7 @@ showDialogToAdd(){
     this.OnSubmit(this.NAME_ARTLOG);
   }
   xtBaseLoadDataFromApiProcessData(name: String, data: Array<any>) {
-    debugger
+   // debugger
 
     this.Gdata = data['Grade'][0].options;
     this.Mdata = data['module'][0].options;
