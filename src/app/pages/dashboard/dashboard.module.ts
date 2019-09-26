@@ -23,6 +23,11 @@ import { MultiSelectModule } from 'primeng/multiselect';
 // import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ReactiveFormsModule } from '@angular/forms';
 import { SliderModule } from 'primeng/slider';
+import {MenubarModule} from 'primeng/menubar';
+import {ScrollPanelModule} from 'primeng/scrollpanel';
+
+import {SplitButtonModule} from 'primeng/splitbutton';
+import {ProgressSpinnerModule} from 'primeng/progressspinner';
 @NgModule({
       imports: [
             CommonModule,
@@ -36,6 +41,10 @@ import { SliderModule } from 'primeng/slider';
             InputTextareaModule,
             ButtonModule,
             SliderModule,
+            MenubarModule,
+            SplitButtonModule,
+            ProgressSpinnerModule,
+            ScrollPanelModule,
             // BrowserAnimationsModule,
             // ChartModule,
             RootSharedModule,

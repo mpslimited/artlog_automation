@@ -81,4 +81,31 @@ export class ArtLogModel implements BaseSearchModelI {
       //       apiKey: 'orderCode',
       //       placeholder: ''
       // };
+};
+export class ArtLogAddModel implements BaseSearchModelI {
+      
+      apiDatakey = 'artLogData';
+      // apiGridHeaderKay = '';
+      jobkey:BasicSearchModelI = {
+            value: '',
+            defaultValue: null,
+            label: 'jobkey',
+            apiKey: 'jobkey',
+            placeholder: ''
+      };
+      grade: BasicSearchModelI = {
+            value: '',
+            defaultValue: null,
+            label: 'grade',
+            apiKey: 'grade',
+            placeholder: ''
+      };
+      module: BasicSearchModelI = {
+            value: '',
+            defaultValue: null,
+            label: 'module',
+            apiKey: 'module',
+            placeholder: ''
+      };
 }
+
