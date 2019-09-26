@@ -8,10 +8,12 @@ import { ArtLogModel } from './dashboard.model';
 import { CustomModalPopUpService } from '../../component/custom-modal-pop-up/custom-modal-pop-up.service';
 import { CustomModalPopUpModel } from '../../component/custom-modal-pop-up/custom-modal-pop-up.model';
 import { CustomerServicesUrls } from '../../core/shared/constant/url-constants/customer-services.constants';
+import { DropdownDataModel, AlertMessageService } from '../../component';
 import { Router } from '@angular/router';
 import { GridAPII } from '../../core/base/base.component';
 import {SessionObject} from '../../core/shared';
 import { MenuItem } from 'primeng/api';
+
 import { ColDef } from 'ag-grid';
 import { HttpHeaders, HttpParams } from '@angular/common/http';
 @Component({
@@ -28,25 +30,26 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
   yearTimeout: any;
   cartdata: any;
   jobID: any;
-  totalage: any = [
-  ];
+  totalage: any = [ ];
   clonedCars: { [s: string]: any; } = {};
-  colors = [ ];
-  jobkeys =[ ];
-  lessions =[];
-  components= [];
-  grades =[];
-  modules=[];
-  artComplexcityOPT=[]; artAssignmentOPT=[]; MetaRiskOPT=[]; MetaImpactOPT=[];
+
+  jobkeys: any    = [];
+  lessions: any   = [];
+  components: any = [];
+  grades: any     = [];
+  modules: any    = [];
+  artComplexcityOPT: any = []; artAssignmentOPT=[]; MetaRiskOPT=[]; MetaImpactOPT=[];
   artcomplexs=[];
   artassions=[]; risks=[]; impacts=[]; workflows=[]; items: MenuItem[];
+  fixCol=[];
   cols = [
     { field: '', header: 'Action' },
     { field: 'job_key', header: 'JobKey'},
-    { field : 'lession', header : 'Lession'},
-    { field : 'component', header : 'Component'},
     { field : 'totalage', header : 'Cumulative Age'},
     {field: 'lastage', header: 'Last Age'},
+    { field : 'lession', header : 'Lession'},
+    { field : 'component', header : 'Component'},
+   
    // {field: 'lastage', header: 'Last Age'},
     {field: 'tags', header: 'Tag Entry'},
     {field: 'artcomplex', header: 'Art-Complexity'},
@@ -58,9 +61,9 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
     { field: 'batch', header: 'Batch' },
     { field: 'workflow', header: 'Workflow' }
   ];
-  dropdownList = [];
-  selectedItems = [];
- 
+  loading: boolean;
+  dropdownList: any[];
+  selectedItems: any [];
   dropdownSettings = {};
   editSetting: any;
   //optionsModel
@@ -69,7 +72,7 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
   Mdata: any;
   Wdata: any;
   WIPdata: any;
-  Tdata: any;
+  Tdata : any;
   jobStatus: any;
   NAME_ARTLOG = 'NAME_ARTLOG';
   gridData: any;
@@ -86,16 +89,35 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
     protected router: Router,
     protected httpService: HttpService,
     protected customModalPopService: CustomModalPopUpService,
+    protected alert: AlertMessageService,
     private fb: FormBuilder ) {
     super(baseServices, router);
-    //this.gridOptions.onCellClicked=this.agCellClicked;
+    //this.checkUserinfo();
+  }
+  ngOnInit() {
+    this.cols.forEach(element => {
+      if(!(element.field == '' || element.field == 'job_key') ){
+        this.fixCol.push(element);
+      }
+    });
+    this.frmdt={ grade:'',module:'',status:'', workflow:''}
+    this.form = this.fb.group({
+      grade: [null , Validators.compose([Validators.required])],
+      module: [null , Validators.compose([Validators.required])],
+      jobkey: [null, Validators.compose([Validators.required])],
+      jobAdd: this.fb.array([this.createContact()])
+    });
+    // set contactlist to the form control containing jobAdd
+    this.contactList = this.form.get('jobAdd') as FormArray;
+    let Wdata = ['Clip Art', 'Created Image', 'Permission', 'Shutterstock'];
+    this.workflows = Wdata.map( d=> ({value: d}));
+    let Tdata= ["Permissions Team","Art Team","Clip Art & Storage Team","Shutterstock Team","Content Team","On Hold Team"];
+    this.Tdata = Tdata.map( d=> ({value: d}));
+    let jobStatus = ['Active', 'NeedsChanges', 'Approved'];
+    this.jobStatus = jobStatus.map( d=> ({field: d, header: d}));
     let obj={};
     this.getMetaData(obj);
-    this.gridOptions.onCellValueChanged = this.agCellClicked;
     this.editSetting = new CustomModalPopUpModel('Edit Job');
-
-
-
   }
   clearData() {
 
@@ -104,120 +126,77 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
     return this.fb.group({
       grade: [ null, Validators.compose([Validators.required])],
       module: [ null, Validators.compose([Validators.required])],
-     // type: ['email', Validators.compose([Validators.required])],
-     jobkey: [null, Validators.compose([Validators.required])],
-     // value: [null, Validators.compose([Validators.required, Validators.email])]
-    });
+      jobkey: [null, Validators.compose([Validators.required])],
+     });
   }
 
-ngOnChanges(){
-  //debugger
-  this.artLogModel.jobkey.value = this.baseService.getMessage();
-  let obj={};
-  this.getMetaData(obj);
-}
-showDialogToAdd(){
-  this.displayDialog = true;
-}
+  ngOnChanges(){
+    this.artLogModel.jobkey.value = this.baseService.getMessage();
+    let obj={};
+    this.getMetaData(obj);
+  }
+  showDialogToAdd(){
+    this.displayDialog = true;
+  }
   searchByjobKey() {
     
   }
   filterData() {
     this.getMetaData( this.search );
   }
+  checkUserinfo(){
+    debugger
+    this.httpService.extractPostData(CustomerServicesUrls.USERINFO_DATA, null, null).subscribe((data) => {
+      debugger
+      console.log("getting data=>", data);
+    });
+  }
   getMetaData(Obj: any) {
-   // debugger
     var self = this;
-    //this.artLogModel.jobkey.value = SessionObject.getJobKey();
     return new Promise(resolve => {
       this.loadDataFromApi(this.NAME_ARTLOG).subscribe((data) => {
-     // this.httpService.extractPostData(CustomerServicesUrls.JOBSMETA_DATA1, null, null).subscribe((data) => {
-       //code for Art-Complexity temp ID c7fbc907710045778ee29863e33d2bd2
-       if(data.hasOwnProperty("WorkFlowJobsMetaData") && data.WorkFlowJobsMetaData.length > 0){
-         let MetaArtComplexity = data.WorkFlowJobsMetaData.filter(d => d.tempId == 'c7fbc907710045778ee29863e33d2bd2' );
-         if(MetaArtComplexity.length > 0 && MetaArtComplexity[0].hasOwnProperty('options')){
-          this.artComplexcityOPT=  MetaArtComplexity[0].options.map(d=>({value:d.ID.split('-').join(''), label:d.label}));
-          this.artComplexcityOPT.push({ value:'', label:'Select Complexity'})
-         }
-       //"cd8809565088496da4955eb3327fea04" for Assignment
-       
-        let MetaArtAssignment = data.WorkFlowJobsMetaData.filter(d => d.tempId == "cd8809565088496da4955eb3327fea04" );
-        if(MetaArtAssignment.length > 0 && MetaArtAssignment[0].hasOwnProperty('options')){
-         this.artAssignmentOPT=  MetaArtAssignment[0].options.map(d=>({value:d.ID.split('-').join(''), label:d.label}));
-         this.artAssignmentOPT.push({ value:'', label:'Select Assignment'})
+      if ( data.hasOwnProperty('GlobalDt') ) {
+        if (!!data.GlobalDt.grade) {
+          this.Gdata = data.GlobalDt.grade;
         }
-      //"309909b0de3f4eb9b5674efe59bee8b9" Permission Risk Rating 
-        //debugger
-        let MetaRisk = data.WorkFlowJobsMetaData.filter(d => d.tempId ==  "309909b0de3f4eb9b5674efe59bee8b9");
-        if(MetaRisk.length > 0 && MetaRisk[0].hasOwnProperty('options')){
-         this.MetaRiskOPT=  MetaRisk[0].options.map(d=>({value:d.ID.split('-').join(''), label:d.label}));
-         this.MetaRiskOPT.push({ value:'', label:'Select Risk'});
+        if (!!data.GlobalDt.module ) {
+          this.Mdata = data.GlobalDt.module ;
         }
-      // "f8bf767302224972a79fd80f7fb36d12" MetaImpactOPT
-        let MetaMetaImpact = data.WorkFlowJobsMetaData.filter(d => d.tempId ==  "f8bf767302224972a79fd80f7fb36d12");
-        if(MetaMetaImpact.length > 0 && MetaMetaImpact[0].hasOwnProperty('options')){
-         this.MetaImpactOPT=  MetaMetaImpact[0].options.map(d=>({value:d.ID.split('-').join(''), label:d.label}));
-         this.MetaImpactOPT.push({ value:'', label:'Select Impact'});
-         //this.MetaImpactOPT.sort((a,b )=> return a.value - b.value)
+        if (!!data.GlobalDt.artAssign ) {
+          data.GlobalDt.artAssign.splice(0, 0, {id: '', value: '', label: 'Select One'});
+          this.artassions = data.GlobalDt.artAssign ;
+        }
+        if (!!data.GlobalDt.artcomplex ) {
+          data.GlobalDt.artcomplex.splice(0, 0, {id:'', value:'', label:'Select One'});
+          this.artcomplexs = data.GlobalDt.artcomplex ;
+        }
+        if (!!data.GlobalDt.risk ) {
+          data.GlobalDt.risk.splice(0, 0, {id: '', value: '', label: 'Select One'});
+          this.risks = data.GlobalDt.risk ;
+        }
+        if (!!data.GlobalDt.impact ) {
+          data.GlobalDt.impact.splice(0, 0, {id: '', value: '', label: 'Select One'});
+          this.impacts = data.GlobalDt.impact ;
         }
       }
-
-        //debugger
-        if ( data.hasOwnProperty('Grade') && data.Grade.length > 0 && data.Grade[0].hasOwnProperty('options')) {
-        this.Gdata = data.Grade[0].options;
-        this.Gdata = this.Gdata.map(d=>({'value':d.ID.split("-").join(''), label: d.label}));
-       }
-       if ( data.hasOwnProperty('module') && data.module.length > 0 && data.module[0].hasOwnProperty('options') ) {
-        this.Mdata = data.module[0].options;
-        this.Mdata = this.Mdata.map(d=>({'value':d.ID.split("-").join(''), label: d.label}));
-       }
-       if ( data.hasOwnProperty('CurriculaWIP') && data.CurriculaWIP.length > 0 && data.CurriculaWIP[0].hasOwnProperty('options') ) {
-        this.WIPdata = data.CurriculaWIP[0].options;
-       }
-
-        let jobkeys = data.artLogData.map( d => d.job_key).filter(d => d != '');
-        this.jobkeys = jobkeys.filter((v,i) => jobkeys.indexOf(v) === i).map( d=> ({label: d, value: d}));
-        
-        let artcomplexs = data.artLogData.map( d => d.artcomplex);
-        this.artcomplexs = artcomplexs.filter((v,i) => artcomplexs.indexOf(v) === i).map( d=> ({label: d, value: d}));
-
-        let artassions = data.artLogData.map( d => d.artassion);
-        this.artassions = artassions.filter((v,i) => artassions.indexOf(v) === i).map( d=> ({label: d, value: d}));
-        //risks , this.impacts
-        //let risks = data.artLogData.map( d => d.risk);
-        //this.artassions = artassions.filter((v,i) => artassions.indexOf(v) === i).map( d=> ({label: d, value: d}));
-
-        let lessions=data.artLogData.map(d=> d.lession).filter(d=>d!='');
-        this.lessions = lessions.filter((v,i) => lessions.indexOf(v) === i).map(d=> ({label: d, value: d}));
-
-        let components=data.artLogData.map(d=> d.component).filter(d=>d!='');
-        this.components = components.filter((v,i) => components.indexOf(v) === i).map(d=> ({label: d, value: d}));
-        let grades=data.artLogData.map(d=> d.grade).filter(d=>d!='');
-        this.grades = grades.filter((v,i) => grades.indexOf(v) === i).map(d=> ({label: d, value: d}));
-        let modules=data.artLogData.map(d=> d.module).filter(d=>d!='');
-        this.modules = modules.filter((v,i) => modules.indexOf(v) === i).map(d=> ({label: d, value: d}));
-        
-        data.artLogData.forEach(element => {
-          this.colors.push({ label: element.name, value: element.name })
-          if (!element.totalage) {
-            element.totalage = 0
-          }
-          this.totalage.push({ label: element.totalage, value: element.totalage })
-        });
-        self.cartdata = data.artLogData;
-
-        self.selectedColumn = this.cols;
-        resolve(data);
+      if ( data.hasOwnProperty('GridFilters') ) {
+        this.lessions = (!!data.GridFilters.lession) ? data.GridFilters.lession.map(d => ({label: d, value: d})) : [];
+        this.components = (!!data.GridFilters.component) ? data.GridFilters.component.map(d => ({label: d, value: d})) : [];
+        this.modules =  (!!data.GridFilters.module) ? data.GridFilters.module.map(d => ({label: d, value: d})) : [];
+        this.grades =  (!!data.GridFilters.grade) ? data.GridFilters.grade.map(d => ({label: d, value: d})) : [];
+      }
+      self.cartdata = data.artLogData;
+      self.selectedColumn = this.cols;
+      resolve(data);
       });
     });
   }
   onRowEditInit(artdt: any, editing) {
-    //debugger
-     editing = !editing;
+    editing = !editing;
     this.clonedArtLog[artdt.jobId] = { ...artdt };
   }
-
   onRowEditSave(artdt: any) {
+    debugger
     // if (car.year > 0) {
     //   delete this.clonedCars[car.vin];
     //   this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Car is updated' });
@@ -226,7 +205,6 @@ showDialogToAdd(){
     //   this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Year is required' });
     // }
   }
-
   onRowEditCancel(artdt: any, index: number) {
     // this.cars2[index] = this.clonedCars[car.vin];
     delete this.clonedArtLog[artdt.jobId];
@@ -260,42 +238,19 @@ submit() {
   console.log(this.form.value);
   const myheader = new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded')
   let body = new HttpParams();
-  //this.form.value.hasOwnProperty('jobAdd')
   body = body.set('jobAdd', JSON.stringify(this.form.value.jobAdd));
-  //body = body.set('module', '');
-  //body = body.set('jobKey','');
-  let self=this;
+  let self = this;
   this.httpService.extractPostData(CustomerServicesUrls.ARTLOG_JOBADD, body, {headers: myheader}).subscribe((data) => {
-     debugger 
-     console.log("added Responce Dadata ==>", data);
-     //data= JSON.parse(data);
     for(let dt of data){
       self.cartdata.push(dt);
     } 
-     //cartdata
+    this.displayDialog=false;
+    this.alert.showAlertScucess([ data.length +' Jobs Added Successfully!!!'], 300000);
   });
 }
-  ngOnInit() {
-    this.frmdt={ grade:'',moduge:'',status:''}
-    this.form = this.fb.group({
-      grade: [null , Validators.compose([Validators.required])],
-      module: [null , Validators.compose([Validators.required])],
-      jobkey: [null, Validators.compose([Validators.required])],
-      jobAdd: this.fb.array([this.createContact()])
-    });
-  
-  // set contactlist to the form control containing jobAdd
-    this.contactList = this.form.get('jobAdd') as FormArray;
-    
-    this.Wdata = ['Clip Art', 'Created Image', 'Permission', 'Shutterstock'];
-    this.jobStatus = ['Active', 'NeedsChanges', 'Approved', 'Closed'];
-    this.jobStatus = this.jobStatus.map( d=> ({field: d, header: d}));
-    this.workflows = this.Wdata.map( d=> ({field: d, label: d}));
-  }
   initSearchModels() {
     this.artLogModel = new ArtLogModel();
   }
-
   getSearchModel(name: string) {
     if (name === this.NAME_ARTLOG) {
       try{
@@ -304,6 +259,12 @@ submit() {
         }
         if(this.frmdt.module.length > 0){
            this.artLogModel.module.value=this.frmdt.module.map(a=> a.value);
+        }
+        if(this.frmdt.status.length > 0){
+          this.artLogModel.status.value=this.frmdt.status.map(a=> a.field);
+        }
+        if(this.frmdt.workflow!="" ){
+          this.artLogModel.workflow.value = this.frmdt.workflow.value;
         }
       }catch(err){
        // console.log(err)
@@ -318,15 +279,12 @@ submit() {
       return CustomerServicesUrls.ARTLOG_DATA;
     }
   }
- 
   getNonSearchModelParams(name: string) {
     if (name === this.NAME_ARTLOG) {
       const obj = { searchBy: 'test' };
       return obj;
     }
   }
-
-
   getGridApi(name: string): GridAPII {
     if (name === this.NAME_ARTLOG) {
       return {
@@ -334,33 +292,6 @@ submit() {
         columnApi: this.columnApi
       };
     }
-  }
-  setColumnDef(name: String): Array<ColDef> {
-
-    // debugger
-    // if (name === this.NAME_ARTLOG) {
-
-    return columnDefsArtLogs;
-    // }
-  }
-  agCellClicked = (event) => {
-    //debugger
-    console.log(event)
-    this.jobID = event.data;
-    // this.customModalPopService.show(this.editSetting);
-  }
-  doOnGridReadyDashboard(api) {
-    this.gridApi = api.api;
-    this.columnApi = api.columnApi;
-    this.doOnGridReady(this.NAME_ARTLOG);
-    this.OnSubmit(this.NAME_ARTLOG);
-  }
-  xtBaseLoadDataFromApiProcessData(name: String, data: Array<any>) {
-   // debugger
-
-    this.Gdata = data['Grade'][0].options;
-    this.Mdata = data['module'][0].options;
-    this.WIPdata = data['CurriculaWIP'][0].options;
   }
 }
 

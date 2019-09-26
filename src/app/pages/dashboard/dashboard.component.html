@@ -13,7 +13,7 @@
                 <div class="col-md-3">
                   <div class="form-group">
                     <label for="formGroupExampleInput2" class="col-sm-12 pl-0">Grade</label>
-                    <p-multiSelect [options]="Gdata" [(ngModel)]="frmdt.grade" optionLabel="label"
+                    <p-multiSelect [options]="Gdata" [(ngModel)]="frmdt.grade" optionLabel="value"
                         selectedItemsLabel="{0} selected" [style]="{minWidth: '100%'}"
                         defaultLabel="Choose Grade" name="grade">
                     </p-multiSelect>
@@ -22,20 +22,15 @@
                 <div class="col-md-3">
                   <div class="form-group">
                     <label for="formGroupExampleInput2" class="col-sm-12 pl-0">Module</label>
-                    <p-multiSelect [options]="Mdata" [(ngModel)]="frmdt.module" optionLabel="label"
+                    <p-multiSelect [options]="Mdata" [(ngModel)]="frmdt.module" optionLabel="value"
                         selectedItemsLabel="{0} selected" [style]="{minWidth: '100%'}"
                         defaultLabel="Choose Module" name="module">
                     </p-multiSelect>
-                    <!-- <select [(ngModel)]="artLogModel.module.value" class="form-control form-control-sm" id="usergroup">
-                      <option value="">All</option>
-                      <option *ngFor="let md of Mdata" [value]="md.ID.split('-').join('')"> M-{{ md.label }}</option>
-                    </select> -->
                   </div>
                 </div>
                 <div class="col-md-3">
                   <div class="form-group">
                     <label for="formGroupExampleInput2">Batch</label>
-                    <!-- <input type="text" pInputText [(ngModel)]="artLogModel.batch.value"/> -->
                     <input type="text" name="batch" pInputText [(ngModel)]="artLogModel.batch.value" placeholder="Batch"
                       class="form-control form-control-sm" />
                   </div>
@@ -43,7 +38,7 @@
                 <div class="col-md-3">
                   <div class="form-group">
                     <label for="workflow" class="col-sm-12 pl-0">Workflow </label>
-                    <p-dropdown [options]="Wdata" [(ngModel)]="artLogModel.workflow.value" optionLabel="label"
+                    <p-dropdown [options]="workflows" [(ngModel)]="frmdt.workflow" optionLabel="value"
                         id="workflow" [style]="{minWidth: '100%'}"
                         placeholder="Choose Workflow" name="workflow">
                     </p-dropdown>
@@ -54,7 +49,7 @@
                 <div class="col-md-3">
                   <div class="form-group">
                     <label for="curriculum" class="col-sm-12 pl-0">Curriculum</label>
-                    <p-dropdown [options]="WIPdata" [(ngModel)]="artLogModel.curricula.value" optionLabel="label"
+                    <p-dropdown [options]="WIPdata" [(ngModel)]="artLogModel.curricula" optionLabel="value"
                         id="curriculum" [style]="{minWidth: '100%'}"
                         placeholder="Choose Curriculum" name="curriculum">
                     </p-dropdown>
@@ -81,7 +76,7 @@
               </div>            
             </div>
             <div class="card-footer text-right">
-              <button type="button" (click)="clearData()" class="btn btn-primary btn-sm mr-1">Reset</button>
+              <button type="button" (click)="clearData()" class="btn btn-danger btn-sm mr-1">Reset</button>
               <button type="submit"  class="btn btn-primary btn-sm">Search</button>
             </div>
           </div>
@@ -92,10 +87,10 @@
         <div class="col-lg-12 grid-margin stretch-card">
       <div class="card">
         <div class="card-body">
-      
-      <p-table #dt editMode="row" dataKey="id" [columns]="selectedColumn" [value]="cartdata" [paginator]="true" [rows]="10"
-          selectionMode="multiple" [(selection)]="selectedCars"  scrollable="true" scrollHeight="550px" 
-          [frozenColumns]="frozenCols">
+          <p-progressSpinner class="d-none" [style]="{width: '50px', height: '50px'}" strokeWidth="8" fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>
+          <p-table #dt editMode="row" dataKey="_id" [columns]="selectedColumn" [value]="cartdata" 
+          selectionMode="multiple"  scrollable="true" [loading]="loading" scrollHeight="550px" 
+          >
           <ng-template pTemplate="colgroup" let-columns>
             <colgroup>
                 <col *ngFor="let col of columns" style="width:175px">
@@ -103,54 +98,63 @@
           </ng-template>
           <ng-template pTemplate="caption">
             <p-menubar [model]="items" [style]="{background:'none', border:'none'}">
-              <p-multiSelect [options]="cols" [(ngModel)]="selectedColumn" optionLabel="header" 
+              <div class="d-flex mb-3">
+                <div class="mr-auto pl-2"><a type="button" href="#" onClick="saveGridState()" label="" class="btn btn-sm"><i class="fa fa-close"></i></a></div>
+                <div class="pr-2">
+                  <p-multiSelect [options]="fixCol" [(ngModel)]="selectedColumn" optionLabel="header" 
               selectedItemsLabel="{0} columns selected" defaultLabel="Choose Columns">
               </p-multiSelect>
               <p-splitButton label="Export Grid As" icon="pi pi-file" [model]="items"></p-splitButton>
-               <!--<div class="btn-group">
-                <button type="button" class="btn btn-sm btn-primary"><i class="fa fa-check"></i> Export Grid As</button>
-                <button type="button" class="btn btn-sm btn-primary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  <span class="sr-only">Toggle Dropdown</span>
-                </button>
-                <div class="dropdown-menu">
-                  <a class="dropdown-item" (click)="dt.exportCSV()"><i class="fa fa-file-excel-o"></i> All Data</a>
-                  <a class="dropdown-item" (click)="dt.exportCSV({selectionOnly:true})"><i class="fa fa-file-excel-o"></i> Selection Only</a>
+              
+            
+              <button type="button" pButton icon="fa fa-plus" (click)="showDialogToAdd()" label="Add Row" class="btn btn-sm ui-button-primary ml-1"></button>
+              <button type="button" pButton icon="fa fa-floppy-o" (click)="saveGridState()" label="Save Grid State" class="btn btn-sm ui-button-primary ml-1"></button>
                 </div>
-              </div>-->
-              <button type="button" pButton icon="fa fa-plus" (click)="showDialogToAdd()" label="Add" class="btn btn-sm btn-primary ml-1"></button>
+              </div>
             </p-menubar>
   
           </ng-template>
           <ng-template pTemplate="header" let-columns>
             <tr>
-              <th *ngFor="let col of columns" [pSortableColumn]="col.field">
-                {{col.header}}
-                <p-sortIcon [field]="col.field" ariaLabel="Activate to sort"
-                  ariaLabelDesc="Activate to sort in descending order"
-                  ariaLabelAsc="Activate to sort in ascending order">
-                </p-sortIcon>
+              <!-- <th *ngFor="let col of fixCol"> {{col.header}} </th> -->
+              <th *ngFor="let col of columns" [ngSwitch]="col.field">
+                  <div *ngSwitchCase="''">
+                      {{col.header}}
+                  </div>
+                <div *ngSwitchCase="'job_key'">
+                    {{col.header}}
+                </div>
+                <div *ngSwitchDefault [pSortableColumn]="col.field">
+                  {{col.header}}
+                  <p-sortIcon  [field]="col.field" ariaLabel="Activate to sort"
+                    ariaLabelDesc="Activate to sort in descending order"
+                    ariaLabelAsc="Activate to sort in ascending order">
+                  </p-sortIcon>
+                </div>
               </th>
             </tr>
             <tr>
+              
               <th *ngFor="let col of columns" [ngSwitch]="col.field">
-                <input *ngSwitchCase="'job_key'" placeholder="Search Job Key" pInputText type="text" (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)" [style]="{minWidth: '155px'}">
+                
                 <!-- <p-dropdown *ngSwitchCase="'totalage'" [options]="totalage" [style]="{'width':'100%'}"
                   (onChange)="dt.filter($event.value, col.field, 'equals')"></p-dropdown>-->
+                <input *ngSwitchCase="'job_key'" placeholder="Search Job Key" pInputText type="text" (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)" [style]="{minWidth: '155px'}">
                 <p-multiSelect *ngSwitchCase="'lession'" [options]="lessions" defaultLabel="All Lessions"
                   (onChange)="dt.filter($event.value, col.field, 'in')" [style]="{minWidth: '155px'}"></p-multiSelect>
                 <p-multiSelect *ngSwitchCase="'component'" [options]="components" defaultLabel="All Components"
                   (onChange)="dt.filter($event.value, col.field, 'in')" [style]="{minWidth: '155px'}"></p-multiSelect>
-                <p-multiSelect *ngSwitchCase="'artcomplex'" [options]="artComplexcityOPT" defaultLabel="All Art-Comp."
+                <p-multiSelect *ngSwitchCase="'artcomplex'" [options]="artcomplexs" defaultLabel="All Art-Comp." 
                   (onChange)="dt.filter($event.value, col.field, 'in')" [style]="{minWidth: '155px'}"></p-multiSelect>
-                <p-multiSelect *ngSwitchCase="'artassion'" [options]="artAssignmentOPT" defaultLabel="All Art-Assi."
+                <p-multiSelect *ngSwitchCase="'artassion'" [options]="artassions" defaultLabel="All Art-Assi." 
                   (onChange)="dt.filter($event.value, col.field, 'in')" [style]="{minWidth: '155px'}"></p-multiSelect>
-                <p-multiSelect *ngSwitchCase="'risk'" [options]="MetaRiskOPT" defaultLabel="All Risk"
+                <p-multiSelect *ngSwitchCase="'risk'" [options]="risks" defaultLabel="All Risk" optionLabel="value"
                   (onChange)="dt.filter($event.value, col.field, 'in')" [style]="{minWidth: '155px'}"></p-multiSelect>
-                <p-multiSelect *ngSwitchCase="'impact'" [options]="MetaImpactOPT" defaultLabel="All Impact"
+                <p-multiSelect *ngSwitchCase="'impact'" [options]="impacts" defaultLabel="All Impact" 
                 (onChange)="dt.filter($event.value, col.field, 'in')" [style]="{minWidth: '155px'}"></p-multiSelect>
-                <p-multiSelect *ngSwitchCase="'module'" [options]="modules" defaultLabel="All Modules"
+                <p-multiSelect *ngSwitchCase="'module'" [options]="modules" defaultLabel="All Modules" 
                   (onChange)="dt.filter($event.value, col.field, 'in')" [style]="{minWidth: '155px'}"></p-multiSelect>
-                <p-multiSelect *ngSwitchCase="'grade'" [options]="grades" defaultLabel="All Grades"
+                <p-multiSelect *ngSwitchCase="'grade'" [options]="grades" defaultLabel="All Grades" 
                   (onChange)="dt.filter($event.value, col.field, 'in')" [style]="{minWidth: '155px'}"></p-multiSelect>
                 <!-- <p-multiSelect *ngSwitchCase="'batch'" [options]="modules" defaultLabel="All Batch"
                 (onChange)="dt.filter($event.value, col.field, 'in')"></p-multiSelect> -->
@@ -160,143 +164,111 @@
             </tr>
           </ng-template>
           <ng-template pTemplate="body" let-columns="columns" let-rowData let-editing="editing" let-ri="rowIndex">
-            <tr [pEditableRow]="rowData">
-              <!-- <td><button *ngIf="!editing" pButton type="button" pInitEditableRow icon="pi pi-pencil"
-                class="ui-button-info" (click)="onRowEditInit(rowData, editing)"></button>
-              <button *ngIf="editing" pButton type="button" pSaveEditableRow icon="pi pi-check"
-                class="ui-button-success" style="margin-right: .5em" (click)="onRowEditSave(rowData)"></button>
-              <button *ngIf="editing" pButton type="button" pCancelEditableRow icon="pi pi-times"
-                class="ui-button-danger" (click)="onRowEditCancel(rowData, ri)"></button>
-              </td>
-              <td>
-                  <p-cellEditor>
-                      <ng-template pTemplate="input">
-                        <input pInputText type="text" [(ngModel)]="rowData.job_key" required>
-                      </ng-template>
-                      <ng-template pTemplate="output">
-                        {{rowData.job_key}}
-                      </ng-template>
-                    </p-cellEditor>
-              </td> -->
-               <td *ngFor="let col of columns" [ngSwitch]="col.field">
-                  <div *ngSwitchCase="''" >
+            <tr [pEditableRow]="rowData" >
+              <!--[pSelectableRow]="rowData"
+              DATA FOR EDITING 
+              -->
+              <td *ngFor="let col of columns"> 
+                  <div  *ngIf="col.field =='' ">
                       <button *ngIf="!editing" pButton type="button" pInitEditableRow icon="pi pi-pencil"
-                      class="ui-button-info" (click)="onRowEditInit(rowData, editing)"></button>
+                      class=" btn btn-sm ui-button-info" (click)="onRowEditInit(rowData, editing)"></button>
                     <button *ngIf="editing" pButton type="button" pSaveEditableRow icon="pi pi-check"
-                      class="ui-button-success" style="margin-right: .5em" (click)="onRowEditSave(rowData)"></button>
+                      class=" btn btn-sm ui-button-success" style="margin-right: .5em" (click)="onRowEditSave(rowData)"></button>
                     <button *ngIf="editing" pButton type="button" pCancelEditableRow icon="pi pi-times"
-                      class="ui-button-danger" (click)="onRowEditCancel(rowData, ri)"></button>
+                      class=" btn btn-sm ui-button-danger" (click)="onRowEditCancel(rowData, ri)"></button>
                   </div>
-                  <div *ngSwitchCase="'job_key'">
+                  <div *ngIf="col.field =='job_key' " > <!-- *ngSwitchCase="'job_key'"-->
                     {{rowData[col.field]}}
                   </div>
-                  <div *ngSwitchCase="'lession'" >
-                      <p-cellEditor>
-                          <ng-template pTemplate="input">
-                            <input pInputText type="text" [(ngModel)]="rowData.lession" required>
-                          </ng-template>
-                          <ng-template pTemplate="output">
-                            {{rowData[col.field]}}
-                          </ng-template>
-                        </p-cellEditor>
-                  </div>
-                  <div *ngSwitchCase="'component'" >
-                      <p-cellEditor>
-                          <ng-template pTemplate="input">
-                            <input pInputText type="text" [(ngModel)]="rowData.component" required>
-                          </ng-template>
-                          <ng-template pTemplate="output">
-                            {{rowData[col.field]}}
-                          </ng-template>
-                        </p-cellEditor>
-                  </div>
-                  <div *ngSwitchCase="'totalage'" >
+                  
+                  <p-cellEditor *ngIf="col.field =='lession' " >
+                    <ng-template pTemplate="input">
+                      <input pInputText type="text" [(ngModel)]="rowData.lession" required>
+                    </ng-template>
+                    <ng-template pTemplate="output">
+                      {{rowData[col.field]}}
+                    </ng-template>
+                  </p-cellEditor>
+                  <p-cellEditor *ngIf="col.field =='component' " >
+                      <ng-template pTemplate="input">
+                        <input pInputText type="text" [(ngModel)]="rowData.component" required>
+                      </ng-template>
+                      <ng-template pTemplate="output">
+                        {{rowData[col.field]}}
+                      </ng-template>
+                  </p-cellEditor>
+                  <div *ngIf="col.field =='totalage' " >
                       {{rowData[col.field]}}
                   </div>
-                  <div *ngSwitchCase="'lastage'" >
+                  <div *ngIf="col.field =='lastage' ">
                       {{rowData[col.field]}}
                   </div>
-                  <div *ngSwitchCase="'tags'" >
-                      <p-cellEditor>
-                          <ng-template pTemplate="input">
-                            <textarea pInputTextarea type="text" [(ngModel)]="rowData.tags" required></textarea>
-                          </ng-template>
-                          <ng-template pTemplate="output">
-                            {{rowData[col.field]}}
-                          </ng-template>
-                        </p-cellEditor>
-                  </div>
-                  <div *ngSwitchCase="'artcomplex'" >
-                    <p-cellEditor>
+                  <p-cellEditor *ngIf="col.field =='tags' ">
+                    <ng-template pTemplate="input">
+                      <textarea pInputTextarea type="text" [(ngModel)]="rowData.tags" required></textarea>
+                    </ng-template>
+                    <ng-template pTemplate="output">
+                      {{rowData[col.field]}}
+                    </ng-template>
+                  </p-cellEditor>
+                  <p-cellEditor *ngIf="col.field =='artcomplex' ">
+                    <ng-template pTemplate="input">
+                    <p-dropdown [options]="artcomplexs" [(ngModel)]="rowData.artcomplex" [style]="{'width':'100%'}">
+                      </p-dropdown>
+                    </ng-template>
+                    <ng-template pTemplate="output">
+                      {{rowData[col.field]}}
+                    </ng-template>
+                  </p-cellEditor>
+                  <p-cellEditor *ngIf="col.field =='artassion' ">
+                    <ng-template pTemplate="input">
+                    <p-dropdown [options]="artassions" [(ngModel)]="rowData.artassion" [style]="{'width':'100%'}">
+                      </p-dropdown>
+                    </ng-template>
+                    <ng-template pTemplate="output">
+                      {{rowData[col.field]}}
+                    </ng-template>
+                  </p-cellEditor>
+                 <p-cellEditor *ngIf="col.field =='risk' ">
                         <ng-template pTemplate="input">
-                        <p-dropdown [options]="artComplexcityOPT" [(ngModel)]="rowData.artcomplex" [style]="{'width':'100%'}">
-                          </p-dropdown>
-                       </ng-template>
-                        <ng-template pTemplate="output">
-                          {{rowData[col.field]}}
-                        </ng-template>
-                      </p-cellEditor>
-                  </div>
-                  <div *ngSwitchCase="'artassion'" >
-                      <p-cellEditor>
-                          <ng-template pTemplate="input">
-                          <p-dropdown [options]="artAssignmentOPT" [(ngModel)]="rowData.artassion" [style]="{'width':'100%'}">
-                            </p-dropdown>
-                         </ng-template>
-                          <ng-template pTemplate="output">
-                            {{rowData[col.field]}}
-                          </ng-template>
-                        </p-cellEditor>
-                  </div>
-                  <div *ngSwitchCase="'risk'" >
-                      <p-cellEditor>
-                        <ng-template pTemplate="input">
-                          <p-dropdown [options]="MetaRiskOPT" [(ngModel)]="rowData.risk" [style]="{'width':'100%'}">
+                          <p-dropdown [options]="risks" [(ngModel)]="rowData.risk" [style]="{'width':'100%'}">
                           </p-dropdown>
                         </ng-template>
                         <ng-template pTemplate="output">
                             {{rowData[col.field]}}
                         </ng-template>
                       </p-cellEditor>
-                  </div>
-                  <div *ngSwitchCase="'impact'" >
-                      <p-cellEditor>
-                        <ng-template pTemplate="input">
-                          <p-dropdown [options]="MetaImpactOPT" [(ngModel)]="rowData.impact" [style]="{'width':'100%'}">
-                          </p-dropdown>
-                        </ng-template>
-                        <ng-template pTemplate="output">
-                            {{rowData[col.field]}}
-                        </ng-template>
-                      </p-cellEditor>
-                  </div>
-                  <div *ngSwitchCase="'module'" >
-                      <p-cellEditor>
-                        <ng-template pTemplate="input">
-                          <p-dropdown [options]="modules" [(ngModel)]="rowData.module" [style]="{'width':'100%'}">
-                          </p-dropdown>
-                        </ng-template>
-                        <ng-template pTemplate="output">
-                            {{rowData[col.field]}}
-                        </ng-template>
-                      </p-cellEditor>
-                  </div>
-                  <div *ngSwitchCase="'grade'" >
-                      <p-cellEditor>
-                        <ng-template pTemplate="input">
-                          <p-dropdown [options]="grades" [(ngModel)]="rowData.grade" [style]="{'width':'100%'}">
-                          </p-dropdown>
-                        </ng-template>
-                        <ng-template pTemplate="output">
-                            {{rowData[col.field]}}
-                        </ng-template>
-                      </p-cellEditor>
-                  </div>
-                  <div *ngSwitchCase="'batch'" >
+                  <p-cellEditor *ngIf="col.field =='impact' ">
+                    <ng-template pTemplate="input">
+                      <p-dropdown [options]="impacts" [(ngModel)]="rowData.impact" [style]="{'width':'100%'}">
+                      </p-dropdown>
+                    </ng-template>
+                    <ng-template pTemplate="output">
+                        {{rowData[col.field]}}
+                    </ng-template>
+                  </p-cellEditor>
+                  <p-cellEditor *ngIf="col.field =='module' ">
+                    <ng-template pTemplate="input">
+                      <p-dropdown [options]="Mdata" [(ngModel)]="rowData.module" [style]="{'width':'100%'}">
+                      </p-dropdown>
+                    </ng-template>
+                    <ng-template pTemplate="output">
+                        {{rowData[col.field]}}
+                    </ng-template>
+                  </p-cellEditor>
+                  <p-cellEditor *ngIf="col.field =='grade' ">
+                    <ng-template pTemplate="input">
+                      <p-dropdown [options]="Gdata" [(ngModel)]="rowData.grade" [style]="{'width':'100%'}">
+                      </p-dropdown>
+                    </ng-template>
+                    <ng-template pTemplate="output">
+                        {{rowData[col.field]}}
+                    </ng-template>
+                  </p-cellEditor>
+                  <div *ngIf="col.field =='batch' "  >
                       {{rowData[col.field]}}
                   </div>
-                  <div *ngSwitchCase="'workflow'" >
-                      <p-cellEditor>
+                      <p-cellEditor *ngIf="col.field =='workflow' ">
                         <ng-template pTemplate="input">
                           <p-dropdown [options]="Wdata" [(ngModel)]="rowData.workflow" [style]="{'width':'100%'}">
                           </p-dropdown>
@@ -305,74 +277,71 @@
                             {{rowData[col.field]}}
                         </ng-template>
                       </p-cellEditor>
-                  </div> 
                 
                 </td>
               
             </tr>
           </ng-template>
         </p-table>
+        
       </div>
     </div>
   </div>
   </div>
   </div>
   
-  <p-dialog header="Art-log Jobs" [(visible)]="displayDialog" [responsive]="true" showEffect="fade" [modal]="true"  [style]="{width: '500px'}">
+  <p-dialog header="Add new record(s)" [(visible)]="displayDialog" [responsive]="true" showEffect="fade" [modal]="true"  [style]="{width: '70%'}">
       <form [formGroup]="form" (submit)="submit()">
-        <div class="ui-g ui-fluid" >
-         
-                <div class="col-12">
-                 
+        <div class="ui-g ui-fluid" >         
+                <div class="col-12 p-0">                 
                     <div class="card" formArrayName="jobAdd">
-                    <div class="card-header"><input type="checkbox"> Autopopulate Grade & Module (Parent Referance) </div>
-                      <div class="card-body" >
+                    <div class="card-header d-none"><input type="checkbox"> Autopopulate Grade & Module (Parent Referance) </div>
+                      <div class="card-body p-2">
                         <div class="row">
+                           <p-scrollPanel [style]="{width: '100%', height: '200px'}">
                           <div class="col-12" *ngFor="let contact of contactFormGroup.controls; let i = index;">
                             <div [formGroupName]="i" class="row">
-                              <div class="form-group col-3">
+                              <div class="form-group col-md-4">
                                   <label for="formGroupExampleInput2" class="col-sm-12 pl-0">Grade</label>
                                   <p-dropdown formControlName="grade" [options]="Gdata" name="grade" optionLabel="label"
                                       selectedItemsLabel="{0} selected" [style]="{minWidth: '200px'}"
                                       defaultLabel="Choose Grade" name="grade">
                                   </p-dropdown>
                               </div>
-                              <div class="form-group col-3">
+                              <div class="form-group col-md-4">
                                   <label for="formGroupExampleInput2" class="col-sm-12 pl-0">Module</label>
                                   <p-dropdown formControlName="module" [options]="Mdata" optionLabel="label"
                                       selectedItemsLabel="{0} selected" [style]="{minWidth: '200px'}"
                                       defaultLabel="Choose Grade" name="grade">
                                   </p-dropdown>
                               </div>
-                              <div class="form-group col-4">
+                              <div class="form-group col-md-3">
                                 <label>Job Key</label>
                                 <input type="text" pInputText formControlName="jobkey"/>
                                 <span class="text-danger" *ngIf="getContactsFormGroup(i).controls['jobkey'].touched && getContactsFormGroup(i).controls['jobkey'].hasError('required')">
                                   Job Key is required! </span>
                               </div>
-                              <div class="form-group col-2 text-right">
-                                  <button  pButton type="button" icon="pi pi-times"
-                                  class="ui-button-danger" (click)="removeContact(i)"></button>
+                              <div class="form-group col-md-1 mt-3">
+                                  <button pButton type="button" icon="pi pi-times"
+                                  class="mt-1 ui-button-danger btn btn-sm" (click)="removeContact(i)"></button>
                               </div>
                             </div>
                           </div>
+                           </p-scrollPanel>
                         </div>
                       </div>
-                      <div class="card-body">
-                        <div class="col-12 text-right">
-                            <button type="button" class="col-2" pButton icon="fa fa-plus" (click)="addContact()" ></button>
+                      <div class="card-body py-0 mb-2">
+                        <div class="col-12 text-right p-0">
+                            <button type="button" class="col-2 btn btn-sm" pButton icon="fa fa-plus" (click)="addContact()" ></button>
                           
                         </div>
                       </div>
                     </div>
-                  
-                </div>
-       
+                </div>       
       </div>
       <p-footer>
-          <div class="ui-dialog-buttonpane ui-helper-clearfix">
-              <button type="button" pButton icon="fa fa-close" label="Delete"></button>
-              <button type="submit" pButton icon="fa fa-check"  label="Save"></button>
+          <div class="ui-dialog-buttonpane ui-helper-clearfix mt-2 text-right">
+              <button type="submit" class="ml-1 btn btn-sm" pButton icon="fa fa-check"  label="Save"></button>
           </div>
       </p-footer>
     </form>
