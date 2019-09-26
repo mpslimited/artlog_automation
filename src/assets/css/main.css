@@ -10969,7 +10969,7 @@ code {
 .btn {
   font-size: 0.875rem;
   line-height: 1;
-  font-family: "ubuntu-bold", sans-serif;
+  font-family: "Open Sans", sans-serif;
   /* Buttons with only icons */
   /* Buttons with icon and text */ }
   .btn i {
@@ -10979,7 +10979,7 @@ code {
   .btn.btn-fw {
     min-width: 150px; }
   .btn.btn-sm, .btn-group-sm > .btn {
-    font-size: 0.875rem; }
+    font-size: 12px; }
   .btn.btn-lg, .btn-group-lg > .btn {
     font-size: 0.875rem; }
   .btn.btn-xs {
@@ -12219,7 +12219,7 @@ code {
 
 /* Forms */
 .form-group {
-  margin-bottom: 1.5rem; }
+  margin-bottom: 10px; }
 
 .input-group-append,
 .input-group-prepend {
