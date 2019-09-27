@@ -1,5 +1,9 @@
 /* You can add global styles to this file, and also import other style files */
 app-cust-desktop{ width: 100%}
+.navbar .navbar-menu-wrapper .navbar-nav .nav-item.dropdown .dropdown-menu.navbar-dropdown .dropdown-item{
+  padding:10px!important;
+  font-size:12px;
+}
 .ui-dialog-mask{z-index:1030!important}
 body .ui-dialog{z-index:1031!important}
 .ui-table-scrollable-header-table colgroup col:nth-child(1), .ui-table-scrollable-body-table colgroup col:nth-child(1){width:95px!important}
@@ -9,6 +13,10 @@ th .ui-multiselect-open{ position: absolute !important;top:39px!important;}
 .ui-splitbutton .ui-menuitem-link{text-align: left!important;}
 .ui-menubar .ui-menubar-custom{float:none!important;;width:100%!important;}
 .ui-menubar-custom .ui-multiselect{position: relative;top:11px;right:4px}
+.dropdown .dropdown-menu .dropdown-item:hover{
+  background:#f7f7f7;
+  color:#000000;
+}
 .custom-btn-dropdown{
   padding: 8px!important;
   color: #333333!important;
