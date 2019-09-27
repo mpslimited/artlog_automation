@@ -169,7 +169,7 @@
               DATA FOR EDITING 
               -->
               <td *ngFor="let col of columns"> 
-                  <div  *ngIf="col.field =='' ">
+                  <div  *ngIf="checkEdit(col.field, rowData)">
                       <button *ngIf="!editing" pButton type="button" pInitEditableRow icon="pi pi-pencil"
                       class=" btn btn-sm ui-button-info" (click)="onRowEditInit(rowData, editing)"></button>
                     <button *ngIf="editing" pButton type="button" pSaveEditableRow icon="pi pi-check"

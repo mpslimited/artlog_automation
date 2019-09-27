@@ -163,19 +163,19 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
           this.Mdata = data.GlobalDt.module ;
         }
         if (!!data.GlobalDt.artAssign ) {
-          data.GlobalDt.artAssign.splice(0, 0, {id: '', value: '', label: 'Select One'});
+          data.GlobalDt.artAssign.splice(0, 0, {id: '', value: '', label: 'Please Select'});
           this.artassions = data.GlobalDt.artAssign ;
         }
         if (!!data.GlobalDt.artcomplex ) {
-          data.GlobalDt.artcomplex.splice(0, 0, {id:'', value:'', label:'Select One'});
+          data.GlobalDt.artcomplex.splice(0, 0, {id:'', value:'', label: 'Please Select'});
           this.artcomplexs = data.GlobalDt.artcomplex ;
         }
         if (!!data.GlobalDt.risk ) {
-          data.GlobalDt.risk.splice(0, 0, {id: '', value: '', label: 'Select One'});
+          data.GlobalDt.risk.splice(0, 0, {id: '', value: '', label: 'Please Select'});
           this.risks = data.GlobalDt.risk ;
         }
         if (!!data.GlobalDt.impact ) {
-          data.GlobalDt.impact.splice(0, 0, {id: '', value: '', label: 'Select One'});
+          data.GlobalDt.impact.splice(0, 0, {id: '', value: '', label: 'Please Select'});
           this.impacts = data.GlobalDt.impact ;
         }
       }
@@ -193,22 +193,16 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
   }
   onRowEditInit(artdt: any, editing) {
     editing = !editing;
-    this.clonedArtLog[artdt.jobId] = { ...artdt };
+   // this.clonedArtLog[artdt._id] = { ...artdt };
   }
-  onRowEditSave(artdt: any) {
-    debugger
-    // if (car.year > 0) {
-    //   delete this.clonedCars[car.vin];
-    //   this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Car is updated' });
-    // }
-    // else {
-    //   this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Year is required' });
-    // }
+  checkEdit(field, dt) {
+    if ( dt.hasOwnProperty('duplicate') && field == '') {
+      return true;
+    } else {
+      return false;
+    }
   }
-  onRowEditCancel(artdt: any, index: number) {
-    // this.cars2[index] = this.clonedCars[car.vin];
-    delete this.clonedArtLog[artdt.jobId];
-  }
+  
   onYearChange(event, dt) {
     if (this.yearTimeout) {
       clearTimeout(this.yearTimeout);
@@ -218,21 +212,21 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
     }, 1250);
   }
   // add a contact form group
-addContact() {
-  this.contactList.push(this.createContact());
-}
-// remove contact from group
-removeContact(index) {
-  this.contactList.removeAt(index);
-}
-get contactFormGroup() {
-  return this.form.get('jobAdd') as FormArray;
-}
-getContactsFormGroup(index): FormGroup {
-  this.contactList = this.form.get('jobAdd') as FormArray;
-  const formGroup = this.contactList.controls[index] as FormGroup;
-  return formGroup;
-}
+  addContact() {
+    this.contactList.push(this.createContact());
+  }
+  // remove contact from group
+  removeContact(index) {
+    this.contactList.removeAt(index);
+  }
+  get contactFormGroup() {
+    return this.form.get('jobAdd') as FormArray;
+  }
+  getContactsFormGroup(index): FormGroup {
+    this.contactList = this.form.get('jobAdd') as FormArray;
+    const formGroup = this.contactList.controls[index] as FormGroup;
+    return formGroup;
+  }
 submit() {
   debugger
   console.log(this.form.value);
@@ -242,7 +236,9 @@ submit() {
   let self = this;
   this.httpService.extractPostData(CustomerServicesUrls.ARTLOG_JOBADD, body, {headers: myheader}).subscribe((data) => {
     for(let dt of data){
-      self.cartdata.push(dt);
+      debugger
+      self.cartdata.splice(0, 0, dt);
+      //self.cartdata.push(dt);
     } 
     this.displayDialog=false;
     this.alert.showAlertScucess([ data.length +' Jobs Added Successfully!!!'], 300000);

@@ -6,6 +6,8 @@ export class CustomerServicesUrls extends UrlBase {
       public static SMARTSHEET_LOGIN = CustomerServicesUrls.ARTLOGAUTOMATION_URL + "api/login";
       public static ARTLOG_DATA = CustomerServicesUrls.ARTLOGAUTOMATION_URL + "api/artlogdata/";
       public static ARTLOG_JOBADD = CustomerServicesUrls.ARTLOGAUTOMATION_URL + "api/addnewjobs/";
+      public static ARTLOG_UPDATEJOBS = CustomerServicesUrls.ARTLOGAUTOMATION_URL + "api/updateJob/";
+
       public static JOBSMETA_DATA = CustomerServicesUrls.ARTLOGAUTOMATION_URL + "api/jobsMetadata/";
       public static USERINFO_DATA = "https://mpstrakdemo.mpstechnologies.com/mpstrak/production/taskTrakingReport";
       public static JOBSMETA_DATA1 = CustomerServicesUrls.ARTLOGAUTOMATION_URL + "api/artlogdata/";
