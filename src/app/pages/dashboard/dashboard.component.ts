@@ -38,28 +38,30 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
   components: any = [];
   grades: any     = [];
   modules: any    = [];
+  freezeCols: any [];
+  scrollableCols: any[];
   artComplexcityOPT: any = []; artAssignmentOPT=[]; MetaRiskOPT=[]; MetaImpactOPT=[];
   artcomplexs=[];
   artassions=[]; risks=[]; impacts=[]; workflows=[]; items: MenuItem[];
   fixCol=[];
   cols = [
-    { field: '', header: 'Action' },
-    { field: 'job_key', header: 'JobKey'},
-    { field : 'totalage', header : 'Cumulative Age'},
-    {field: 'lastage', header: 'Last Age'},
-    { field : 'lession', header : 'Lession'},
-    { field : 'component', header : 'Component'},
+    { field: '', header: 'Action', tid:1 },
+    { field: 'job_key', header: 'JobKey', tid:2},
+    { field : 'totalage', header : 'Cumulative Age',tid:3},
+    {field: 'lastage', header: 'Last Age', tid:3},
+    { field : 'lession', header : 'Lession', tid:5},
+    { field : 'component', header : 'Component', tid:6},
    
    // {field: 'lastage', header: 'Last Age'},
-    {field: 'tags', header: 'Tag Entry'},
-    {field: 'artcomplex', header: 'Art-Complexity'},
-    { field: 'artassion', header: 'Art-Assignment'},
-    { field: 'risk', header: 'Permission-Risk'},
-    { field: 'impact', header: 'Permission-Impact'},
-    { field: 'module', header: 'Module'},
-    { field: 'grade', header: 'Grade' },
-    { field: 'batch', header: 'Batch' },
-    { field: 'workflow', header: 'Workflow' }
+    {field: 'tags', header: 'Tag Entry', tid:6},
+    {field: 'artcomplex', header: 'Art-Complexity', tid:7},
+    { field: 'artassion', header: 'Art-Assignment', tid:8},
+    { field: 'risk', header: 'Permission-Risk', tid:9},
+    { field: 'impact', header: 'Permission-Impact', tid: 10},
+    { field: 'module', header: 'Module', tid:11},
+    { field: 'grade', header: 'Grade' , tid:12},
+    { field: 'batch', header: 'Batch' , tid:13},
+    { field: 'workflow', header: 'Workflow', tid:14 }
   ];
   loading: boolean;
   dropdownList: any[];
@@ -95,6 +97,25 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
     //this.checkUserinfo();
   }
   ngOnInit() {
+    // this.freezeCols=[
+    //   { field: '', header: 'Action', tid:1 },
+    //   { field: 'job_key', header: 'JobKey', tid:2}
+    // ];
+    // this.scrollableCols= [
+    //   { field : 'totalage', header : 'Cumulative Age',tid:3},
+    //   {field: 'lastage', header: 'Last Age', tid:3},
+    //   { field : 'lession', header : 'Lession', tid:5},
+    //   { field : 'component', header : 'Component', tid:6},
+    //   {field: 'tags', header: 'Tag Entry', tid:6},
+    //   {field: 'artcomplex', header: 'Art-Complexity', tid:7},
+    //   { field: 'artassion', header: 'Art-Assignment', tid:8},
+    //   { field: 'risk', header: 'Permission-Risk', tid:9},
+    //   { field: 'impact', header: 'Permission-Impact', tid: 10},
+    //   { field: 'module', header: 'Module', tid:11},
+    //   { field: 'grade', header: 'Grade' , tid:12},
+    //   { field: 'batch', header: 'Batch' , tid:13},
+    //   { field: 'workflow', header: 'Workflow', tid:14 }
+    // ];
     this.cols.forEach(element => {
       if(!(element.field == '' || element.field == 'job_key') ){
         this.fixCol.push(element);
@@ -112,7 +133,7 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
     let Wdata = ['Clip Art', 'Created Image', 'Permission', 'Shutterstock'];
     this.workflows = Wdata.map( d=> ({value: d}));
     let Tdata= ["Permissions Team","Art Team","Clip Art & Storage Team","Shutterstock Team","Content Team","On Hold Team"];
-    this.Tdata = Tdata.map( d=> ({value: d}));
+    this.Tdata = Tdata.map( d=> ({value: d, label: d }));
     let jobStatus = ['Active', 'NeedsChanges', 'Approved'];
     this.jobStatus = jobStatus.map( d=> ({field: d, header: d}));
     let obj={};
@@ -129,7 +150,6 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
       jobkey: [null, Validators.compose([Validators.required])],
      });
   }
-
   ngOnChanges(){
     this.artLogModel.jobkey.value = this.baseService.getMessage();
     let obj={};
@@ -139,7 +159,7 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
     this.displayDialog = true;
   }
   searchByjobKey() {
-    
+
   }
   filterData() {
     this.getMetaData( this.search );
@@ -191,6 +211,15 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
       });
     });
   }
+  updateSelection() {
+    if ( this.selectedColumn.length > 0 && this.selectedColumn[0].field != '') {
+      this.selectedColumn.splice(0, 0, this.cols[0]);
+    }
+    if ( this.selectedColumn.length > 0 && !!this.selectedColumn[1] && this.selectedColumn[1].field != 'job_key') {
+      this.selectedColumn.splice(1, 0, this.cols[1]);
+    }
+    this.selectedColumn = this.selectedColumn.sort(( a , b ) => a.tid - b.tid);
+  }
   onRowEditInit(artdt: any, editing) {
     editing = !editing;
    // this.clonedArtLog[artdt._id] = { ...artdt };
@@ -228,20 +257,17 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
     return formGroup;
   }
 submit() {
-  debugger
-  console.log(this.form.value);
   const myheader = new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded')
   let body = new HttpParams();
   body = body.set('jobAdd', JSON.stringify(this.form.value.jobAdd));
   let self = this;
   this.httpService.extractPostData(CustomerServicesUrls.ARTLOG_JOBADD, body, {headers: myheader}).subscribe((data) => {
     for(let dt of data){
-      debugger
-      self.cartdata.splice(0, 0, dt);
-      //self.cartdata.push(dt);
+      let index = self.cartdata.indexOf(self.cartdata.filter((d, i) => d.job_key === dt.job_key )[0]);
+      self.cartdata.splice((index + 1), 0, dt);
     } 
-    this.displayDialog=false;
-    this.alert.showAlertScucess([ data.length +' Jobs Added Successfully!!!'], 300000);
+    this.displayDialog = false;
+    this.alert.showAlertScucess([ data.length + ' Jobs Added Successfully!!!'], 300000);
   });
 }
   initSearchModels() {
@@ -250,11 +276,12 @@ submit() {
   getSearchModel(name: string) {
     if (name === this.NAME_ARTLOG) {
       try{
+        debugger
         if(this.frmdt.grade.length > 0){
-          this.artLogModel.grade.value=this.frmdt.grade.map(a=> a.value);
+          this.artLogModel.grade.value=this.frmdt.grade.map(a=> a.id);
         }
         if(this.frmdt.module.length > 0){
-           this.artLogModel.module.value=this.frmdt.module.map(a=> a.value);
+           this.artLogModel.module.value=this.frmdt.module.map(a=> a.id);
         }
         if(this.frmdt.status.length > 0){
           this.artLogModel.status.value=this.frmdt.status.map(a=> a.field);

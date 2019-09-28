@@ -89,8 +89,11 @@
         <div class="card-body">
           <p-progressSpinner class="d-none" [style]="{width: '50px', height: '50px'}" strokeWidth="8" fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>
           <p-table #dt editMode="row" dataKey="_id" [columns]="selectedColumn" [value]="cartdata" 
-          selectionMode="multiple"  scrollable="true" [loading]="loading" scrollHeight="550px" 
+          selectionMode="multiple"  scrollable="true" [loading]="loading" 
+          
+          scrollHeight="550px" 
           >
+          <!-- [frozenColumns]="freezeCols" [columns]="scrollableCols" frozenWidth="300px" -->
           <ng-template pTemplate="colgroup" let-columns>
             <colgroup>
                 <col *ngFor="let col of columns" style="width:175px">
@@ -101,9 +104,9 @@
               <div class="d-flex mb-3">
                 <div class="mr-auto pl-2"><a type="button" href="#" onClick="saveGridState()" label="" class="btn btn-sm"><i class="fa fa-close"></i></a></div>
                 <div class="pr-2">
-                  <p-multiSelect [options]="fixCol" [(ngModel)]="selectedColumn" optionLabel="header" 
-              selectedItemsLabel="{0} columns selected" defaultLabel="Choose Columns">
-              </p-multiSelect>
+                  <p-multiSelect [options]="fixCol" [(ngModel)]="selectedColumn" (onChange)="updateSelection()" optionLabel="header" 
+                    selectedItemsLabel="{0} columns selected" defaultLabel="Choose Columns">
+                  </p-multiSelect>
               <p-splitButton label="Export Grid As" icon="pi pi-file" [model]="items"></p-splitButton>
               
             
@@ -168,7 +171,7 @@
               <!--[pSelectableRow]="rowData"
               DATA FOR EDITING 
               -->
-              <td *ngFor="let col of columns"> 
+              <td *ngFor="let col of columns" > 
                   <div  *ngIf="checkEdit(col.field, rowData)">
                       <button *ngIf="!editing" pButton type="button" pInitEditableRow icon="pi pi-pencil"
                       class=" btn btn-sm ui-button-info" (click)="onRowEditInit(rowData, editing)"></button>
@@ -290,7 +293,7 @@
   </div>
   </div>
   
-  <p-dialog header="Add new record(s)" [(visible)]="displayDialog" [responsive]="true" showEffect="fade" [modal]="true"  [style]="{width: '70%'}">
+  <p-dialog  header="Add new record(s)" [(visible)]="displayDialog" [responsive]="true" showEffect="fade" [modal]="true"  [style]="{width: '70%', height:'70%'}">
       <form [formGroup]="form" (submit)="submit()">
         <div class="ui-g ui-fluid" >         
                 <div class="col-12 p-0">                 
@@ -321,7 +324,7 @@
                                 <span class="text-danger" *ngIf="getContactsFormGroup(i).controls['jobkey'].touched && getContactsFormGroup(i).controls['jobkey'].hasError('required')">
                                   Job Key is required! </span>
                               </div>
-                              <div class="form-group col-md-1 mt-3">
+                              <div class="form-group col-md-1 mt-3" *ngIf="i!=0">
                                   <button pButton type="button" icon="pi pi-times"
                                   class="mt-1 ui-button-danger btn btn-sm" (click)="removeContact(i)"></button>
                               </div>
