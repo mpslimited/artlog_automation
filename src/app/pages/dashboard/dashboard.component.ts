@@ -34,35 +34,22 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
   clonedCars: { [s: string]: any; } = {};
 
   jobkeys: any    = [];
-  lessions: any   = [];
+  lessons: any   = [];
   components: any = [];
   grades: any     = [];
   modules: any    = [];
-  freezeCols: any [];
+  freezeCols: any = [];
+  pagingCol: any = [
+    { value: '', label: 'N/A' },
+    { value: 'Yes', label: 'Yes'},
+    { value: 'No', label: 'No'}
+  ];
   scrollableCols: any[];
   artComplexcityOPT: any = []; artAssignmentOPT=[]; MetaRiskOPT=[]; MetaImpactOPT=[];
   artcomplexs=[];
   artassions=[]; risks=[]; impacts=[]; workflows=[]; items: MenuItem[];
   fixCol=[];
-  cols = [
-    { field: '', header: 'Action', tid:1 },
-    { field: 'job_key', header: 'JobKey', tid:2},
-    { field : 'totalage', header : 'Cumulative Age',tid:3},
-    {field: 'lastage', header: 'Last Age', tid:3},
-    { field : 'lession', header : 'Lession', tid:5},
-    { field : 'component', header : 'Component', tid:6},
-   
-   // {field: 'lastage', header: 'Last Age'},
-    {field: 'tags', header: 'Tag Entry', tid:6},
-    {field: 'artcomplex', header: 'Art-Complexity', tid:7},
-    { field: 'artassion', header: 'Art-Assignment', tid:8},
-    { field: 'risk', header: 'Permission-Risk', tid:9},
-    { field: 'impact', header: 'Permission-Impact', tid: 10},
-    { field: 'module', header: 'Module', tid:11},
-    { field: 'grade', header: 'Grade' , tid:12},
-    { field: 'batch', header: 'Batch' , tid:13},
-    { field: 'workflow', header: 'Workflow', tid:14 }
-  ];
+  cols: any [] ;
   loading: boolean;
   dropdownList: any[];
   selectedItems: any [];
@@ -81,8 +68,9 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
   jobmeta: any;
   Editdata: any;
   search = { };
-  displayDialog : boolean;
+  displayDialog: boolean;
   frmdt :any;
+
   //@Input("edit-jobs") editJobID: string;
   public form: FormGroup;
   public contactList: FormArray;
@@ -95,27 +83,38 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
     private fb: FormBuilder ) {
     super(baseServices, router);
     //this.checkUserinfo();
+    this.cols=[
+      { field: '', header: 'Action' },
+      { field: 'job_key', header: 'JobKey'},
+      //{ field : 't', header : 'tt'},
+      { field : 'lesson', header : 'Lesson'},
+      { field : 'component', header : 'Component'},
+      { field : 'lessonlet', header : 'Lesson Letter'},
+      { field : 'description', header : 'Discription'},
+      { field : 'thumb', header : 'Thumbnail'},
+      { field: 'cstage', header: 'Current Stage'},
+      { field : 'totalage', header : 'Cumulative Age'},
+      { field: 'lastage', header: 'Last Age'},
+      { field: 'comment', header: 'Comments'},
+      { field: 'mverification', header: 'M. Verification'},
+      {field: 'tags', header: 'Tag Entry'},
+      {field: 'ispaging', header: 'Paging Approved'},
+      {field: 'artcomplex', header: 'Art-Complexity'},
+      { field: 'artassion', header: 'Art-Assignment'},
+      { field: 'risk', header: 'Permission-Risk'},
+      { field: 'impact', header: 'Permission-Impact'},
+      { field: 'module', header: 'Module'},
+      { field: 'grade', header: 'Grade'},
+      { field: 'batch', header: 'Batch'},
+      { field: 'workflow', header: 'Workflow'}
+    ]
+    this.cols = this.cols.map(d=>({ field: d.field , header: d.header ,tid: this.cols.indexOf(d)}));
   }
   ngOnInit() {
-    // this.freezeCols=[
-    //   { field: '', header: 'Action', tid:1 },
-    //   { field: 'job_key', header: 'JobKey', tid:2}
-    // ];
-    // this.scrollableCols= [
-    //   { field : 'totalage', header : 'Cumulative Age',tid:3},
-    //   {field: 'lastage', header: 'Last Age', tid:3},
-    //   { field : 'lession', header : 'Lession', tid:5},
-    //   { field : 'component', header : 'Component', tid:6},
-    //   {field: 'tags', header: 'Tag Entry', tid:6},
-    //   {field: 'artcomplex', header: 'Art-Complexity', tid:7},
-    //   { field: 'artassion', header: 'Art-Assignment', tid:8},
-    //   { field: 'risk', header: 'Permission-Risk', tid:9},
-    //   { field: 'impact', header: 'Permission-Impact', tid: 10},
-    //   { field: 'module', header: 'Module', tid:11},
-    //   { field: 'grade', header: 'Grade' , tid:12},
-    //   { field: 'batch', header: 'Batch' , tid:13},
-    //   { field: 'workflow', header: 'Workflow', tid:14 }
-    // ];
+
+    this.freezeCols = this.cols.filter(d=> d.tid < 2);
+    this.scrollableCols = this.cols.filter(d=> d.tid > 1 );
+
     this.cols.forEach(element => {
       if(!(element.field == '' || element.field == 'job_key') ){
         this.fixCol.push(element);
@@ -200,7 +199,7 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
         }
       }
       if ( data.hasOwnProperty('GridFilters') ) {
-        this.lessions = (!!data.GridFilters.lession) ? data.GridFilters.lession.map(d => ({label: d, value: d})) : [];
+        this.lessons = (!!data.GridFilters.lesson) ? data.GridFilters.lesson.map(d => ({label: d, value: d})) : [];
         this.components = (!!data.GridFilters.component) ? data.GridFilters.component.map(d => ({label: d, value: d})) : [];
         this.modules =  (!!data.GridFilters.module) ? data.GridFilters.module.map(d => ({label: d, value: d})) : [];
         this.grades =  (!!data.GridFilters.grade) ? data.GridFilters.grade.map(d => ({label: d, value: d})) : [];

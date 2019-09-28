@@ -87,13 +87,12 @@
         <div class="col-lg-12 grid-margin stretch-card">
       <div class="card">
         <div class="card-body">
-          <p-progressSpinner class="d-none" [style]="{width: '50px', height: '50px'}" strokeWidth="8" fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>
-          <p-table #dt editMode="row" dataKey="_id" [columns]="selectedColumn" [value]="cartdata" 
+          <p-table #dt editMode="row" dataKey="_id"  [value]="cartdata" 
           selectionMode="multiple"  scrollable="true" [loading]="loading" 
-          
-          scrollHeight="550px" 
+          [frozenColumns]="freezeCols" [columns]="scrollableCols" frozenWidth="300px"
+          scrollHeight="450px" 
           >
-          <!-- [frozenColumns]="freezeCols" [columns]="scrollableCols" frozenWidth="300px" -->
+          <!-- [columns]="selectedColumn" -->
           <ng-template pTemplate="colgroup" let-columns>
             <colgroup>
                 <col *ngFor="let col of columns" style="width:175px">
@@ -107,9 +106,18 @@
                   <p-multiSelect [options]="fixCol" [(ngModel)]="selectedColumn" (onChange)="updateSelection()" optionLabel="header" 
                     selectedItemsLabel="{0} columns selected" defaultLabel="Choose Columns">
                   </p-multiSelect>
-              <p-splitButton label="Export Grid As" icon="pi pi-file" [model]="items"></p-splitButton>
-              
-            
+              <div class="btn-group">
+                <button class="btn btn-primary btn-sm" type="button">
+                  Export Data
+                </button>
+                <button type="button" class="btn btn-sm btn-primary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  <span class="sr-only">Toggle Dropdown</span>
+                </button>
+                <div class="dropdown-menu dropdown-menu-right ml-9">
+                  <a class="dropdown-item" (click)="dt.exportCSV()">All Data</a>
+                  <a class="dropdown-item" (click)="dt.exportCSV({selectionOnly:true})">Selected Row(s)</a>
+                </div>
+              </div>            
               <button type="button" pButton icon="fa fa-plus" (click)="showDialogToAdd()" label="Add Row" class="btn btn-sm ui-button-primary ml-1"></button>
               <button type="button" pButton icon="fa fa-floppy-o" (click)="saveGridState()" label="Save Grid State" class="btn btn-sm ui-button-primary ml-1"></button>
                 </div>
@@ -143,7 +151,7 @@
                 <!-- <p-dropdown *ngSwitchCase="'totalage'" [options]="totalage" [style]="{'width':'100%'}"
                   (onChange)="dt.filter($event.value, col.field, 'equals')"></p-dropdown>-->
                 <input *ngSwitchCase="'job_key'" placeholder="Search Job Key" pInputText type="text" (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)" [style]="{minWidth: '155px'}">
-                <p-multiSelect *ngSwitchCase="'lession'" [options]="lessions" defaultLabel="All Lessions"
+                <p-multiSelect *ngSwitchCase="'lesson'" [options]="lessons" defaultLabel="All Lessons"
                   (onChange)="dt.filter($event.value, col.field, 'in')" [style]="{minWidth: '155px'}"></p-multiSelect>
                 <p-multiSelect *ngSwitchCase="'component'" [options]="components" defaultLabel="All Components"
                   (onChange)="dt.filter($event.value, col.field, 'in')" [style]="{minWidth: '155px'}"></p-multiSelect>
@@ -167,8 +175,8 @@
             </tr>
           </ng-template>
           <ng-template pTemplate="body" let-columns="columns" let-rowData let-editing="editing" let-ri="rowIndex">
-            <tr [pEditableRow]="rowData" >
-              <!--[pSelectableRow]="rowData"
+            <tr [pEditableRow]="rowData" [pSelectableRow]="rowData">
+              <!--
               DATA FOR EDITING 
               -->
               <td *ngFor="let col of columns" > 
@@ -184,9 +192,9 @@
                     {{rowData[col.field]}}
                   </div>
                   
-                  <p-cellEditor *ngIf="col.field =='lession' " >
+                  <p-cellEditor *ngIf="col.field =='lesson' " >
                     <ng-template pTemplate="input">
-                      <input pInputText type="text" [(ngModel)]="rowData.lession" required>
+                      <input pInputText type="text" [(ngModel)]="rowData.lesson" required>
                     </ng-template>
                     <ng-template pTemplate="output">
                       {{rowData[col.field]}}
@@ -200,10 +208,43 @@
                         {{rowData[col.field]}}
                       </ng-template>
                   </p-cellEditor>
+                  <p-cellEditor *ngIf="col.field =='lessonlet' " >
+                      <ng-template pTemplate="input">
+                        <input pInputText type="text" [(ngModel)]="rowData.lessonlet" required>
+                      </ng-template>
+                      <ng-template pTemplate="output">
+                        {{rowData[col.field]}}
+                      </ng-template>
+                  </p-cellEditor>
+                  <p-cellEditor *ngIf="col.field =='description' " >
+                      <ng-template pTemplate="input">
+                        <textarea pInputTextarea type="text" [(ngModel)]="rowData.description" required></textarea>
+                      </ng-template>
+                      <ng-template pTemplate="output">
+                        {{rowData[col.field]}}
+                      </ng-template>
+                  </p-cellEditor>
+                  <div *ngIf="col.field =='thumb' " >
+                      {{rowData[col.field]}}
+                  </div>
+                  <div *ngIf="col.field =='cstage' " >
+                      {{rowData[col.field]}}
+                  </div>
                   <div *ngIf="col.field =='totalage' " >
                       {{rowData[col.field]}}
                   </div>
                   <div *ngIf="col.field =='lastage' ">
+                      {{rowData[col.field]}}
+                  </div>
+                  <p-cellEditor *ngIf="col.field =='comment' ">
+                    <ng-template pTemplate="input">
+                      <textarea pInputTextarea type="text" [(ngModel)]="rowData.comment" required></textarea>
+                    </ng-template>
+                    <ng-template pTemplate="output">
+                      {{rowData[col.field]}}
+                    </ng-template>
+                  </p-cellEditor>
+                  <div *ngIf="col.field =='mverification' ">
                       {{rowData[col.field]}}
                   </div>
                   <p-cellEditor *ngIf="col.field =='tags' ">
@@ -214,6 +255,16 @@
                       {{rowData[col.field]}}
                     </ng-template>
                   </p-cellEditor>
+                  <p-cellEditor *ngIf="col.field =='ispaging' ">
+                    <ng-template pTemplate="input">
+                      <p-dropdown [options]="pagingCol" [(ngModel)]="rowData.ispaging" [style]="{'width':'100%'}">
+                      </p-dropdown>
+                    </ng-template>
+                    <ng-template pTemplate="output">
+                      {{rowData[col.field]}}
+                    </ng-template>
+                  </p-cellEditor>
+                  
                   <p-cellEditor *ngIf="col.field =='artcomplex' ">
                     <ng-template pTemplate="input">
                     <p-dropdown [options]="artcomplexs" [(ngModel)]="rowData.artcomplex" [style]="{'width':'100%'}">
@@ -355,4 +406,3 @@
   <app-editjob [jobdataid]="jobID">
   </app-editjob>
   </ng-template>
-  
