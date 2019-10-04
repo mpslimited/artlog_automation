@@ -11,15 +11,7 @@
           <h4 class="nav-link m-0 ml-n4" href="#">Art Log Automation</h4>
         </li>
       </ul>
-      <form class="form-inline my-lg-0">
-        <div class="input-group">
-          <input type="text" placeholder="Job Key (eg. SCI-1164)"
-            class="form-control form-control-sm">
-          <div class="input-group-append"><button (click)="searchByjobKey($event)" type="button"
-              class="btn btn-secondary btn-sm">Search</button>
-          </div>
-        </div>
-      </form>
+      
       <ul class="navbar-nav navbar-nav-right">
         <li class="nav-item nav-profile dropdown">
           <a class="nav-link dropdown-toggle" id="profileDropdown" href="#" data-toggle="dropdown" aria-expanded="false">
@@ -35,7 +27,7 @@
             <a class="dropdown-item" href="#">
               <i class="mdi mdi-cached mr-2 text-success"></i> Saved Searches </a>
             <div class="dropdown-divider"></div>
-            <a class="dropdown-item" href="#">
+            <a class="dropdown-item" (click)="logout()">
               <i class="mdi mdi-logout mr-2 text-primary"></i> Signout </a>
           </div>
         </li>
