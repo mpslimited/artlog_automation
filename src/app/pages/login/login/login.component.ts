@@ -66,7 +66,7 @@ export class LoginComponent extends BaseComponent implements OnInit {
       if (data.Status === 'OK') {
         SessionObject.setUserDetails({
           'userInfo': data.id,
-          'Token': data.Token
+          'Token': data.token
         });
         localStorage.setItem('isLogin', 'true');
 

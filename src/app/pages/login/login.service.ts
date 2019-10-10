@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 import { Http, Headers, Response } from '@angular/http';
 import { UserDetailsI } from '../../core/shared';
 //import { ProcessUrls } from '../../core/shared';
 import { SessionObject } from '../../core/shared/session-object';
-
+import { CustomerServicesUrls } from '../../core/shared/constant/url-constants/customer-services.constants';
 import { Observable } from 'rxjs';
 
 import { HttpService } from '../../core/services/http.service';
@@ -18,13 +19,25 @@ export class LoginService extends BaseService {
 
     public token: string;
 
-    constructor(protected httpService: HttpService,
+    constructor(protected router: Router,
+        protected httpService: HttpService,
         protected globalPup: GlobalPopupService
     ) {
         super(httpService, globalPup);
-        // set token if saved in local storage
+        this.isLoggedIn();
     }
     public isLoggedIn(): boolean {
+        this.httpService.extractPostData(CustomerServicesUrls.ARTLOG_REDDRUSERINFO, null, null).subscribe((data) => {
+            if (!!data.Status && data.Status === 'OK') {
+                SessionObject.setUserDetails({
+                  'userInfo': data.id,
+                  'Token': data.token
+                });
+                console.log(data);
+                localStorage.setItem('isLogin', 'true');
+                this.router.navigate(['/pages/admin']);
+            }
+        });
         return true;
     }
     // login(username: string, password: string): Observable<UserDetails[]> {
