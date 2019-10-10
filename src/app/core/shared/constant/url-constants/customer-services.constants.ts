@@ -4,11 +4,23 @@ export class CustomerServicesUrls extends UrlBase {
       public static ARTLOGAUTOMATION_URL="http://localhost:3000/";
       //public static ARTLOGAUTOMATION_URL = "https://gmartlogautomationdemo.mpstechnologies.com/";
       public static SMARTSHEET_LOGIN = CustomerServicesUrls.ARTLOGAUTOMATION_URL + "api/login";
+      public static SMARTSHEET_LOGOUT = CustomerServicesUrls.ARTLOGAUTOMATION_URL + "api/logout";
+      public static ARTLOG_INIT = CustomerServicesUrls.ARTLOGAUTOMATION_URL + "api/artloginit/";
       public static ARTLOG_DATA = CustomerServicesUrls.ARTLOGAUTOMATION_URL + "api/artlogdata/";
+      
+      //setDefaultSearch
       public static ARTLOG_JOBADD = CustomerServicesUrls.ARTLOGAUTOMATION_URL + "api/addnewjobs/";
       public static ARTLOG_UPDATEJOBS = CustomerServicesUrls.ARTLOGAUTOMATION_URL + "api/updateJob/";
+      public static ARTLOG_REDDRUSERINFO = CustomerServicesUrls.ARTLOGAUTOMATION_URL + "api/getUserInfo/";
+      public static ARTLOG_SEARCHSAVE = CustomerServicesUrls.ARTLOGAUTOMATION_URL + "api/searchState/";
+      public static ARTLOG_GRIDSTATESAVE = CustomerServicesUrls.ARTLOGAUTOMATION_URL + "api/gridStage/";
+      public static ARTLOG_GRIDSTATECLEAR = CustomerServicesUrls.ARTLOGAUTOMATION_URL + "api/cleargridStage/";
+      
+      public static ARTLOG_DELETE_SEARCHSAVE = CustomerServicesUrls.ARTLOGAUTOMATION_URL + "api/dellSearchState/";
+      public static ARTLOG_SETDEFAULT_SEARCH = CustomerServicesUrls.ARTLOGAUTOMATION_URL + "api/setDefaultSearch/";
 
       public static JOBSMETA_DATA = CustomerServicesUrls.ARTLOGAUTOMATION_URL + "api/jobsMetadata/";
+      
       public static USERINFO_DATA = "https://mpstrakdemo.mpstechnologies.com/mpstrak/production/taskTrakingReport";
       public static JOBSMETA_DATA1 = CustomerServicesUrls.ARTLOGAUTOMATION_URL + "api/artlogdata/";
 

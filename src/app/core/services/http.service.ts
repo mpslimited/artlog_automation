@@ -7,7 +7,7 @@ import { Injectable } from '@angular/core';
 
 
 
-
+import { SessionObject, CustomerServicesUrls } from '../shared';
 import { HttpClient, HttpHandler, HttpHeaders } from '@angular/common/http';
 
 
@@ -43,7 +43,29 @@ export class HttpService /*extends HttpClient*/ {
 
 
       // }
+      extractData(url: string, body: any, responseType: string = 'json'): Observable<any> {
+            this.showLoader();
+            const sessionObj = SessionObject.getUserDetails();
+            let AUser = sessionObj && SessionObject.getUserDetails();
+            const options = this.getHTTPOptions(AUser.Token, AUser.userInfo);
+            console.log(this.http);
+            options['responseType'] = responseType;
+            return this.http.post(url, body, options).pipe(
+                  catchError(this.onCatch),
+                  tap((res: Response) => {
+                        //   console.log(res);
+                        this.onSuccess(res);
 
+                  }, (error: any) => {
+                        console.log('error');
+                        this.onError(error);
+                  }),
+                  finalize(() => {
+                        // console.log('final.......................................................');
+                        this.onEnd();
+                  }));
+
+      }
       extractPostData(url: string, body: any, tokenId: any, responseType: string = 'json'): Observable<any> {
             this.showLoader();
 
@@ -88,7 +110,22 @@ export class HttpService /*extends HttpClient*/ {
 
       private hideLoader(): void {
       }
-
+      private getHTTPOptions(tokenId: any, id: any): any {
+            const httpOptions = {
+                  headers: new HttpHeaders(
+                        {
+                              'Content-Type': 'application/x-www-form-urlencoded'
+                        }
+                  )
+            };
+            if (tokenId) {
+                  httpOptions.headers = httpOptions.headers.set('Authorization', tokenId);
+            }
+            if (id){
+                  httpOptions.headers = httpOptions.headers.set('AuthUser', id);      
+            }
+            return httpOptions;
+      }
       private getHTTPOption(tokenId: any): any {
             const httpOptions = {
                   headers: new HttpHeaders(

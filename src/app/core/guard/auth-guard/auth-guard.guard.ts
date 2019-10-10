@@ -8,7 +8,7 @@ export class AuthGuard implements CanActivate, CanLoad, CanActivateChild {
 
       constructor(
             private grdSer: GuardService
-      ) { }
+      ) {  }
 
       canActivate(): Promise<boolean> {
             return this.checkMyRoute();
@@ -23,7 +23,6 @@ export class AuthGuard implements CanActivate, CanLoad, CanActivateChild {
       }
 
       checkMyRoute(): Promise<boolean> {
-            debugger
             return new Promise((resolve, reject) => {
                   if (this.grdSer.isTokenAvaible()) {
                         resolve(true);
