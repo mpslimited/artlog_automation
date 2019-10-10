@@ -1,7 +1,7 @@
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-import { AgGridModule } from 'ag-grid-angular/main';
+//import { AgGridModule } from 'ag-grid-angular/main';
 import { routing } from './dashboard.routing';
 import { ComponentModule } from './../../component/component.module';
 import { EditjobComponent } from '../dashboard/editjob/editjob.component';
@@ -25,15 +25,18 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { SliderModule } from 'primeng/slider';
 import {MenubarModule} from 'primeng/menubar';
 import {ScrollPanelModule} from 'primeng/scrollpanel';
-
+import {RadioButtonModule} from 'primeng/radiobutton';
 import {SplitButtonModule} from 'primeng/splitbutton';
 import {ProgressSpinnerModule} from 'primeng/progressspinner';
+import {TooltipModule} from 'primeng/tooltip';
+import {OverlayPanelModule} from 'primeng/overlaypanel';
 @NgModule({
       imports: [
+            OverlayPanelModule,
+            TooltipModule,
             CommonModule,
             routing,
             ComponentModule,
-            AgGridModule,
             ScrollingModule,
             DialogModule,
             TableModule,
@@ -44,6 +47,7 @@ import {ProgressSpinnerModule} from 'primeng/progressspinner';
             MenubarModule,
             SplitButtonModule,
             ProgressSpinnerModule,
+            RadioButtonModule,
             ScrollPanelModule,
             // BrowserAnimationsModule,
             // ChartModule,

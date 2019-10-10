@@ -60,6 +60,13 @@ export class ArtLogModel implements BaseSearchModelI {
             apiKey: 'resTeam',
             placeholder: ''
       };
+      added: BasicSearchModelI = {
+            value: '',
+            defaultValue: null,
+            label: 'added',
+            apiKey: 'added',
+            placeholder: ''
+      };
       // limitToOc: BasicSearchModelI = {
       //       value: '',
       //       defaultValue: null,

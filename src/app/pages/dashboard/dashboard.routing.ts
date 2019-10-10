@@ -1,7 +1,7 @@
 import { Routes, RouterModule } from '@angular/router';
 import { ModuleWithProviders } from '@angular/core';
 import { DashboardComponent } from './dashboard.component';
-//import { AuthGuard } from '../../core/guard';
+import { AuthGuard } from '../../core/guard';
 //import { AuthGuard } from '../dashboard/dashboard.module';
 export const routes: Routes = [
       {
@@ -19,7 +19,7 @@ export const routes: Routes = [
             //       //       loadChildren: '../cust-service/cust-desktop.module#CustDestTopModule'
             //       // }
             // ],
-            // // canActivate: [AuthGuard],
+             canActivate: [AuthGuard],
             // // canActivateChild: [AuthGuard]
       }
 ];

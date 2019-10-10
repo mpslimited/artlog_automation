@@ -13,9 +13,10 @@ import { Router } from '@angular/router';
 import { GridAPII } from '../../core/base/base.component';
 import {SessionObject} from '../../core/shared';
 import { MenuItem } from 'primeng/api';
-
-import { ColDef } from 'ag-grid';
+//ARTLOG_SEARCHSAVE
 import { HttpHeaders, HttpParams } from '@angular/common/http';
+import { HeaderOpt } from './token';
+import { OverlayPanel } from 'primeng/overlaypanel';
 @Component({
   selector: 'dashboard',
   templateUrl: './dashboard.component.html',
@@ -23,7 +24,6 @@ import { HttpHeaders, HttpParams } from '@angular/common/http';
 })
 export class DashboardComponent extends BaseComponent implements OnInit, OnChanges {
   //@Input() jobId: string;
-
   clonedArtLog: { [s: string]: any; } = {};
   yearFilter: number;
   selectedColumn: any;
@@ -32,12 +32,20 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
   jobID: any;
   totalage: any = [ ];
   clonedCars: { [s: string]: any; } = {};
-
   jobkeys: any    = [];
+// -- columans for filter Grid dropdown
   lessons: any   = [];
   components: any = [];
   grades: any     = [];
   modules: any    = [];
+  Gartcomplexs: any= [];
+  Gartassions: any = [];
+  Grisks: any      = [];
+  Gimpact: any      = [];
+  GcurrentRTeam:any = [];
+  Gworkflow: any    = [];
+  Gcurriculum:any   = [];
+
   freezeCols: any = [];
   pagingCol: any = [
     { value: '', label: 'N/A' },
@@ -45,9 +53,10 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
     { value: 'No', label: 'No'}
   ];
   scrollableCols: any[];
-  artComplexcityOPT: any = []; artAssignmentOPT=[]; MetaRiskOPT=[]; MetaImpactOPT=[];
+  filteredValuesLength: any = [];
+ artAssignmentOPT=[]; MetaRiskOPT=[]; MetaImpactOPT=[];
   artcomplexs=[];
-  artassions=[]; risks=[]; impacts=[]; workflows=[]; items: MenuItem[];
+  artassions=[]; risks=[]; impacts=[]; workflows=[]; wip=[]; items: MenuItem[];
   fixCol=[];
   cols: any [] ;
   loading: boolean;
@@ -55,6 +64,7 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
   selectedItems: any [];
   dropdownSettings = {};
   editSetting: any;
+  selectedData: any=[];
   //optionsModel
   artLogModel: ArtLogModel;
   Gdata: any;
@@ -68,9 +78,18 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
   jobmeta: any;
   Editdata: any;
   search = { };
-  displayDialog: boolean;
-  frmdt :any;
-
+  displayDialog : boolean;
+  saveSearchModal : boolean;
+  savedSearchListModal: boolean;
+  savedsearchLists: any=[];
+  gridState: any;
+  defaultSearch: any;
+  isSaveSearch  : boolean ;
+  searchText: string;
+  frmdt : any;
+  jobkey: any; 
+  grid: any = {};
+  dataloading: boolean;
   //@Input("edit-jobs") editJobID: string;
   public form: FormGroup;
   public contactList: FormArray;
@@ -84,21 +103,23 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
     super(baseServices, router);
     //this.checkUserinfo();
     this.cols=[
-      { field: '', header: 'Action' },
+      //{ field: '', header: 'Action' },
       { field: 'job_key', header: 'JobKey'},
       //{ field : 't', header : 'tt'},
       { field : 'lesson', header : 'Lesson'},
       { field : 'component', header : 'Component'},
       { field : 'lessonlet', header : 'Lesson Letter'},
-      { field : 'description', header : 'Discription'},
+      { field : 'description', header : 'Description'},
       { field : 'thumb', header : 'Thumbnail'},
       { field: 'cstage', header: 'Current Stage'},
+      { field: 'currentRTeam', header: 'CR Team'},
+      { field: 'curriculum', header: 'Curriculum'},
       { field : 'totalage', header : 'Cumulative Age'},
       { field: 'lastage', header: 'Last Age'},
       { field: 'comment', header: 'Comments'},
       { field: 'mverification', header: 'M. Verification'},
       {field: 'tags', header: 'Tag Entry'},
-      {field: 'ispaging', header: 'Paging Approved'},
+      {field: 'isPaging', header: 'Paging Approved'},
       {field: 'artcomplex', header: 'Art-Complexity'},
       { field: 'artassion', header: 'Art-Assignment'},
       { field: 'risk', header: 'Permission-Risk'},
@@ -111,10 +132,11 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
     this.cols = this.cols.map(d=>({ field: d.field , header: d.header ,tid: this.cols.indexOf(d)}));
   }
   ngOnInit() {
-
-    this.freezeCols = this.cols.filter(d=> d.tid < 2);
-    this.scrollableCols = this.cols.filter(d=> d.tid > 1 );
-
+    this.dataloading=true;
+    this.isSaveSearch = false;
+    this.searchText= "Search List1";
+    this.freezeCols = this.cols.filter(d=> d.tid < 1);
+    this.scrollableCols = this.cols.filter(d=> d.tid > 0 );
     this.cols.forEach(element => {
       if(!(element.field == '' || element.field == 'job_key') ){
         this.fixCol.push(element);
@@ -133,14 +155,46 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
     this.workflows = Wdata.map( d=> ({value: d}));
     let Tdata= ["Permissions Team","Art Team","Clip Art & Storage Team","Shutterstock Team","Content Team","On Hold Team"];
     this.Tdata = Tdata.map( d=> ({value: d, label: d }));
-    let jobStatus = ['Active', 'NeedsChanges', 'Approved'];
+    let jobStatus = ['Active', 'NeedsChanges', 'Approved','Asset Bank'];
     this.jobStatus = jobStatus.map( d=> ({field: d, header: d}));
-    let obj={};
-    this.getMetaData(obj);
+    //scrollableCols
+    this.getinit();
     this.editSetting = new CustomModalPopUpModel('Edit Job');
   }
   clearData() {
+    this.frmdt.grade = "";
+    this.frmdt.module = "";
+    this.artLogModel.batch.value="";
+    this.frmdt.workflow="";
+    this.artLogModel.curricula.value="";
+    this.frmdt.status="";
+    this.artLogModel.added.value="";
+  }
+  isDuplicate(d, edit){
+    if(d.duplicate && edit){
+      return "newrecordEdited";
+    }
+    if(d.duplicate){
+      return "newrecord";
+    }
+  }
+  onFilter(event, dt) { this.filteredValuesLength = event.filteredValue.length; // count of displayed rows 
+  }
+  ellipsisData(col){
+    if(col.field =='description' || col.field =='cstage' || col.field =='tags'){
+      return "text-truncate";
+    }
+  }
+  setEditableHeight(isEdited){
+   return (!isEdited)?'nonEdited':'edited';
+  }
 
+  setWith(name){
+    if(name.field=="job_key"){
+      return 'width:140px';
+    }else{
+      return 'width:175px';
+    }
   }
   createContact(): FormGroup {
     return this.fb.group({
@@ -154,13 +208,20 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
     let obj={};
     this.getMetaData(obj);
   }
+  searchByjobKey(evt: any) {
+    this.filterData();
+  }
+  viewSavedSearchList(){
+    this.savedSearchListModal = true;
+  }
   showDialogToAdd(){
     this.displayDialog = true;
   }
-  searchByjobKey() {
-
+  saveSearchDialog(){
+    this.saveSearchModal = true;
   }
   filterData() {
+    this.isSaveSearch= true;
     this.getMetaData( this.search );
   }
   checkUserinfo(){
@@ -170,67 +231,175 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
       console.log("getting data=>", data);
     });
   }
+  setDefaltSearch(evt: any){
+    let body = new HttpParams();
+    body = body.set('default', this.defaultSearch);
+    this.httpService.extractData(CustomerServicesUrls.ARTLOG_SETDEFAULT_SEARCH, body, null).subscribe((data) => {
+    this.alert.showAlertScucess([ 'Your default search list has been updated!'], 3000);
+    });
+  }
+  clearGridState() {
+    this.httpService.extractData(CustomerServicesUrls.ARTLOG_GRIDSTATECLEAR, null, null).subscribe((data) => {
+      this.gridState="";
+      this.alert.showAlertScucess([ 'Grid state reset successfully!'], 3000);
+    });
+  }
+  saveGridState() {
+    let body = new HttpParams();
+    let dt ={ 'selectedColumn': this.scrollableCols, 'search': this.grid};
+    body = body.set('selectedColumn', JSON.stringify(dt));
+    this.httpService.extractData(CustomerServicesUrls.ARTLOG_GRIDSTATESAVE, body, null).subscribe((data) => {
+      if(!!data.searchTitle){
+       this.gridState = data;
+      }
+      this.alert.showAlertScucess([ 'Grid state saved successfully!'], 3000);
+    });
+  }
+  saveUserSerach(){
+    let body = new HttpParams();
+    let frmDt =  { grade: this.frmdt.grade, module: this.frmdt.module, status: this.frmdt.status, batch: this.artLogModel.batch.value,
+      workflow: this.frmdt.workflow, curricula:this.artLogModel.curricula.value, resTeam: this.artLogModel.resTeam.value,
+      added:this.artLogModel.added.value }
+      body = body.set('frmdt', JSON.stringify(frmDt));
+      body = body.set('searchText', JSON.stringify(this.searchText));
+      this.httpService.extractData(CustomerServicesUrls.ARTLOG_SEARCHSAVE, body, null).subscribe((data) => {
+      this.savedsearchLists.splice(0, 0, data);
+      this.saveSearchModal = false;
+      this.alert.showAlertScucess([ 'Search saved successfully!'], 3000);
+      });
+  }
+  deleteSearchList(obj) {
+    let body = new HttpParams();
+    body = body.set('_id', obj._id);
+    this.httpService.extractData(CustomerServicesUrls.ARTLOG_DELETE_SEARCHSAVE, body, null).subscribe((data)=>{
+      let d = this.savedsearchLists.find(d=> d._id === data.did);
+      let index = this.savedsearchLists.indexOf(d);
+      this.savedsearchLists.splice(index, 1);
+      this.alert.showAlertDanger([ 'Saved search removed successfully!'], 3000);
+    });
+  }
+  getinit() {
+    this.httpService.extractData(CustomerServicesUrls.ARTLOG_INIT, null, null).subscribe((data)=>{
+        if ( data.hasOwnProperty('grade') ) {
+          this.Gdata = data.grade;
+        }
+        if (!!data.module ) {
+          this.Mdata = data.module ;
+        }
+        if (!!data.artAssign ) {
+          data.artAssign.splice(0, 0, {id: '', value: '', label: 'Please Select'});
+          this.artassions = data.artAssign ;
+        }
+        if (!!data.artcomplex ) {
+          data.artcomplex.splice(0, 0, {id:'', value:'', label: 'Please Select'});
+          this.artcomplexs = data.artcomplex ;
+        }
+        if (!!data.risk ) {
+          data.risk.splice(0, 0, {id: '', value: '', label: 'Please Select'});
+          this.risks = data.risk ;
+        }
+        if (!!data.impact ) {
+          data.impact.splice(0, 0, {id: '', value: '', label: 'Please Select'});
+          this.impacts = data.impact ;
+        }
+        if (!!data.wip ) {
+          data.wip.splice(0, 0, {id: '', value: '', label: 'Please Select'});
+          this.wip = data.wip ;
+        }
+        if(!!data.inData){
+          let def = data.inData.filter( d=> d.isDefault === true);
+          if (def.length > 0) {
+            this.defaultSearch  = def[0]._id;
+          }
+          this.gridState = data.inData.find( d => d.state === 'GridStage');
+          // setting default grid state
+          if(!!this.gridState && !!this.gridState.fields){
+           let dt= JSON.parse(this.gridState.fields);
+           this.scrollableCols=dt.selectedColumn;
+          }
+          this.savedsearchLists = data.inData.filter( d => d.state !== 'GridStage');
+          let defalutSearch = this.savedsearchLists.filter( d=> d.isDefault == true);
+          if ( this.savedsearchLists.length && defalutSearch.length > 0 ) {
+            let frmData = JSON.parse(defalutSearch[0].fields);
+            if( frmData.grade.length ) {
+              this.frmdt.grade = frmData.grade;
+            }
+            if( frmData.module.length > 0 ) {
+              this.frmdt.module = frmData.module;
+            }if( frmData.batch!=="" ) {
+              this.artLogModel.batch.value = frmData.batch;
+            }if( frmData.workflow!=="" ) {
+              this.frmdt.workflow = frmData.workflow;
+            }if( frmData.curricula!=="" ) {
+              this.artLogModel.curricula.value = frmData.curricula;
+            }if( frmData.status!=="" ) {
+              this.frmdt.status = frmData.status;
+            }if( frmData.added!=="" ) {
+              this.artLogModel.added.value = frmData.added;
+            }
+            this.filterData();
+          } else {
+            let obj: any = {};
+            this.getMetaData(obj);
+          }
+        }
+    });
+  }
   getMetaData(Obj: any) {
+    this.dataloading=true;
     var self = this;
     return new Promise(resolve => {
       this.loadDataFromApi(this.NAME_ARTLOG).subscribe((data) => {
-      if ( data.hasOwnProperty('GlobalDt') ) {
-        if (!!data.GlobalDt.grade) {
-          this.Gdata = data.GlobalDt.grade;
-        }
-        if (!!data.GlobalDt.module ) {
-          this.Mdata = data.GlobalDt.module ;
-        }
-        if (!!data.GlobalDt.artAssign ) {
-          data.GlobalDt.artAssign.splice(0, 0, {id: '', value: '', label: 'Please Select'});
-          this.artassions = data.GlobalDt.artAssign ;
-        }
-        if (!!data.GlobalDt.artcomplex ) {
-          data.GlobalDt.artcomplex.splice(0, 0, {id:'', value:'', label: 'Please Select'});
-          this.artcomplexs = data.GlobalDt.artcomplex ;
-        }
-        if (!!data.GlobalDt.risk ) {
-          data.GlobalDt.risk.splice(0, 0, {id: '', value: '', label: 'Please Select'});
-          this.risks = data.GlobalDt.risk ;
-        }
-        if (!!data.GlobalDt.impact ) {
-          data.GlobalDt.impact.splice(0, 0, {id: '', value: '', label: 'Please Select'});
-          this.impacts = data.GlobalDt.impact ;
-        }
-      }
+      this.dataloading=false;
       if ( data.hasOwnProperty('GridFilters') ) {
         this.lessons = (!!data.GridFilters.lesson) ? data.GridFilters.lesson.map(d => ({label: d, value: d})) : [];
         this.components = (!!data.GridFilters.component) ? data.GridFilters.component.map(d => ({label: d, value: d})) : [];
         this.modules =  (!!data.GridFilters.module) ? data.GridFilters.module.map(d => ({label: d, value: d})) : [];
         this.grades =  (!!data.GridFilters.grade) ? data.GridFilters.grade.map(d => ({label: d, value: d})) : [];
+        this.Gartcomplexs=(!!data.GridFilters.artcomplex)?data.GridFilters.artcomplex.map(d => ({label: d, value: d})) : [];
+        this.Gartassions=(!!data.GridFilters.artassion)?data.GridFilters.artassion.map(d => ({label: d, value: d})) : [];
+        this.Grisks=(!!data.GridFilters.risk)?data.GridFilters.risk.map(d => ({label: d, value: d})) : [];
+        this.Gimpact=(!!data.GridFilters.impact)?data.GridFilters.impact.map(d => ({label: d, value: d})) : [];
+        this.GcurrentRTeam=(!!data.GridFilters.currentRTeam)?data.GridFilters.currentRTeam.map(d => ({label: d, value: d})) : [];
+        this.Gworkflow=(!!data.GridFilters.workflow)?data.GridFilters.workflow.map(d => ({label: d, value: d})) : [];
+        this.Gcurriculum=(!!data.GridFilters.curriculum)?data.GridFilters.curriculum.map(d => ({label: d, value: d})) : [];
       }
       self.cartdata = data.artLogData;
+      this.filteredValuesLength =  data.artLogData.length;
       self.selectedColumn = this.cols;
       resolve(data);
       });
     });
   }
-  updateSelection() {
-    if ( this.selectedColumn.length > 0 && this.selectedColumn[0].field != '') {
-      this.selectedColumn.splice(0, 0, this.cols[0]);
-    }
-    if ( this.selectedColumn.length > 0 && !!this.selectedColumn[1] && this.selectedColumn[1].field != 'job_key') {
-      this.selectedColumn.splice(1, 0, this.cols[1]);
-    }
-    this.selectedColumn = this.selectedColumn.sort(( a , b ) => a.tid - b.tid);
+ updateSelection() {
+    this.scrollableCols = this.scrollableCols.sort(( a , b ) => a.tid - b.tid);
   }
   onRowEditInit(artdt: any, editing) {
     editing = !editing;
    // this.clonedArtLog[artdt._id] = { ...artdt };
   }
+  onRowEditSave(artdt: any) {
+    const myheader = new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded');
+   //  httpOptions.set('Authorization', tokenId);
+    //this.getHTTPOption
+    let body = new HttpParams();
+    body = body.set('newData', JSON.stringify(artdt));
+    this.httpService.extractPostData(CustomerServicesUrls.ARTLOG_UPDATEJOBS, body, {headers: myheader}).subscribe((data) => {
+      if(data.length >0 && data[0].msg==='SUCCESS'){
+        this.alert.showAlertScucess([ ' Job updated successfully!'], 3000);
+      } else {
+        this.alert.showAlertDanger([ ' Job updated have some issue!'], 3000);
+      }
+    });
+    //CustomerServicesUrls.ARTLOG_UPDATEJOBS
+  }
   checkEdit(field, dt) {
-    if ( dt.hasOwnProperty('duplicate') && field == '') {
+    if ( dt.hasOwnProperty('duplicate') && field === 'job_key') {
       return true;
     } else {
       return false;
     }
   }
-  
   onYearChange(event, dt) {
     if (this.yearTimeout) {
       clearTimeout(this.yearTimeout);
@@ -256,7 +425,8 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
     return formGroup;
   }
 submit() {
-  const myheader = new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded')
+  debugger
+  const myheader = new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded');
   let body = new HttpParams();
   body = body.set('jobAdd', JSON.stringify(this.form.value.jobAdd));
   let self = this;
@@ -266,7 +436,7 @@ submit() {
       self.cartdata.splice((index + 1), 0, dt);
     } 
     this.displayDialog = false;
-    this.alert.showAlertScucess([ data.length + ' Jobs Added Successfully!!!'], 300000);
+    this.alert.showAlertScucess([ data.length + ' Jobs added successfully!'], 3000);
   });
 }
   initSearchModels() {
@@ -275,7 +445,6 @@ submit() {
   getSearchModel(name: string) {
     if (name === this.NAME_ARTLOG) {
       try{
-        debugger
         if(this.frmdt.grade.length > 0){
           this.artLogModel.grade.value=this.frmdt.grade.map(a=> a.id);
         }
@@ -294,10 +463,12 @@ submit() {
       return this.artLogModel;
     }
   }
-
+  selectedImages(event, data: any, overlaypanel: OverlayPanel) {
+    this.selectedData = data;
+    overlaypanel.toggle(event);
+}
   getServiceUrl(name: string) {
     if (name === this.NAME_ARTLOG) {
-
       return CustomerServicesUrls.ARTLOG_DATA;
     }
   }
@@ -316,4 +487,3 @@ submit() {
     }
   }
 }
-
