@@ -14,7 +14,8 @@ import { SessionObject, Utils, ProjectUtils } from '../../core/shared/index';
 import { BaseComponent, BaseService } from '../../core/base';
 import { GuardService } from '../../core/guard/guard.service';
 import { TopMenuBarModel } from './top-menu-bar.model';
-
+import { HttpService } from '../../core/services/http.service';
+import { CustomerServicesUrls } from '../../core/shared/constant/url-constants/customer-services.constants';
 @Component({
   selector: 'app-top-menu-bar',
   templateUrl: './top-menu-bar.component.html',
@@ -44,6 +45,7 @@ export class TopMenuBarComponent extends BaseComponent implements OnInit {
 
 
   constructor(
+    protected httpService: HttpService,
     protected router: Router,
     protected customModalPopService: CustomModalPopUpService,
     private globalProcessRoutingService: GlobalProcessRoutingService,
@@ -56,9 +58,19 @@ export class TopMenuBarComponent extends BaseComponent implements OnInit {
     
     this.docRefFlag = true;
   }
- 
+   logout(){
+    debugger
+    this.httpService.extractPostData(CustomerServicesUrls.SMARTSHEET_LOGOUT, null, null).subscribe((data) => {
+      debugger
+      console.log("getting data=>", data);
+      localStorage.removeItem('UserDetails');
+      localStorage.clear();
+      localStorage.setItem('isLogin', 'false');
+      this.router.navigate(['/']);
+    });
+  }
   searchByjobKey(evt: any) {
-debugger
+   debugger
    SessionObject.setJobKey(this.jobkey);
   }
   initSearchModels() {
