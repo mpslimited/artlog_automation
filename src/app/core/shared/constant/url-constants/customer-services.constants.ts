@@ -19,7 +19,11 @@ export class CustomerServicesUrls extends UrlBase {
       public static ARTLOG_DELETE_SEARCHSAVE = CustomerServicesUrls.ARTLOGAUTOMATION_URL + "api/dellSearchState/";
       public static ARTLOG_SETDEFAULT_SEARCH = CustomerServicesUrls.ARTLOGAUTOMATION_URL + "api/setDefaultSearch/";
 
+      public static ARTLOG_BULKBATCH = CustomerServicesUrls.ARTLOGAUTOMATION_URL + "api/updateBulkBatch/";
+      public static ARTLOG_BULKTAGS  = CustomerServicesUrls.ARTLOGAUTOMATION_URL + "api/updateBulkTags/";
+
       public static JOBSMETA_DATA = CustomerServicesUrls.ARTLOGAUTOMATION_URL + "api/jobsMetadata/";
+      public static UPDATEASSETTAGS = CustomerServicesUrls.ARTLOGAUTOMATION_URL + "api/updateAsset/";
       
       public static USERINFO_DATA = "https://mpstrakdemo.mpstechnologies.com/mpstrak/production/taskTrakingReport";
       public static JOBSMETA_DATA1 = CustomerServicesUrls.ARTLOGAUTOMATION_URL + "api/artlogdata/";

@@ -9,7 +9,11 @@
         <div class="col-lg-12 grid-margin stretch-card">
           <div class="card">
             <div class="card-header">
-                <div class="d-flex d-flex justify-content-end">
+                <div class="d-flex align-items-start">
+                    <div class="p-0 mr-auto">
+                      <i class="fa fa-angle-down"></i>
+                      <i class="fa fa-angle-right"></i>
+                    </div>
                     <div>
                         <a (click)="viewSavedSearchList()"><small>Saved Search List</small></a>
                     </div>
@@ -73,11 +77,16 @@
                 </div>
                 <div class="col-md-3">
                     <div class="form-group">
-                        <div class="form-check col-sm-12 pl-0">
+                        <label for="formGroupExampleInput2" class="col-sm-12 pl-0">Job Type </label>
+                        <p-dropdown [options]="jobsTypes" [(ngModel)]="artLogModel.added.value" 
+                            [style]="{minWidth: '100%'}"
+                            defaultLabel="Choose Type" name="job_type">
+                        </p-dropdown >
+                        <!-- <div class="form-check col-sm-12 pl-0">
                           <input type="checkbox" class="form-check-input" [(ngModel)]="artLogModel.added.value"  name="added"
                           id="named">
-                            <label class="form-check-label" for="exampleCheck1">Added jobs Only</label>
-                          </div>
+                            <label class="ml-0 form-check-label" for="exampleCheck1">Added jobs Only</label>
+                          </div> -->
                       </div>
                   </div>
               </div>            
@@ -92,324 +101,364 @@
       </div>
     </form>
       <div class="row">
-        <div class="col-lg-12 grid-margin stretch-card">
-      <div class="card">
-        <div class="card-body">
-          <p-table #dt editMode="row" dataKey="_id" [value]="cartdata" 
-          selectionMode="multiple" scrollable="true" [loading]="dataloading" 
-          [frozenColumns]="freezeCols" [columns]="scrollableCols" frozenWidth="170px"
-          scrollHeight="450px" (onFilter)="onFilter($event, dt)">
-          <ng-template pTemplate="colgroup" let-columns>
-            <colgroup>
-                <col *ngFor="let col of columns" style="width:175px">
-            </colgroup>
-          </ng-template>
+        <div class="col-lg-12">
           
-          <ng-template pTemplate="caption">
-            <p-menubar>              
-              <div class="d-flex">
-                  <div class="pl-2">                                        
-                    <a type="button" (click)="clearGridState()" label="" class="btn btn-sm" *ngIf="!!gridState && gridState.hasOwnProperty('searchTitle')"> {{gridState.searchTitle}} <i class="fa fa-close"></i></a>
-                    </div>
-                  <div class="pl-2 mr-auto">
-                      <form class="form-inline my-lg-0">
-                          <div class="input-group">
-                            <input type="text" [(ngModel)]="artLogModel.jobkey.value" name="jobkey" placeholder="Job Key (eg. SCI-1164)"
-                              class="form-control form-control-sm">
-                            <div class="input-group-append"><button (click)="searchByjobKey($event)" type="button"
-                                class="btn btn-secondary btn-sm">Search</button>
+            <p-table #dt editMode="row" dataKey="_id" [value]="cartdata" 
+            selectionMode="multiple" [(selection)]="selectedRows" scrollable="true" [loading]="dataloading" 
+            [frozenColumns]="freezeCols" [columns]="scrollableCols" frozenWidth="170px"
+            scrollHeight="450px" (onFilter)="onFilter($event, dt)">
+            <ng-template pTemplate="colgroup" let-columns>
+              <colgroup>
+                  <col *ngFor="let col of columns" style="width:175px">
+              </colgroup>
+            </ng-template>
+            
+            <ng-template pTemplate="caption">
+              <p-menubar>              
+                <div class="d-flex">
+                    <div class="pl-2">                                        
+                      <a type="button" (click)="clearGridState()" label="" class="btn btn-sm" *ngIf="!!gridState && gridState.hasOwnProperty('searchTitle')"> {{gridState.searchTitle}} <i class="fa fa-close"></i></a>
+                      </div>
+                    <div class="pl-2 mr-auto">
+                        <form class="form-inline my-lg-0">
+                            <div class="input-group">
+                              <input type="text" [(ngModel)]="artLogModel.jobkey.value" name="jobkey" placeholder="Job Key (eg. SCI-1164)"
+                                class="form-control form-control-sm">
+                              <div class="input-group-append"><button (click)="searchByjobKey($event)" type="button"
+                                  class="btn btn-secondary btn-sm">Search</button>
+                              </div>
                             </div>
-                          </div>
-                        </form>
+                          </form>
+                    </div>
+                <div class="pr-2">
+                  <!--selectedColumn  -->
+                    <p-multiSelect [options]="fixCol" [(ngModel)]="scrollableCols" (onChange)="updateSelection()" optionLabel="header" 
+                      selectedItemsLabel="{0} columns selected" defaultLabel="Choose Columns">
+                    </p-multiSelect>
+                <div class="btn-group">
+                    <button type="button" class="btn btn-sm btn-primary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Export Data
+                  </button>
+                  <div class="dropdown-menu dropdown-menu-right ml-9">
+                    <a class="dropdown-item" (click)="dt.exportCSV()">All Data</a>
+                    <a class="dropdown-item" (click)="dt.exportCSV({selectionOnly:true})">Selected Row(s)</a>
                   </div>
-              <div class="pr-2">
-                <!--selectedColumn  -->
-                  <p-multiSelect [options]="fixCol" [(ngModel)]="scrollableCols" (onChange)="updateSelection()" optionLabel="header" 
-                    selectedItemsLabel="{0} columns selected" defaultLabel="Choose Columns">
-                  </p-multiSelect>
-              <div class="btn-group">
-                <button class="btn btn-primary btn-sm" type="button">
-                  Export Data
-                </button>
-                <button type="button" class="btn btn-sm btn-primary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  <span class="sr-only">Toggle Dropdown</span>
-                </button>
-                <div class="dropdown-menu dropdown-menu-right ml-9">
-                  <a class="dropdown-item" (click)="dt.exportCSV()">All Data</a>
-                  <a class="dropdown-item" (click)="dt.exportCSV({selectionOnly:true})">Selected Row(s)</a>
                 </div>
-              </div>            
-              <button type="button" pButton icon="fa fa-plus" (click)="showDialogToAdd()" label="Add Row" class="btn btn-sm ui-button-primary ml-1"></button>
-              <button type="button" pButton icon="fa fa-floppy-o" (click)="saveGridState()" label="Save Grid State" class="btn btn-sm ui-button-primary ml-1"></button>
+                <p-selectButton class="ml-1" [options]="modes" [(ngModel)]="selectedModes" (onChange)="optionChangeData()"></p-selectButton>
+
+                <!-- <a (click)="showDialogToAdd()" pTooltip="Add Row" tooltipPosition="top" class="ml-1"><i class="fa fa-plus fa-2x"></i></a>
+                <a (click)="saveGridState()" pTooltip="Save Grid State" tooltipPosition="top" class="ml-1"><i class="fa fa-floppy-o fa-2x"></i></a>
+                <a (click)="lockJobGenerateTags()" pTooltip="Lock Job & Generate Tags" tooltipPosition="top" class="ml-1"><i class="fa fa-lock fa-2x"></i></a> -->
+                  </div>
                 </div>
-              </div>
-              <p class="rowCountSummary">Showing {{filteredValuesLength}} of {{cartdata?.length}} entries</p>
-            </p-menubar>
-  
-          </ng-template>
-          <ng-template pTemplate="header" let-columns>
-            <tr>
-              <!-- <th *ngFor="let col of fixCol"> {{col.header}} </th> -->
-              <th *ngFor="let col of columns" [ngSwitch]="col.field">
-                  <div *ngSwitchCase="''">
+                <p class="rowCountSummary">Showing {{filteredValuesLength}} of {{cartdata?.length}} entries</p>
+              </p-menubar>
+    
+            </ng-template>
+            <ng-template pTemplate="header" let-columns>
+              <tr>
+                <!-- <th *ngFor="let col of fixCol"> {{col.header}} </th> -->
+                <th *ngFor="let col of columns" [ngSwitch]="col.field">
+                  <div *ngSwitchCase="'job_key'">
                       {{col.header}}
                   </div>
-                <div *ngSwitchCase="'job_key'">
+                  <div *ngSwitchDefault [pSortableColumn]="col.field">
                     {{col.header}}
-                </div>
-                <div *ngSwitchDefault [pSortableColumn]="col.field">
-                  {{col.header}}
-                  <p-sortIcon  [field]="col.field" ariaLabel="Activate to sort"
-                    ariaLabelDesc="Activate to sort in descending order"
-                    ariaLabelAsc="Activate to sort in ascending order">
-                  </p-sortIcon>
-                </div>
-              </th>
-            </tr>
-            <tr>
-              
-              <th *ngFor="let col of columns" [ngSwitch]="col.field">
-                
-                <!-- <p-dropdown *ngSwitchCase="'totalage'" [options]="totalage" [style]="{'width':'100%'}"
-                  (onChange)="dt.filter($event.value, col.field, 'equals')"></p-dropdown>-->
-                <input *ngSwitchCase="'job_key'" placeholder="Search Job Key" pInputText type="text" [(ngModel)]="grid.jobkey" (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)" [style]="{minWidth: '155px'} " class="mt2">
-                <p-multiSelect maxSelectedLabels="1" *ngSwitchCase="'lesson'" [(ngModel)]="grid.lesson"  [options]="lessons" defaultLabel="All Lessons"
-                  (onChange)="dt.filter($event.value, col.field, 'in')" [style]="{minWidth: '155px'}"></p-multiSelect>
-                <p-multiSelect maxSelectedLabels="1" *ngSwitchCase="'component'"  [(ngModel)]="grid.component" [options]="components" defaultLabel="All Components"
-                  (onChange)="dt.filter($event.value, col.field, 'in')" [style]="{minWidth: '155px'}"></p-multiSelect>
-                  <p-multiSelect  maxSelectedLabels="1" *ngSwitchCase="'currentRTeam'" [(ngModel)]="grid.currentRTeam"  [options]="GcurrentRTeam" defaultLabel="All Team" 
-                  (onChange)="dt.filter($event.value, col.field, 'in')" [style]="{minWidth: '155px'}"></p-multiSelect>
-                <p-multiSelect maxSelectedLabels="1" *ngSwitchCase="'curriculum'" [(ngModel)]="grid.curriculum"  [options]="Gcurriculum" defaultLabel="All Curriculum" 
-                  (onChange)="dt.filter($event.value, col.field, 'in')" [style]="{minWidth: '155px'}"></p-multiSelect>
-                <p-multiSelect maxSelectedLabels="1" *ngSwitchCase="'artcomplex'" [(ngModel)]="grid.artcomplex"  [options]="Gartcomplexs" defaultLabel="Art Complexity" 
-                  (onChange)="dt.filter($event.value, col.field, 'in')" [style]="{minWidth: '155px'}"></p-multiSelect>
-                <p-multiSelect maxSelectedLabels="1" *ngSwitchCase="'artassion'" [(ngModel)]="grid.artassion" [options]="Gartassions" defaultLabel="Art Assignment" 
-                  (onChange)="dt.filter($event.value, col.field, 'in')" [style]="{minWidth: '155px'}"></p-multiSelect>
-                <p-multiSelect maxSelectedLabels="1" *ngSwitchCase="'risk'" [(ngModel)]="grid.risk" [options]="Grisks" defaultLabel="All Risk" optionLabel="value"
-                  (onChange)="dt.filter($event.value, col.field, 'in')" [style]="{minWidth: '155px'}"></p-multiSelect>
-                <p-multiSelect maxSelectedLabels="1" *ngSwitchCase="'impact'" [(ngModel)]="grid.impact" [options]="Gimpacts" defaultLabel="All Impact" 
-                (onChange)="dt.filter($event.value, col.field, 'in')" [style]="{minWidth: '155px'}"></p-multiSelect>
-                <p-multiSelect maxSelectedLabels="1" *ngSwitchCase="'module'" [(ngModel)]="grid.module" [options]="modules" defaultLabel="All Modules" 
-                  (onChange)="dt.filter($event.value, col.field, 'in')" [style]="{minWidth: '155px'}"></p-multiSelect>
-                <p-multiSelect maxSelectedLabels="1" *ngSwitchCase="'grade'" [(ngModel)]="grid.grade" [options]="grades" defaultLabel="All Grades" 
-                  (onChange)="dt.filter($event.value, col.field, 'in')" [style]="{minWidth: '155px'}"></p-multiSelect>
-                <p-multiSelect maxSelectedLabels="1" *ngSwitchCase="'workflow'" [(ngModel)]="grid.workflow" [options]="Gworkflow" defaultLabel="All Workflow"
-                (onChange)="dt.filter($event.value, col.field, 'in')" [style]="{minWidth: '155px'}"></p-multiSelect>
-              </th>
-            </tr>
-          </ng-template>
-          <ng-template pTemplate="body" let-columns="columns" let-rowData let-editing="editing" let-ri="rowIndex">
-            <tr [pEditableRow]="rowData" [pSelectableRow]="rowData" class="myClass {{isDuplicate(rowData, editing)}} {{setEditableHeight(editing)}}">
-              <!--
-              DATA FOR EDITING 
-              -->
-              <td *ngFor="let col of columns" class="{{ellipsisData(col)}}"> 
-                  
-                  <ng-container *ngIf="col.field =='job_key' " > <!-- *ngSwitchCase="'job_key'"-->
-                    <ng-container  *ngIf="checkEdit(col.field, rowData)">
-                        <button *ngIf="!editing" pButton type="button" label="{{rowData[col.field]}}" pInitEditableRow icon="pi pi-pencil"
-                        class=" btn btn-sm btn-primary" (click)="onRowEditInit(rowData, editing)"></button>
-                    </ng-container>
-                    <a *ngIf="!checkEdit(col.field, rowData)" href="https://greatminds.getbynder.com/workflow/job/view/{{rowData[col.field]}}" target="_blank">
-                    {{rowData[col.field]}}
-                    </a>
-                    <button *ngIf="editing" pButton label="{{rowData[col.field]}}"  type="button" pSaveEditableRow icon="pi pi-check"
-                      class=" btn btn-sm ui-button-success" style="margin-right: .5em" (click)="onRowEditSave(rowData)"></button>
-                    <button *ngIf="editing" pButton type="button"  pCancelEditableRow icon="pi pi-times"
-                      class=" btn btn-sm ui-button-danger" (click)="onRowEditCancel(rowData, ri)"></button>
-                  </ng-container>
-                  
-                  <p-cellEditor *ngIf="col.field =='lesson' " >
-                    <ng-template pTemplate="input">
-                      <input pInputText type="text" [(ngModel)]="rowData.lesson" required>
-                    </ng-template>
-                    <ng-template pTemplate="output">
-                      {{rowData[col.field]}}
-                    </ng-template>
-                  </p-cellEditor>
-                  <p-cellEditor *ngIf="col.field =='component' " >
-                      <ng-template pTemplate="input">
-                        <input pInputText type="text" [(ngModel)]="rowData.component" required>
-                      </ng-template>
-                      <ng-template pTemplate="output">
-                        {{rowData[col.field]}}
-                      </ng-template>
-                  </p-cellEditor>
-                  <p-cellEditor *ngIf="col.field =='lessonlet' " >
-                      <ng-template pTemplate="input">
-                        <input pInputText type="text" [(ngModel)]="rowData.lessonlet" required>
-                      </ng-template>
-                      <ng-template pTemplate="output">
-                        {{rowData[col.field]}}
-                      </ng-template>
-                  </p-cellEditor>
-                  <p-cellEditor *ngIf="col.field =='description' " pTooltip="{{rowData.description}}" tooltipPosition="top">
-                      <ng-template pTemplate="input">
-                        <textarea pInputTextarea type="text" [(ngModel)]="rowData.description" required></textarea>
-                      </ng-template>
-                      <ng-template pTemplate="output">
-                        {{rowData[col.field]}}
-                      </ng-template>
-                  </p-cellEditor>
-                  <ng-container *ngIf="col.field =='thumb' && !!rowData.thumb" >
-                      <button pButton icon="pi pi-search " class="btn btn-sm" (click)="selectedImages($event, rowData, op3)"></button>
-                  </ng-container>
-                  <span *ngIf="col.field =='cstage' " pTooltip="{{rowData.cstage}}" tooltipPosition="top">
-                      {{rowData[col.field]}}
-                  </span>
-                  <ng-container *ngIf="col.field =='currentRTeam' ">
-                      {{rowData[col.field]}}
-                  </ng-container>
-                  <ng-container *ngIf="col.field =='curriculum' " >
-                      {{rowData[col.field]}}
-                  </ng-container>
-                  <ng-container *ngIf="col.field =='totalage' " >
-                      {{rowData[col.field]}}
-                  </ng-container>
-                  <ng-container *ngIf="col.field =='lastage' ">
-                      {{rowData[col.field]}}
-                  </ng-container>
-                  <p-cellEditor *ngIf="col.field =='comment' " pTooltip="{{rowData.comment}}" tooltipPosition="top">
-                    <ng-template pTemplate="input">
-                      <textarea pInputTextarea type="text" [(ngModel)]="rowData.comment" required></textarea>
-                    </ng-template>
-                    <ng-template pTemplate="output">
-                      {{rowData[col.field]}}
-                    </ng-template>
-                  </p-cellEditor>
-                  <div *ngIf="col.field =='mverification' ">
-                      {{rowData[col.field]}}
+                    <p-sortIcon  [field]="col.field" ariaLabel="Activate to sort"
+                      ariaLabelDesc="Activate to sort in descending order"
+                      ariaLabelAsc="Activate to sort in ascending order">
+                    </p-sortIcon>
                   </div>
-                  <p-cellEditor *ngIf="col.field =='tags' " pTooltip="{{rowData.tags}}" tooltipPosition="top">
-                    <ng-template pTemplate="input">
-                      <textarea pInputTextarea type="text" [(ngModel)]="rowData.tags" required></textarea>
-                    </ng-template>
-                    <ng-template pTemplate="output">
+                </th>
+              </tr>
+              <tr>
+                
+                <th *ngFor="let col of columns" [ngSwitch]="col.field">
+                  
+                  <!-- <p-dropdown *ngSwitchCase="'totalage'" [options]="totalage" [style]="{'width':'100%'}"
+                    (onChange)="dt.filter($event.value, col.field, 'equals')"></p-dropdown>-->
+                  <input *ngSwitchCase="'job_key'" placeholder="Search Job Key" pInputText type="text" (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)" [style]="{minWidth: '155px'} " class="mt2">
+                  <input *ngSwitchCase="'name'" placeholder="Search Job Name" pInputText type="text" (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)" [style]="{minWidth: '155px'} " class="mt2">
+                  <input *ngSwitchCase="'lessonlet'" placeholder="Lesson Letter" pInputText type="text" (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)" [style]="{minWidth: '155px'} " class="mt2">
+                  <input *ngSwitchCase="'tags'" placeholder="Tags " pInputText type="text" (input)="dt.filter($event.target.value, col.field, 'contains')" [style]="{minWidth: '155px'} " class="mt2">
+                  <input *ngSwitchCase="'comment'" placeholder="Lesson Letter" pInputText type="text" (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)" [style]="{minWidth: '155px'} " class="mt2">
+                  <input *ngSwitchCase="'description'" placeholder="Description" pInputText type="text" (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)" [style]="{minWidth: '155px'} " class="mt2">
+                  <input *ngSwitchCase="'cstage'" placeholder="" pInputText type="text" (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)" [style]="{minWidth: '155px'} " class="mt2">
+                  <input *ngSwitchCase="'job_active_stage.status'" placeholder="" pInputText type="text" (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)" [style]="{minWidth: '155px'} " class="mt2">
+                  <input *ngSwitchCase="'creditLine'" placeholder="" pInputText type="text" (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)" [style]="{minWidth: '155px'} " class="mt2">
+                  <input *ngSwitchCase="'mverification'" placeholder="" pInputText type="text" (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)" [style]="{minWidth: '155px'} " class="mt2">
+                  <input *ngSwitchCase="'isPaging'" placeholder="" pInputText type="text" (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)" [style]="{minWidth: '155px'} " class="mt2">
+                  
+                  <p-multiSelect maxSelectedLabels="1" *ngSwitchCase="'lesson'"  [options]="lessons" defaultLabel="All Lessons"
+                    (onChange)="dt.filter($event.value, col.field, 'in')" [style]="{minWidth: '155px'}"></p-multiSelect>
+                  <p-multiSelect maxSelectedLabels="1" *ngSwitchCase="'component'"  [options]="components" defaultLabel="All Components"
+                    (onChange)="dt.filter($event.value, col.field, 'in')" [style]="{minWidth: '155px'}"></p-multiSelect>
+                  <p-multiSelect maxSelectedLabels="1" *ngSwitchCase="'module'" [options]="modules" defaultLabel="All Modules" 
+                    (onChange)="dt.filter($event.value, col.field, 'in')" [style]="{minWidth: '155px'}"></p-multiSelect>
+                  <p-multiSelect maxSelectedLabels="1" *ngSwitchCase="'grade'"  [options]="grades" defaultLabel="All Grades" 
+                    (onChange)="dt.filter($event.value, col.field, 'in')" [style]="{minWidth: '155px'}"></p-multiSelect>
+                  <p-multiSelect maxSelectedLabels="1" *ngSwitchCase="'batch'" [options]="batchs" defaultLabel="All Batches" 
+                    (onChange)="dt.filter($event.value, col.field, 'in')" [style]="{minWidth: '155px'}"></p-multiSelect>
+                  <p-multiSelect  maxSelectedLabels="1" *ngSwitchCase="'currentRTeam'"  [options]="GcurrentRTeam" defaultLabel="All Team" 
+                    (onChange)="dt.filter($event.value, col.field, 'in')" [style]="{minWidth: '155px'}"></p-multiSelect>
+                  <p-multiSelect maxSelectedLabels="1" *ngSwitchCase="'curriculum'"  [options]="Gcurriculum" defaultLabel="All Curriculum" 
+                    (onChange)="dt.filter($event.value, col.field, 'in')" [style]="{minWidth: '155px'}"></p-multiSelect>
+                  <p-multiSelect maxSelectedLabels="1" *ngSwitchCase="'revisionC'"  [options]="" defaultLabel="All R.Count" 
+                    (onChange)="dt.filter($event.value, col.field, 'in')" [style]="{minWidth: '155px'}"></p-multiSelect>
+                  <p-multiSelect maxSelectedLabels="1" *ngSwitchCase="'artcomplex'"  [options]="Gartcomplexs" defaultLabel="Art Complexity" 
+                    (onChange)="dt.filter($event.value, col.field, 'in')" [style]="{minWidth: '155px'}"></p-multiSelect>
+                  <p-multiSelect maxSelectedLabels="1" *ngSwitchCase="'artassion'" [options]="Gartassions" defaultLabel="Art Assignment" 
+                    (onChange)="dt.filter($event.value, col.field, 'in')" [style]="{minWidth: '155px'}"></p-multiSelect>
+                  <p-multiSelect maxSelectedLabels="1" *ngSwitchCase="'risk'" [options]="Grisks" defaultLabel="All Risk" optionLabel="value"
+                    (onChange)="dt.filter($event.value, col.field, 'in')" [style]="{minWidth: '155px'}"></p-multiSelect>
+                  <p-multiSelect maxSelectedLabels="1" *ngSwitchCase="'impact'" [options]="Gimpacts" defaultLabel="All Impact" 
+                  (onChange)="dt.filter($event.value, col.field, 'in')" [style]="{minWidth: '155px'}"></p-multiSelect>
+                  <p-multiSelect maxSelectedLabels="1" *ngSwitchCase="'facing'" [(ngModel)]="grid.facing" [options]="facings" defaultLabel="All Facings" 
+                    (onChange)="dt.filter($event.value, col.field, 'in')" [style]="{minWidth: '155px'}"></p-multiSelect>
+                  <p-multiSelect maxSelectedLabels="1" *ngSwitchCase="'series'" [options]="seriess" defaultLabel="All Series" 
+                    (onChange)="dt.filter($event.value, col.field, 'in')" [style]="{minWidth: '155px'}"></p-multiSelect>
+                  <p-multiSelect maxSelectedLabels="1" *ngSwitchCase="'workflow'" [options]="Gworkflow" defaultLabel="All Workflow"
+                  (onChange)="dt.filter($event.value, col.field, 'in')" [style]="{minWidth: '155px'}"></p-multiSelect>
+                </th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-columns="columns" let-rowData let-editing="editing" let-ri="rowIndex">
+              <tr [pEditableRow]="rowData" [pSelectableRow]="rowData" class="myClass {{isDuplicate(rowData, editing)}} {{setEditableHeight(editing)}}">
+                <!--
+                DATA FOR EDITING 
+                -->
+                <td *ngFor="let col of columns" class="{{ellipsisData(col)}}"> 
+                    
+                    <ng-container *ngIf="col.field =='job_key' " > <!-- *ngSwitchCase="'job_key'"-->
+                      <ng-container  *ngIf="checkEdit(col.field, rowData)">
+                          <button *ngIf="!editing" pButton type="button" label="{{rowData[col.field]}}" pInitEditableRow icon="pi pi-pencil"
+                          class=" btn btn-sm btn-primary" (click)="onRowEditInit(rowData, editing)"></button>
+                      </ng-container>
+                      <a *ngIf="!checkEdit(col.field, rowData)" href="https://greatminds.getbynder.com/workflow/job/view/{{rowData[col.field]}}" target="_blank">
                       {{rowData[col.field]}}
-                    </ng-template>
-                  </p-cellEditor>
-                  <p-cellEditor *ngIf="col.field =='isPaging' ">
-                    <ng-template pTemplate="input">
-                      <p-dropdown [options]="pagingCol" [(ngModel)]="rowData.isPaging" [style]="{'width':'100%'}">
-                      </p-dropdown>
-                    </ng-template>
-                    <ng-template pTemplate="output">
-                      {{rowData[col.field]}}
-                    </ng-template>
-                  </p-cellEditor>
-                  <p-cellEditor *ngIf="col.field =='artcomplex' ">
-                    <ng-template pTemplate="input">
-                    <p-dropdown [options]="artcomplexs" [(ngModel)]="rowData.artcomplex" [style]="{'width':'100%'}">
-                      </p-dropdown>
-                    </ng-template>
-                    <ng-template pTemplate="output">
-                      {{rowData[col.field]}}
-                    </ng-template>
-                  </p-cellEditor>
-                  <p-cellEditor *ngIf="col.field =='artassion' ">
-                    <ng-template pTemplate="input">
-                    <p-dropdown [options]="artassions" [(ngModel)]="rowData.artassion" [style]="{'width':'100%'}">
-                      </p-dropdown>
-                    </ng-template>
-                    <ng-template pTemplate="output">
-                      {{rowData[col.field]}}
-                    </ng-template>
-                  </p-cellEditor>
-                 <p-cellEditor *ngIf="col.field =='risk' ">
+                      </a>
+                      <button *ngIf="editing" pButton label="{{rowData[col.field]}}"  type="button" pSaveEditableRow icon="pi pi-check"
+                        class=" btn btn-sm ui-button-success" style="margin-right: .5em" (click)="onRowEditSave(rowData)"></button>
+                      <button *ngIf="editing" pButton type="button"  pCancelEditableRow icon="pi pi-times"
+                        class=" btn btn-sm ui-button-danger" (click)="onRowEditCancel(rowData, ri)"></button>
+                    </ng-container>
+                    <span *ngIf="col.field =='name' " pTooltip="{{rowData.name}}" tooltipPosition="top">
+                        {{rowData[col.field]}}
+                    </span>
+                    <p-cellEditor *ngIf="col.field =='lesson' ">
+                      <ng-template pTemplate="input">
+                        <input pInputText type="text" [(ngModel)]="rowData.lesson" required>
+                      </ng-template>
+                      <ng-template pTemplate="output">
+                        {{rowData[col.field]}}
+                      </ng-template>
+                    </p-cellEditor>
+                    <p-cellEditor *ngIf="col.field =='component' ">
                         <ng-template pTemplate="input">
-                          <p-dropdown [options]="risks" [(ngModel)]="rowData.risk" [style]="{'width':'100%'}">
+                          <input pInputText type="text" [(ngModel)]="rowData.component" required>
+                        </ng-template>
+                        <ng-template pTemplate="output">
+                          {{rowData[col.field]}}
+                        </ng-template>
+                    </p-cellEditor>
+                    <p-cellEditor *ngIf="col.field =='lessonlet' ">
+                        <ng-template pTemplate="input">
+                          <input pInputText type="text" [(ngModel)]="rowData.lessonlet" required>
+                        </ng-template>
+                        <ng-template pTemplate="output">
+                          {{rowData[col.field]}}
+                        </ng-template>
+                    </p-cellEditor>
+                    <p-cellEditor *ngIf="col.field =='module' ">
+                      <ng-template pTemplate="input">
+                        <p-dropdown [options]="Mdata" [(ngModel)]="rowData.module" [style]="{'width':'100%'}">
+                        </p-dropdown>
+                      </ng-template>
+                      <ng-template pTemplate="output">
+                          {{rowData[col.field]}}
+                      </ng-template>
+                    </p-cellEditor>
+                    <p-cellEditor *ngIf="col.field =='grade' ">
+                      <ng-template pTemplate="input">
+                        <p-dropdown [options]="Gdata" [(ngModel)]="rowData.grade" [style]="{'width':'100%'}">
+                        </p-dropdown>
+                      </ng-template>
+                      <ng-template pTemplate="output">
+                          {{rowData[col.field]}}
+                      </ng-template>
+                    </p-cellEditor>
+                    <p-cellEditor *ngIf="col.field =='batch' ">
+                        <ng-template pTemplate="input">
+                          <input pInputText type="text" [(ngModel)]="rowData.batch" required>
+                        </ng-template>
+                        <ng-template pTemplate="output">
+                          {{rowData[col.field]}}
+                        </ng-template>
+                    </p-cellEditor>
+                    <p-cellEditor *ngIf="col.field =='description' " pTooltip="{{rowData.description}}" tooltipPosition="top">
+                        <ng-template pTemplate="input">
+                          <textarea pInputTextarea type="text" [(ngModel)]="rowData.description" required></textarea>
+                        </ng-template>
+                        <ng-template pTemplate="output">
+                          {{rowData[col.field]}}
+                        </ng-template>
+                    </p-cellEditor>
+                    <ng-container *ngIf="col.field =='thumb' && !!rowData.thumb" >
+                        <button pButton icon="pi pi-search " class="btn btn-sm" (click)="selectedImages($event, rowData, op)"></button>
+                    </ng-container>
+                    <span *ngIf="col.field =='cstage' " pTooltip="{{rowData.cstage}}" tooltipPosition="top">
+                        {{rowData[col.field]}}
+                    </span>
+                    <ng-container *ngIf="col.field =='currentRTeam' ">
+                        {{rowData[col.field]}}
+                    </ng-container>
+                    <ng-container *ngIf="col.field =='job_active_stage.status' ">
+                        {{rowData[col.field]}}
+                        {{rowData.job_active_stage.status}}
+                    </ng-container>
+                    <ng-container *ngIf="col.field =='curriculum' " >
+                        {{rowData[col.field]}}
+                    </ng-container>
+                    <ng-container *ngIf="col.field =='totalage' " >
+                        {{rowData[col.field]}}
+                    </ng-container>
+                    <ng-container *ngIf="col.field =='lastage' ">
+                        {{rowData[col.field]}}
+                    </ng-container>
+                    <p-cellEditor *ngIf="col.field =='comment' " pTooltip="{{rowData.comment}}" tooltipPosition="top">
+                      <ng-template pTemplate="input">
+                        <textarea pInputTextarea type="text" [(ngModel)]="rowData.comment" required></textarea>
+                      </ng-template>
+                      <ng-template pTemplate="output">
+                        {{rowData[col.field]}}
+                      </ng-template>
+                    </p-cellEditor>
+                    
+                    <p-cellEditor *ngIf="col.field =='tags' " pTooltip="{{rowData.tags}}" tooltipPosition="top">
+                      <ng-template pTemplate="input">
+                        <textarea pInputTextarea type="text" [(ngModel)]="rowData.tags" required></textarea>
+                      </ng-template>
+                      <ng-template pTemplate="output">
+                        {{rowData[col.field]}}
+                      </ng-template>
+                    </p-cellEditor>
+                    <p-cellEditor *ngIf="col.field =='mverification' ">
+                        <ng-template pTemplate="input">
+                          <p-dropdown [options]="verificationsDt" [(ngModel)]="rowData.mverification" [style]="{'width':'100%'}">
                           </p-dropdown>
                         </ng-template>
                         <ng-template pTemplate="output">
-                            {{rowData[col.field]}}
+                          {{rowData[col.field]}}
                         </ng-template>
                       </p-cellEditor>
-                  <p-cellEditor *ngIf="col.field =='impact' ">
-                    <ng-template pTemplate="input">
-                      <p-dropdown [options]="impacts" [(ngModel)]="rowData.impact" [style]="{'width':'100%'}">
-                      </p-dropdown>
-                    </ng-template>
-                    <ng-template pTemplate="output">
+                    <p-cellEditor *ngIf="col.field =='isPaging' ">
+                      <ng-template pTemplate="input">
+                        <p-dropdown [options]="pagingCol" [(ngModel)]="rowData.isPaging" [style]="{'width':'100%'}">
+                        </p-dropdown>
+                      </ng-template>
+                      <ng-template pTemplate="output">
                         {{rowData[col.field]}}
-                    </ng-template>
-                  </p-cellEditor>
-                  <p-cellEditor *ngIf="col.field =='module' ">
-                    <ng-template pTemplate="input">
-                      <p-dropdown [options]="Mdata" [(ngModel)]="rowData.module" [style]="{'width':'100%'}">
-                      </p-dropdown>
-                    </ng-template>
-                    <ng-template pTemplate="output">
-                        {{rowData[col.field]}}
-                    </ng-template>
-                  </p-cellEditor>
-                  <p-cellEditor *ngIf="col.field =='grade' ">
-                    <ng-template pTemplate="input">
-                      <p-dropdown [options]="Gdata" [(ngModel)]="rowData.grade" [style]="{'width':'100%'}">
-                      </p-dropdown>
-                    </ng-template>
-                    <ng-template pTemplate="output">
-                        {{rowData[col.field]}}
-                    </ng-template>
-                  </p-cellEditor>
-                  <ng-container *ngIf="col.field =='batch' "  >
+                      </ng-template>
+                    </p-cellEditor>
+                    <ng-container *ngIf="col.field =='revisionC' ">
                       {{rowData[col.field]}}
-                  </ng-container>
-                  <ng-container *ngIf="col.field =='workflow' ">
+                    </ng-container>
+                    <ng-container *ngIf="col.field =='artcomplex' ">
                       {{rowData[col.field]}}
-                  </ng-container>
-                </td>
-            </tr>
-          </ng-template>
-          <ng-template pTemplate="emptymessage" let-columns>
-              <tr>
-                  <td [attr.colspan]="columns.length">
-                      No records found
+                    </ng-container>
+                    <ng-container *ngIf="col.field =='artassion' ">
+                        {{rowData[col.field]}}
+                    </ng-container>
+                    <ng-container *ngIf="col.field =='risk' ">
+                        {{rowData[col.field]}}
+                    </ng-container>
+                    <ng-container  *ngIf="col.field =='impact' ">
+                    {{rowData[col.field]}}
+                    </ng-container>
+                    <ng-container *ngIf="col.field =='facing' ">
+                      {{rowData[col.field]}}
+                    </ng-container>
+                    <ng-container *ngIf="col.field =='series' ">
+                      {{rowData[col.field]}}
+                    </ng-container>
+                    <ng-container *ngIf="col.field =='workflow' ">
+                        {{rowData[col.field]}}
+                    </ng-container>
                   </td>
               </tr>
-          </ng-template>
-        </p-table>        
-      </div>
-    </div>
+            </ng-template>
+            <ng-template pTemplate="emptymessage" let-columns>
+                <tr>
+                    <td [attr.colspan]="columns.length">
+                        No records found
+                    </td>
+                </tr>
+            </ng-template>
+          </p-table>
   </div>
   </div>
   </div>
   
-  <p-overlayPanel #op3 [showTransitionOptions]="'0ms'" [hideTransitionOptions]="'0ms'" [dismissable]="true" [showCloseIcon]="true">
-      <img src="{{selectedData.thumb}}" *ngIf="selectedData" class="img-fluid"/> 
+  <p-overlayPanel #op [showTransitionOptions]="'0ms'" [hideTransitionOptions]="'0ms'" [dismissable]="true" [showCloseIcon]="true">
+      <img src="{{selectedData.thumb}}" *ngIf="selectedData" style="width: 250px; height: 25%;"/> 
   </p-overlayPanel>  
     <!--Modal dialog for add new records-->
-  <p-dialog header="Add new record(s)" [(visible)]="displayDialog" [modal]="true" showEffect="fade" [responsive]="true" [baseZIndex]="10000" [style]="{width: '650px', height:'300px', minHeight:'300px'}" [minY]="70" 
+  <p-dialog header="Add new record(s)" (onHide)="hideNewRecord('$event')" [(visible)]="displayDialog" [modal]="true" showEffect="fade" [responsive]="true" [baseZIndex]="10000" [style]="{width: '900px', height:'300px', minHeight:'300px'}" [minY]="70" 
   [maximizable]="true" [baseZIndex]="10000">
       <form [formGroup]="form" (ngSubmit)="submit()" #documentEditForm="ngForm">
         <div class="ui-g ui-fluid" >         
                 <div class="col-12 p-0">                 
                      <div class="card-body p-2">
-                        <div class="row" formArrayName="jobAdd">
-                          <div class="col-12" *ngFor="let contact of contactFormGroup.controls; let i = index;">
+                      <div class="row">
+                        <div class="col-12">
+                            <div class="row">
+                            <div class="col-2 font-weight-bold">Job Key</div>
+                            <div class="col-2 font-weight-bold">Grade</div>
+                            <div class="col-2 font-weight-bold">Module</div>
+                            <div class="col-2 font-weight-bold">Component</div>
+                            <div class="col-2 font-weight-bold">Lesson</div>
+                            <div class="col-1">*</div>
+                            </div>
+                        </div>
+                      </div>
+                      <div class="row" formArrayName="jobAdd">
+                      <div class="col-md-12" *ngFor="let contact of contactFormGroup.controls; let i = index;">
                             <div [formGroupName]="i" class="row">
-                              <div class="form-group col-md-4">
-                                  <label for="formGroupExampleInput2" class="col-sm-12 pl-0">Grade</label>
-                                  <p-dropdown formControlName="grade" [options]="Gdata" name="grade" optionLabel="label"
-                                      selectedItemsLabel="{0} selected" [style]="{minWidth: '200px'}"
+                                <div class="form-group col-md-2 pr-0">
+                                    <input type="text" pInputText formControlName="jobkey" name="jobkey"/>
+                                    <span class="text-danger" *ngIf="getContactsFormGroup(i).controls['jobkey'].touched && getContactsFormGroup(i).controls['jobkey'].hasError('required')">
+                                      Job Key is required! </span>
+                                  </div>
+                              <div class="form-group col-md-2 pr-0">
+                                  <p-dropdown formControlName="grade" [options]="addGdata" name="grade" optionLabel="label"
+                                      selectedItemsLabel="{0} selected" 
                                       defaultLabel="Choose Grade" >
                                   </p-dropdown>
                               </div>
-                              <div class="form-group col-md-4">
-                                  <label for="formGroupExampleInput2" class="col-sm-12 pl-0">Module</label>
-                                  <p-dropdown formControlName="module" [options]="Mdata" optionLabel="label"
-                                      selectedItemsLabel="{0} selected" [style]="{minWidth: '200px'}"
+                              <div class="form-group col-md-2 pr-0">
+                                  <p-dropdown formControlName="module" [options]="addMdata" optionLabel="label"
+                                      selectedItemsLabel="{0} selected" 
                                       defaultLabel="Choose Grade" name="module">
                                   </p-dropdown>
+                              </div> 
+                              <div class="form-group col-md-2 pr-0">
+                                  <input type="text" pInputText formControlName="component" name="component"/>
+                                  <!-- <span class="text-danger" *ngIf="getContactsFormGroup(i).controls['component'].touched && getContactsFormGroup(i).controls['component'].hasError('required')">
+                                      Component is required! </span> -->
+                              </div>                             
+                              <div class="form-group col-md-2 pr-0">
+                                  <input type="text" pInputText formControlName="lesson" name="lesson"/>
+                                  <!-- <span class="text-danger" *ngIf="getContactsFormGroup(i).controls['lesson'].touched && getContactsFormGroup(i).controls['lesson'].hasError('required')">
+                                      Lesson is required! </span> -->
                               </div>
-                              <div class="form-group col-md-3">
-                                <label>Job Key</label>
-                                <input type="text" pInputText formControlName="jobkey" name="jobkey"/>
-                                <span class="text-danger" *ngIf="getContactsFormGroup(i).controls['jobkey'].touched && getContactsFormGroup(i).controls['jobkey'].hasError('required')">
-                                  Job Key is required! </span>
-                              </div>
-                              <div class="form-group col-md-1 mt-3" *ngIf="i!=0">
+                              
+                              <div class="form-group col-md-2 pr-0">
+                                <button pButton type="button" icon="pi pi-plus"
+                                  class="ui-button-primary btn btn-sm" (click)="createClone(i)"></button>
+                                <ng-container *ngIf="i!=0">
                                   <button pButton type="button" icon="pi pi-times"
-                                  class="mt-1 ui-button-danger btn btn-sm" (click)="removeContact(i)"></button>
+                                  class="ml-1 ui-button-danger btn btn-sm" (click)="removeContact(i)"></button>
+                                </ng-container>
                               </div>
                             </div>
                           </div>
@@ -420,13 +469,13 @@
     </form>
     <p-footer>
       <div class="ui-dialog-buttonpane ui-helper-clearfix mt-2 text-right">
-          <button type="button" class="btn btn-sm" pButton icon="fa fa-plus" (click)="addContact()" label="Add Row"></button>
+          <button type="button" class="btn btn-sm" pButton icon="fa fa-plus" (click)="addContact()" label="Insert Blank Row"></button>
           <button type="button" class="ml-1 btn btn-sm" pButton icon="fa fa-check" (click)="documentEditForm.ngSubmit.emit()" label="Save"></button>
       </div>
   </p-footer>
   </p-dialog>
 <!--Modal dialog for Saved Search-->
-<p-dialog header="Save Search" [(visible)]="saveSearchModal" [responsive]="true" showEffect="fade" [modal]="true"  [style]="{width: '30%'}">
+<p-dialog header="Save Search" [(visible)]="saveSearchModal"  [responsive]="true" showEffect="fade" [modal]="true"  [style]="{width: '30%'}">
   <div class="ui-g ui-fluid">           
       <div class="ui-g-12 ui-md-12">
           <div class="ui-inputgroup">                                        
@@ -453,7 +502,7 @@
                     </tr>
                 </ng-template>
                 <ng-template pTemplate="body" let-savedsearchList>
-                    <tr>
+                    <tr >
                         <td><p-radioButton name="groupname" [value]="savedsearchList._id" [(ngModel)]="defaultSearch" (onClick)="setDefaltSearch($event)" value="val1" ></p-radioButton></td>
                         <td>{{savedsearchList.searchTitle }}</td>
                         <td><button type="button" pButton icon="fa fa-close" class="ui-button-danger btn btn-sm" (click)="deleteSearchList(savedsearchList)"></button></td>
@@ -462,3 +511,66 @@
             </p-table>
           </div> 
   </p-dialog>
+  <!-- tag generation and verification-->
+  <p-dialog header="Automated Tag Generation & Verification" [(visible)]="tagverificationModal" [responsive]="true" showEffect="fade" [modal]="true"  [style]="{width: '90%'}" [maximizable]="true">
+      <div class="ui-g ui-fluid">           
+          <p-table [value]="rowsmoveTags" [(selection)]="selectedTagsData">
+              <ng-template pTemplate="header">
+                  <tr>
+                      <th style="width: 3em">
+                          <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                      </th>
+                      <th style="width: 8em">Job key</th>
+                      <th style="width: 8em">Grade</th>
+                      <th style="width: 8em">Module</th>
+                      <th style="width: 8em">Components</th>
+                      <th style="width: 8em">Lesson</th>
+                      <th style="width: 8em">Batch</th>
+                      <th style="width: 20em">Pre-exist Tags</th>
+                      <th style="width: 20em">Generated Tags</th>
+                  </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-rowsmoveTags>
+                  <tr > <!-- rowsmoveTags-->
+                    <td>
+                        <p-tableCheckbox [value]="rowsmoveTags"></p-tableCheckbox>
+                    </td>
+                      <td>{{rowsmoveTags.job_key}}</td>
+                      <td>{{rowsmoveTags.grade}}</td>
+                      <td>{{rowsmoveTags.module}}</td>
+                      <td>{{rowsmoveTags.component}}</td>
+                      <td>{{rowsmoveTags.lesson}}</td>
+                      <td>{{rowsmoveTags.batch}}</td>
+                      <td>{{rowsmoveTags.tags}}</td>
+                      <td> <textarea pInputTextarea type="text" [(ngModel)]="rowsmoveTags.generatedTags" ></textarea></td>
+                     <!--<td></td>
+                  --> </tr>
+              </ng-template>
+          </p-table>
+          <!-- <p>{{selectedTagsData| json}}</p> -->
+        </div> 
+        <p-footer>
+            <button type="button" pButton icon="fa fa-trash" class="ui-button-danger btn btn-sm" (click)="deleteMoveTagList(selectedTagsData)" label="Remove Selected Rows"></button>
+            <button type="button" pButton icon="pi pi-check" class="ui-button-success btn btn-sm" (click)="confirm()" label="Push to Asset Bank"></button>
+        </p-footer>
+</p-dialog> 
+<p-confirmDialog header="Confirmation" icon="pi pi-exclamation-triangle" [style]="{width: '25vw', height:'20vh'}"></p-confirmDialog>
+
+<!--Modal dialog for bulk batch generation-->
+<p-dialog header="Bulk Insert Batch" [(visible)]="bulkBatchModal" [responsive]="true" showEffect="fade" [modal]="true"  [style]="{width: '30%'}">
+    <div class="ui-g ui-fluid">           
+        <input type="text" pInputText [(ngModel)]="bulkBatch"/>
+      </div>
+      <p-footer>
+        <button type="button" pButton icon="fa fa-floppy-o" class="ui-button-success btn btn-sm" (click)="saveBatchData()" label="Save"></button>
+    </p-footer>
+</p-dialog>
+<!--Modal dialog for bulk tag generation-->
+<p-dialog header="Bulk Insert Tags" [(visible)]="bulkTagModal" [responsive]="true" showEffect="fade" [modal]="true"  [style]="{width: '30%'}">
+    <div class="ui-g ui-fluid">           
+        <input type="text" pInputText [(ngModel)]="bulkTags"/>
+      </div>
+      <p-footer>
+        <button type="button" pButton icon="fa fa-floppy-o" class="ui-button-success btn btn-sm" (click)="saveTagData()" label="Save"></button>
+    </p-footer>
+</p-dialog>

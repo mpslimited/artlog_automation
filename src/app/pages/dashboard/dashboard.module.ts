@@ -30,8 +30,17 @@ import {SplitButtonModule} from 'primeng/splitbutton';
 import {ProgressSpinnerModule} from 'primeng/progressspinner';
 import {TooltipModule} from 'primeng/tooltip';
 import {OverlayPanelModule} from 'primeng/overlaypanel';
+import {DynamicDialogModule} from 'primeng/dynamicdialog';
+import {ConfirmDialogModule} from 'primeng/confirmdialog';
+import {SelectButtonModule} from 'primeng/selectbutton';
+
+
+
 @NgModule({
       imports: [
+            SelectButtonModule,
+            ConfirmDialogModule,
+            DynamicDialogModule,
             OverlayPanelModule,
             TooltipModule,
             CommonModule,

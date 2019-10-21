@@ -1,22 +1,24 @@
 /* You can add global styles to this file, and also import other style files */
 app-cust-desktop{ width: 100%}
 .mt2{ margin-top:2px !important }
-body .ui-table .ui-table-tbody > tr:nth-child(even).ui-state-highlight{color:#000!important}
+/* body .ui-table .ui-table-tbody > tr:nth-child(even).ui-state-highlight{color:#000!important} */
 .navbar-brand-wrapper{background:#07212d!important}
-.newrecord{background:#c0fbc0!important}
+.newrecord{ background:#c0fbc0!important }
+.newrecord.ui-state-highlight{ background:#007ad9!important }
 .navbar .navbar-menu-wrapper .navbar-nav .nav-item.dropdown .dropdown-menu.navbar-dropdown .dropdown-item{
   padding:10px!important;
   font-size:12px;
 }
+.form-check-label{font-size:12px!important;padding-top:2px;}
 .rowCountSummary {
   font-size: 12px;
   float: left;
   margin-left: 18px!important;
 }
-.ui-overlaypanel-content img{
-  width:100%!important;
-  height: 100%!important;
-}
+/* .ui-overlaypanel-content img{
+  width:40%!important;
+  height: auto!important;
+} */
 .edited{height:63.28px}
 .nonEdited{height:42.28px}
 
@@ -24,9 +26,10 @@ body .ui-table .ui-table-tbody > tr:nth-child(even).ui-state-highlight{color:#00
 .ui-menubar-custom .dropdown-item{
   font-size:11px;
 }
+.ui-selectbutton{position: relative;top:3px;}
 .ui-dialog-mask{z-index:1030!important}
 body .ui-dialog{z-index:1031!important}
-body .ui-dialog .ui-dialog-content{height:50vh!important;}
+/* body .ui-dialog .ui-dialog-content{height:50vh!important;} */
 .ui-table-frozen-view .ui-table-scrollable-header-table colgroup col:nth-child(1), .ui-table-frozen-view .ui-table-scrollable-body-table colgroup col:nth-child(1){width:95px!important}
 .ui-table-frozen-view .ui-table-scrollable-header-table .ui-table-thead > tr > th{padding-bottom: 8px!important;}
 .ui-table .ui-menubar{border:0 none!important}
