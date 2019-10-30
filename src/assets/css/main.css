@@ -12796,7 +12796,7 @@ dl {
         color: inherit;
         font-size: 0.875rem;
         margin-left: 1.5rem;
-        margin-right: 1.5rem;
+        margin-right: 0;
         height: 70px;
         display: -webkit-box;
         display: -ms-flexbox;
@@ -12822,6 +12822,7 @@ dl {
           position: absolute;
           font-size: 0.9rem;
           margin-top: 0;
+          right:0;
           padding: 0; }
           .rtl .navbar .navbar-menu-wrapper .navbar-nav .nav-item.dropdown .dropdown-menu.navbar-dropdown {
             right: auto;

@@ -31,7 +31,9 @@ export class LoginService extends BaseService {
             if (!!data.Status && data.Status === 'OK') {
                 SessionObject.setUserDetails({
                   'userInfo': data.id,
-                  'Token': data.token
+                  'Token': data.token,
+                  'name' : data.name,
+                  'roleName': data.roleName
                 });
                 console.log(data);
                 localStorage.setItem('isLogin', 'true');

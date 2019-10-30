@@ -10,16 +10,17 @@
           <div class="card">
             <div class="card-header">
                 <div class="d-flex align-items-start">
-                    <div class="p-0 mr-auto">
-                      <i class="fa fa-angle-down"></i>
-                      <i class="fa fa-angle-right"></i>
+                    <div class="p-0 mr-auto" >
+                        <h6 style="cursor: pointer;" (click)="criteria=(criteria!=true)" data-toggle="collapse" href="#collapseSearch">Search Filter
+                            <i [ngClass]="{' fa-angle-right': !criteria, ' fa-angle-down': criteria  }" class="fa " ></i>
+                          </h6>
                     </div>
                     <div>
                         <a (click)="viewSavedSearchList()"><small>Saved Search List</small></a>
                     </div>
                 </div>
             </div>
-            <div class="card-body">
+            <div class="card-body panel-collapse collapse" id="collapseSearch" >
               <div class=" row ">
                 <div class="col-md-3">
                   <div class="form-group">
@@ -49,7 +50,7 @@
                 <div class="col-md-3">
                   <div class="form-group">
                     <label for="workflow" class="col-sm-12 pl-0">Workflow </label>
-                    <p-dropdown [options]="workflows" [(ngModel)]="frmdt.workflow" optionLabel="value"
+                    <p-dropdown [options]="workflows" [(ngModel)]="artLogModel.workflow.value" 
                         id="workflow" name="workflow" [style]="{minWidth: '100%'}"
                         placeholder="Choose Workflow" name="workflow">
                     </p-dropdown>
@@ -82,29 +83,24 @@
                             [style]="{minWidth: '100%'}"
                             defaultLabel="Choose Type" name="job_type">
                         </p-dropdown >
-                        <!-- <div class="form-check col-sm-12 pl-0">
-                          <input type="checkbox" class="form-check-input" [(ngModel)]="artLogModel.added.value"  name="added"
-                          id="named">
-                            <label class="ml-0 form-check-label" for="exampleCheck1">Added jobs Only</label>
-                          </div> -->
                       </div>
                   </div>
+                  <div class="col-md-12 text-right">
+                      <button type="button" (click)="clearData()" class="btn btn-secondary btn-sm mr-1">Reset</button>
+                      <button type="submit" class="btn btn-primary btn-sm mr-1">Search</button>
+                      <button type="button" *ngIf="isSaveSearch" (click)="saveSearchDialog()" class="btn btn-primary btn-sm">Save Search</button>
+                    </div>
               </div>            
             </div>
-            <div class="card-footer text-right">
-              <button type="button" (click)="clearData()" class="btn btn-secondary btn-sm mr-1">Reset</button>
-              <button type="submit" class="btn btn-primary btn-sm mr-1">Search</button>
-              <button type="button" *ngIf="isSaveSearch" (click)="saveSearchDialog()" class="btn btn-primary btn-sm">Save Search</button>
-            </div>
+            
           </div>
         </div>
       </div>
     </form>
       <div class="row">
-        <div class="col-lg-12">
-          
+        <div class="col-lg-12">          
             <p-table #dt editMode="row" dataKey="_id" [value]="cartdata" 
-            selectionMode="multiple" [(selection)]="selectedRows" scrollable="true" [loading]="dataloading" 
+            selectionMode="multiple" [(selection)]="selectedRows" scrollable="isScrollable" [loading]="dataloading" 
             [frozenColumns]="freezeCols" [columns]="scrollableCols" frozenWidth="170px"
             scrollHeight="450px" (onFilter)="onFilter($event, dt)">
             <ng-template pTemplate="colgroup" let-columns>
@@ -114,11 +110,100 @@
             </ng-template>
             
             <ng-template pTemplate="caption">
-              <p-menubar>              
-                <div class="d-flex">
-                    <div class="pl-2">                                        
-                      <a type="button" (click)="clearGridState()" label="" class="btn btn-sm" *ngIf="!!gridState && gridState.hasOwnProperty('searchTitle')"> {{gridState.searchTitle}} <i class="fa fa-close"></i></a>
+              <p-menubar>
+                  <div class="d-flex">                    
+                      <div class="pl-1 mr-auto">
+                        <!--Filter Bar-->
+                        <div class="searchFilterBar">
+                            <a href="javascript:void(0)" pTooltip="JobKey:{{g.job_key}}" tooltipPosition="top" class="badge badge-light" *ngIf="g.hasOwnProperty('job_key') && g.job_key!=''">
+                              <i class="fa fa-filter"></i> {{g.job_key}} <i class="fa fa-times-circle" style="font-size:14px" (click)="cleargInputFilter(dt,'job_key')"></i>
+                            </a>
+                            <a href="javascript:void(0)" pTooltip="Job Name: {{g.name}}" tooltipPosition="top"  class="badge badge-light" *ngIf="g.hasOwnProperty('name') && g.name!=''">
+                                <i class="fa fa-filter"></i> <span class="d-inline-block text-truncate" style="max-width: 100px;"> {{g.name}} </span><i class="fa fa-times-circle" (click)="cleargInputFilter(dt,'name')"></i>
+                            </a>
+                            <a href="javascript:void(0)" pTooltip="Grade: {{g.grade}}" tooltipPosition="top" class="badge badge-light" *ngIf="g.hasOwnProperty('grade') && g.grade!=''">
+                                <i class="fa fa-filter"></i> <span class="d-inline-block text-truncate" style="max-width: 100px;"><strong>Grade</strong>: {{g.grade}} </span><i class="fa fa-times-circle" (click)="cleargSelectFilter(dt,'grade')"></i>
+                            </a>
+                            <a href="javascript:void(0)" pTooltip="Module: {{g.module}}" tooltipPosition="top" class="badge badge-light" *ngIf="g.hasOwnProperty('module') && g.module!=''">
+                                <i class="fa fa-filter"></i> <span class="d-inline-block text-truncate" style="max-width: 100px;"><strong>Module</strong>: {{g.module}} </span><i class="fa fa-times-circle" (click)="cleargSelectFilter(dt,'module')"></i>
+                            </a>
+                            <a href="javascript:void(0)" pTooltip="Component: {{g.component}}" tooltipPosition="top" class="badge badge-light" *ngIf="g.hasOwnProperty('component') && g.component!=''">
+                                <i class="fa fa-filter"></i> <span class="d-inline-block text-truncate" style="max-width: 100px;"><strong>Component</strong>: {{g.component}} </span><i class="fa fa-times-circle" (click)="cleargSelectFilter(dt,'component')"></i>
+                            </a>
+                            <a href="javascript:void(0)" pTooltip="Lesson: {{g.lesson}}" tooltipPosition="top" class="badge badge-light" *ngIf="g.hasOwnProperty('lesson') && g.lesson!=''">
+                                <i class="fa fa-filter"></i> <span class="d-inline-block text-truncate" style="max-width: 100px;"><strong>Lesson</strong>: {{g.lesson}} </span><i class="fa fa-times-circle" (click)="cleargSelectFilter(dt,'lesson')"></i>
+                            </a>
+                            <a href="javascript:void(0)" pTooltip="Lesson Letter: {{g.lessonlet}}" tooltipPosition="top" class="badge badge-light" *ngIf="g.hasOwnProperty('lessonlet') && g.lessonlet!=''">
+                                <i class="fa fa-filter"></i> <span class="d-inline-block text-truncate" style="max-width: 100px;"><strong>Lesson Letter</strong>: {{g.lessonlet}} </span><i class="fa fa-times-circle" (click)="cleargInputFilter(dt,'lessonlet')"></i>
+                            </a>
+                            <a href="javascript:void(0)" pTooltip="Batch: {{g.lessonlet}}" tooltipPosition="top" class="badge badge-light" *ngIf="g.hasOwnProperty('batch') && g.batch!=''">
+                                <i class="fa fa-filter"></i> <span class="d-inline-block text-truncate" style="max-width: 100px;"><strong>Batch</strong>: {{g.batch}} </span><i class="fa fa-times-circle" (click)="cleargSelectFilter(dt,'batch')"></i>
+                            </a>
+                            <a href="javascript:void(0)" pTooltip="Desc: {{g.description}}" tooltipPosition="top" class="badge badge-light" *ngIf="g.hasOwnProperty('description') && g.description!=''">
+                                <i class="fa fa-filter"></i> <span class="d-inline-block text-truncate" style="max-width: 100px;"><strong>Desc</strong>: {{g.description}} </span><i class="fa fa-times-circle" (click)="cleargInputFilter(dt,'description')"></i>
+                            </a>
+                            <a href="javascript:void(0)" pTooltip="CR.Stage: {{g.cstage}}" tooltipPosition="top" class="badge badge-light" *ngIf="g.hasOwnProperty('cstage') && g.cstage!=''">
+                                <i class="fa fa-filter"></i> <span class="d-inline-block text-truncate" style="max-width: 100px;"><strong>Cr.Stage</strong>: {{g.cstage}} </span><i class="fa fa-times-circle" (click)="cleargInputFilter(dt,'cstage')"></i>
+                            </a>
+                            <a href="javascript:void(0)" pTooltip="Status: {{g.status}}" tooltipPosition="top" class="badge badge-light" *ngIf="g.hasOwnProperty('status') && g.status!=''">
+                                <i class="fa fa-filter"></i> <span class="d-inline-block text-truncate" style="max-width: 100px;"><strong>Status</strong>: {{g.status}} </span><i class="fa fa-times-circle" (click)="cleargInputFilter(dt,'status')"></i>
+                            </a>
+                            <a href="javascript:void(0)" pTooltip="R.Team: {{g.currentRTeam}}" tooltipPosition="top" class="badge badge-light" *ngIf="g.hasOwnProperty('currentRTeam') && g.currentRTeam!=''">
+                                <i class="fa fa-filter"></i> <span class="d-inline-block text-truncate" style="max-width: 100px;"><strong>R.Team</strong>: {{g.currentRTeam}} </span><i class="fa fa-times-circle" (click)="cleargSelectFilter(dt,'currentRTeam')"></i>
+                            </a>
+                            <a href="javascript:void(0)" pTooltip="Curriculum: {{g.curriculum}}" tooltipPosition="top" class="badge badge-light" *ngIf="g.hasOwnProperty('curriculum') && g.curriculum!=''">
+                                <i class="fa fa-filter"></i> <span class="d-inline-block text-truncate" style="max-width: 100px;"><strong>Curriculum</strong>: {{g.curriculum}} </span><i class="fa fa-times-circle" (click)="cleargSelectFilter(dt,'curriculum')"></i>
+                            </a>
+                            <a href="javascript:void(0)" pTooltip="Facing: {{g.facing}}" tooltipPosition="top" class="badge badge-light" *ngIf="g.hasOwnProperty('facing') && g.facing!=''">
+                                <i class="fa fa-filter"></i> <span class="d-inline-block text-truncate" style="max-width: 100px;"><strong>Facing</strong>: {{g.facing}} </span><i class="fa fa-times-circle" (click)="cleargSelectFilter(dt,'facing')"></i>
+                            </a>
+                            <a href="javascript:void(0)" pTooltip="Series: {{g.series}}" tooltipPosition="top" class="badge badge-light" *ngIf="g.hasOwnProperty('series') && g.series!=''">
+                                <i class="fa fa-filter"></i> <span class="d-inline-block text-truncate" style="max-width: 100px;"><strong>Series</strong>: {{g.series}} </span><i class="fa fa-times-circle" (click)="cleargSelectFilter(dt,'series')"></i>
+                            </a>
+                            <a href="javascript:void(0)" pTooltip="CreditLine: {{g.creditLine}}" tooltipPosition="top" class="badge badge-light" *ngIf="g.hasOwnProperty('creditLine') && g.creditLine!=''">
+                                <i class="fa fa-filter"></i> <span class="d-inline-block text-truncate" style="max-width: 100px;"><strong>CreditLine</strong>: {{g.creditLine}} </span><i class="fa fa-times-circle" (click)="cleargInputFilter(dt,'creditLine')"></i>
+                            </a>
+                            <a href="javascript:void(0)" pTooltip="Comment: {{g.comment}}" tooltipPosition="top" class="badge badge-light" *ngIf="g.hasOwnProperty('comment') && g.comment!=''">
+                                <i class="fa fa-filter"></i> <span class="d-inline-block text-truncate" style="max-width: 100px;"><strong>Comment</strong>: {{g.comment}} </span><i class="fa fa-times-circle" (click)="cleargInputFilter(dt,'comment')"></i>
+                            </a>
+                            <a href="javascript:void(0)" pTooltip="Tags: {{g.tags}}" tooltipPosition="top" class="badge badge-light" *ngIf="g.hasOwnProperty('tags') && g.tags!=''">
+                                <i class="fa fa-filter"></i> <span class="d-inline-block text-truncate" style="max-width: 100px;"><strong>Tags</strong>: {{g.tags}} </span><i class="fa fa-times-circle"  (click)="cleargInputOtherFilter(dt,'tags')"></i>
+                            </a>
+                            <a href="javascript:void(0)" pTooltip="Mverifi..: {{g.mverification}}" tooltipPosition="top" class="badge badge-light" *ngIf="g.hasOwnProperty('mverification') && g.mverification!=''">
+                                <i class="fa fa-filter"></i> <span class="d-inline-block text-truncate" style="max-width: 100px;"><strong>Mverifi..</strong>: {{g.mverification}} </span><i class="fa fa-times-circle" (click)="cleargInputFilter(dt,'mverification')"></i>
+                            </a>
+                            <a href="javascript:void(0)" pTooltip="Paging: {{g.isPaging}}" tooltipPosition="top" class="badge badge-light" *ngIf="g.hasOwnProperty('isPaging') && g.isPaging!=''">
+                                <i class="fa fa-filter"></i> <span class="d-inline-block text-truncate" style="max-width: 100px;"><strong>Paging</strong>: {{g.isPaging}} </span><i class="fa fa-times-circle" (click)="cleargInputFilter(dt,'isPaging')"></i>
+                            </a>
+                            <a href="javascript:void(0)" pTooltip="R.Count: {{g.revisionC}}" tooltipPosition="top" class="badge badge-light" *ngIf="g.hasOwnProperty('revisionC') && g.revisionC!=''">
+                                <i class="fa fa-filter"></i> <span class="d-inline-block text-truncate" style="max-width: 100px;"><strong>R.Count</strong>: {{g.revisionC}} </span><i class="fa fa-times-circle" (click)="cleargSelectFilter(dt,'revisionC')"></i>
+                            </a>
+                            <a href="javascript:void(0)" pTooltip="Artcomplex: {{g.artcomplex}}" tooltipPosition="top" class="badge badge-light" *ngIf="g.hasOwnProperty('artcomplex') && g.artcomplex!=''">
+                                <i class="fa fa-filter"></i> <span class="d-inline-block text-truncate" style="max-width: 100px;"><strong>Artcomplex</strong>: {{g.artcomplex}} </span><i class="fa fa-times-circle" (click)="cleargSelectFilter(dt,'artcomplex')"></i>
+                            </a>
+                            <a href="javascript:void(0)" pTooltip="Artassion: {{g.artassion}}" tooltipPosition="top" class="badge badge-light" *ngIf="g.hasOwnProperty('artassion') && g.artassion!=''">
+                                <i class="fa fa-filter"></i> <span class="d-inline-block text-truncate" style="max-width: 100px;"><strong>Artassion</strong>: {{g.artassion}} </span><i class="fa fa-times-circle" (click)="cleargSelectFilter(dt,'artassion')"></i>
+                            </a>
+                            <a href="javascript:void(0)" pTooltip="Risk: {{g.risk}}" tooltipPosition="top" class="badge badge-light" *ngIf="g.hasOwnProperty('risk') && g.risk!=''">
+                                <i class="fa fa-filter"></i> <span class="d-inline-block text-truncate" style="max-width: 100px;"><strong>Risk</strong>: {{g.risk}} </span><i class="fa fa-times-circle" (click)="cleargSelectFilter(dt,'risk')"></i>
+                            </a>
+                            <a href="javascript:void(0)" pTooltip="Impact: {{g.impact}}" tooltipPosition="top" class="badge badge-light" *ngIf="g.hasOwnProperty('impact') && g.impact!=''">
+                                <i class="fa fa-filter"></i> <span class="d-inline-block text-truncate" style="max-width: 100px;"><strong>Impact</strong>: {{g.impact}} </span><i class="fa fa-times-circle" (click)="cleargSelectFilter(dt,'impact')"></i>
+                            </a>
+                            <a href="javascript:void(0)" pTooltip="Workflow: {{g.workflow}}" tooltipPosition="top" class="badge badge-light" *ngIf="g.hasOwnProperty('workflow') && g.workflow!=''">
+                                <i class="fa fa-filter"></i> <span class="d-inline-block text-truncate" style="max-width: 100px;"><strong>Workflow</strong>: {{g.workflow}} </span><i class="fa fa-times-circle" (click)="cleargSelectFilter(dt,'workflow')"></i>
+                            </a>
+                            <a href="javascript:void(0)" class="badge badge-info" (click)="clearAllFilter(dt)" *ngIf="hasData()">
+                              <i class="fa fa-times-circle"></i> Clear Filters </a>
+                        <!-- {{g | json}} -->
+                          </div>
+                        <!--Filter Bar-->
                       </div>
+                      <div class="pl-1">
+                          <p class="rowCountSummary">Showing {{filteredValuesLength}} of {{cartdata?.length}} entries</p>
+                      </div>
+                  </div>
+                <div class="d-flex">                    
                     <div class="pl-2 mr-auto">
                         <form class="form-inline my-lg-0">
                             <div class="input-group">
@@ -130,8 +215,12 @@
                             </div>
                           </form>
                     </div>
-                <div class="pr-2">
-                  <!--selectedColumn  -->
+                <div class="pl-2 d-none">                                        
+                  
+                </div>
+                <div class="pr-2" style="margin-top:-8px;">
+                    <button pButton type="button" class="custom-clear-btn" icon="fa fa-close" label="{{gridState.searchTitle}}" (click)="clearGridState()" *ngIf="!!gridState && gridState.hasOwnProperty('searchTitle')"></button>
+                    <!-- <a (click)="clearGridState()" class="btn btn-sm btn-primary" *ngIf="!!gridState && gridState.hasOwnProperty('searchTitle')"><i class="fa fa-close"></i> {{gridState.searchTitle}}</a> -->
                     <p-multiSelect [options]="fixCol" [(ngModel)]="scrollableCols" (onChange)="updateSelection()" optionLabel="header" 
                       selectedItemsLabel="{0} columns selected" defaultLabel="Choose Columns">
                     </p-multiSelect>
@@ -140,18 +229,14 @@
                     Export Data
                   </button>
                   <div class="dropdown-menu dropdown-menu-right ml-9">
-                    <a class="dropdown-item" (click)="dt.exportCSV()">All Data</a>
-                    <a class="dropdown-item" (click)="dt.exportCSV({selectionOnly:true})">Selected Row(s)</a>
+                    <!-- dt.exportCSV()-->
+                    <a class="dropdown-item" (click)="exportDataAsCSV(dt)">All Data</a>
+                    <a class="dropdown-item" (click)="exportDataAsCSVSelected(dt)">Selected Row(s)</a>
                   </div>
                 </div>
                 <p-selectButton class="ml-1" [options]="modes" [(ngModel)]="selectedModes" (onChange)="optionChangeData()"></p-selectButton>
-
-                <!-- <a (click)="showDialogToAdd()" pTooltip="Add Row" tooltipPosition="top" class="ml-1"><i class="fa fa-plus fa-2x"></i></a>
-                <a (click)="saveGridState()" pTooltip="Save Grid State" tooltipPosition="top" class="ml-1"><i class="fa fa-floppy-o fa-2x"></i></a>
-                <a (click)="lockJobGenerateTags()" pTooltip="Lock Job & Generate Tags" tooltipPosition="top" class="ml-1"><i class="fa fa-lock fa-2x"></i></a> -->
-                  </div>
-                </div>
-                <p class="rowCountSummary">Showing {{filteredValuesLength}} of {{cartdata?.length}} entries</p>
+              </div>
+                </div>               
               </p-menubar>
     
             </ng-template>
@@ -177,54 +262,54 @@
                   
                   <!-- <p-dropdown *ngSwitchCase="'totalage'" [options]="totalage" [style]="{'width':'100%'}"
                     (onChange)="dt.filter($event.value, col.field, 'equals')"></p-dropdown>-->
-                  <input *ngSwitchCase="'job_key'" placeholder="Search Job Key" pInputText type="text" (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)" [style]="{minWidth: '155px'} " class="mt2">
-                  <input *ngSwitchCase="'name'" placeholder="Search Job Name" pInputText type="text" (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)" [style]="{minWidth: '155px'} " class="mt2">
-                  <input *ngSwitchCase="'lessonlet'" placeholder="Lesson Letter" pInputText type="text" (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)" [style]="{minWidth: '155px'} " class="mt2">
-                  <input *ngSwitchCase="'tags'" placeholder="Tags " pInputText type="text" (input)="dt.filter($event.target.value, col.field, 'contains')" [style]="{minWidth: '155px'} " class="mt2">
-                  <input *ngSwitchCase="'comment'" placeholder="Lesson Letter" pInputText type="text" (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)" [style]="{minWidth: '155px'} " class="mt2">
-                  <input *ngSwitchCase="'description'" placeholder="Description" pInputText type="text" (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)" [style]="{minWidth: '155px'} " class="mt2">
-                  <input *ngSwitchCase="'cstage'" placeholder="" pInputText type="text" (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)" [style]="{minWidth: '155px'} " class="mt2">
-                  <input *ngSwitchCase="'job_active_stage.status'" placeholder="" pInputText type="text" (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)" [style]="{minWidth: '155px'} " class="mt2">
-                  <input *ngSwitchCase="'creditLine'" placeholder="" pInputText type="text" (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)" [style]="{minWidth: '155px'} " class="mt2">
-                  <input *ngSwitchCase="'mverification'" placeholder="" pInputText type="text" (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)" [style]="{minWidth: '155px'} " class="mt2">
-                  <input *ngSwitchCase="'isPaging'" placeholder="" pInputText type="text" (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)" [style]="{minWidth: '155px'} " class="mt2">
+                  <input *ngSwitchCase="'job_key'" [(ngModel)]="g.job_key" placeholder="Search Job Key" pInputText type="text" (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)" class="w-100">
+                  <input *ngSwitchCase="'name'" [(ngModel)]="g.name" placeholder="Search Job Name" pInputText type="text" (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)" class="w-100">
+                  <input *ngSwitchCase="'lessonlet'" [(ngModel)]="g.lessonlet" placeholder="Lesson Letter" pInputText type="text" (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)" class="w-100">
+                  <input *ngSwitchCase="'tags'" [(ngModel)]="g.tags" placeholder="Tags" pInputText type="text" (input)="dt.filter($event.target.value, col.field, 'contains')" class="w-100">
+                  <input *ngSwitchCase="'comment'" [(ngModel)]="g.comment" placeholder="Comment" pInputText type="text" (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)" class="w-100">
+                  <input *ngSwitchCase="'description'" [(ngModel)]="g.description" placeholder="Description" pInputText type="text" (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)" class="w-100">
+                  <input *ngSwitchCase="'cstage'" [(ngModel)]="g.cstage" placeholder="" pInputText type="text" (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)" class="w-100">
+                  <input *ngSwitchCase="'job_active_stage.status'" [(ngModel)]="g.status" placeholder="" pInputText type="text" (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)" class="w-100">
+                  <input *ngSwitchCase="'creditLine'" [(ngModel)]="g.creditLine" placeholder="" pInputText type="text" (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)" class="w-100">
+                  <input *ngSwitchCase="'mverification'" [(ngModel)]="g.mverification" placeholder="" pInputText type="text" (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)" class="w-100">
+                  <input *ngSwitchCase="'isPaging'" [(ngModel)]="g.isPaging" placeholder="" pInputText type="text" (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)" class="w-100">
                   
-                  <p-multiSelect maxSelectedLabels="1" *ngSwitchCase="'lesson'"  [options]="lessons" defaultLabel="All Lessons"
+                  <p-multiSelect maxSelectedLabels="1" *ngSwitchCase="'lesson'" [(ngModel)]="g.lesson" [options]="lessons" defaultLabel="All Lessons"
                     (onChange)="dt.filter($event.value, col.field, 'in')" [style]="{minWidth: '155px'}"></p-multiSelect>
-                  <p-multiSelect maxSelectedLabels="1" *ngSwitchCase="'component'"  [options]="components" defaultLabel="All Components"
+                  <p-multiSelect maxSelectedLabels="1" *ngSwitchCase="'component'" [(ngModel)]="g.component"  [options]="components" defaultLabel="All Components"
                     (onChange)="dt.filter($event.value, col.field, 'in')" [style]="{minWidth: '155px'}"></p-multiSelect>
-                  <p-multiSelect maxSelectedLabels="1" *ngSwitchCase="'module'" [options]="modules" defaultLabel="All Modules" 
+                  <p-multiSelect maxSelectedLabels="1" *ngSwitchCase="'module'" [(ngModel)]="g.module" [options]="modules" defaultLabel="All Modules" 
                     (onChange)="dt.filter($event.value, col.field, 'in')" [style]="{minWidth: '155px'}"></p-multiSelect>
-                  <p-multiSelect maxSelectedLabels="1" *ngSwitchCase="'grade'"  [options]="grades" defaultLabel="All Grades" 
+                  <p-multiSelect maxSelectedLabels="1" *ngSwitchCase="'grade'" [(ngModel)]="g.grade" [options]="grades" defaultLabel="All Grades" 
                     (onChange)="dt.filter($event.value, col.field, 'in')" [style]="{minWidth: '155px'}"></p-multiSelect>
-                  <p-multiSelect maxSelectedLabels="1" *ngSwitchCase="'batch'" [options]="batchs" defaultLabel="All Batches" 
+                  <p-multiSelect maxSelectedLabels="1" *ngSwitchCase="'batch'" [(ngModel)]="g.batch" [options]="batchs" defaultLabel="All Batches" 
                     (onChange)="dt.filter($event.value, col.field, 'in')" [style]="{minWidth: '155px'}"></p-multiSelect>
-                  <p-multiSelect  maxSelectedLabels="1" *ngSwitchCase="'currentRTeam'"  [options]="GcurrentRTeam" defaultLabel="All Team" 
+                  <p-multiSelect  maxSelectedLabels="1" *ngSwitchCase="'currentRTeam'" [(ngModel)]="g.currentRTeam" [options]="GcurrentRTeam" defaultLabel="All Team" 
                     (onChange)="dt.filter($event.value, col.field, 'in')" [style]="{minWidth: '155px'}"></p-multiSelect>
-                  <p-multiSelect maxSelectedLabels="1" *ngSwitchCase="'curriculum'"  [options]="Gcurriculum" defaultLabel="All Curriculum" 
+                  <p-multiSelect maxSelectedLabels="1" *ngSwitchCase="'curriculum'"  [(ngModel)]="g.curriculum" [options]="Gcurriculum" defaultLabel="All Curriculum" 
                     (onChange)="dt.filter($event.value, col.field, 'in')" [style]="{minWidth: '155px'}"></p-multiSelect>
-                  <p-multiSelect maxSelectedLabels="1" *ngSwitchCase="'revisionC'"  [options]="" defaultLabel="All R.Count" 
+                  <p-multiSelect maxSelectedLabels="1" *ngSwitchCase="'revisionC'" [(ngModel)]="g.revisionC" [options]="revisions" defaultLabel="All R.Count" 
                     (onChange)="dt.filter($event.value, col.field, 'in')" [style]="{minWidth: '155px'}"></p-multiSelect>
-                  <p-multiSelect maxSelectedLabels="1" *ngSwitchCase="'artcomplex'"  [options]="Gartcomplexs" defaultLabel="Art Complexity" 
+                  <p-multiSelect maxSelectedLabels="1" *ngSwitchCase="'artcomplex'" [(ngModel)]="g.artcomplex"  [options]="Gartcomplexs" defaultLabel="Art Complexity" 
                     (onChange)="dt.filter($event.value, col.field, 'in')" [style]="{minWidth: '155px'}"></p-multiSelect>
-                  <p-multiSelect maxSelectedLabels="1" *ngSwitchCase="'artassion'" [options]="Gartassions" defaultLabel="Art Assignment" 
+                  <p-multiSelect maxSelectedLabels="1" *ngSwitchCase="'artassion'" [(ngModel)]="g.artassion"  [options]="Gartassions" defaultLabel="Art Assignment" 
                     (onChange)="dt.filter($event.value, col.field, 'in')" [style]="{minWidth: '155px'}"></p-multiSelect>
-                  <p-multiSelect maxSelectedLabels="1" *ngSwitchCase="'risk'" [options]="Grisks" defaultLabel="All Risk" optionLabel="value"
+                  <p-multiSelect maxSelectedLabels="1" *ngSwitchCase="'risk'" [(ngModel)]="g.risk"  [options]="Grisks" defaultLabel="All Risk" 
                     (onChange)="dt.filter($event.value, col.field, 'in')" [style]="{minWidth: '155px'}"></p-multiSelect>
-                  <p-multiSelect maxSelectedLabels="1" *ngSwitchCase="'impact'" [options]="Gimpacts" defaultLabel="All Impact" 
+                  <p-multiSelect maxSelectedLabels="1" *ngSwitchCase="'impact'" [(ngModel)]="g.impact" [options]="Gimpact" defaultLabel="All Impact" 
                   (onChange)="dt.filter($event.value, col.field, 'in')" [style]="{minWidth: '155px'}"></p-multiSelect>
-                  <p-multiSelect maxSelectedLabels="1" *ngSwitchCase="'facing'" [(ngModel)]="grid.facing" [options]="facings" defaultLabel="All Facings" 
+                  <p-multiSelect maxSelectedLabels="1" *ngSwitchCase="'facing'" [(ngModel)]="g.facing" [(ngModel)]="grid.facing" [options]="facings" defaultLabel="All Facings" 
                     (onChange)="dt.filter($event.value, col.field, 'in')" [style]="{minWidth: '155px'}"></p-multiSelect>
-                  <p-multiSelect maxSelectedLabels="1" *ngSwitchCase="'series'" [options]="seriess" defaultLabel="All Series" 
+                  <p-multiSelect maxSelectedLabels="1" *ngSwitchCase="'series'" [(ngModel)]="g.series" [options]="seriess" defaultLabel="All Series" 
                     (onChange)="dt.filter($event.value, col.field, 'in')" [style]="{minWidth: '155px'}"></p-multiSelect>
-                  <p-multiSelect maxSelectedLabels="1" *ngSwitchCase="'workflow'" [options]="Gworkflow" defaultLabel="All Workflow"
+                  <p-multiSelect maxSelectedLabels="1" *ngSwitchCase="'workflow'" [(ngModel)]="g.workflow"  [options]="Gworkflow" defaultLabel="All Workflow"
                   (onChange)="dt.filter($event.value, col.field, 'in')" [style]="{minWidth: '155px'}"></p-multiSelect>
                 </th>
               </tr>
             </ng-template>
             <ng-template pTemplate="body" let-columns="columns" let-rowData let-editing="editing" let-ri="rowIndex">
-              <tr [pEditableRow]="rowData" [pSelectableRow]="rowData" class="myClass {{isDuplicate(rowData, editing)}} {{setEditableHeight(editing)}}">
-                <!--
+              <tr [pEditableRow]="rowData" [pSelectableRow]="rowData" class=" {{isDuplicate(rowData, editing)}} {{setEditableHeight(editing)}}">
+                <!-- killed
                 DATA FOR EDITING 
                 -->
                 <td *ngFor="let col of columns" class="{{ellipsisData(col)}}"> 
@@ -233,13 +318,17 @@
                       <ng-container  *ngIf="checkEdit(col.field, rowData)">
                           <button *ngIf="!editing" pButton type="button" label="{{rowData[col.field]}}" pInitEditableRow icon="pi pi-pencil"
                           class=" btn btn-sm btn-primary" (click)="onRowEditInit(rowData, editing)"></button>
+                          <!-- <button *ngIf="!editing" pButton type="button" title="Kill" pInitEditableRow icon="fa fa-trash"
+                          class="ml-1 btn btn-sm ui-button-danger" (click)="killJobs(rowData, editing)"></button> -->
+                          <!-- <button *ngIf="!editing" pButton type="button" title="" pInitEditableRow icon="fa fa-undo"
+                          class="ml-1 btn btn-sm ui-button-success" (click)="onRowEditInit(rowData, editing)"></button> -->
                       </ng-container>
                       <a *ngIf="!checkEdit(col.field, rowData)" href="https://greatminds.getbynder.com/workflow/job/view/{{rowData[col.field]}}" target="_blank">
                       {{rowData[col.field]}}
                       </a>
-                      <button *ngIf="editing" pButton label="{{rowData[col.field]}}"  type="button" pSaveEditableRow icon="pi pi-check"
+                      <button *ngIf="editing" pButton label="{{rowData[col.field]}}"  type="button" pSaveEditableRow icon="fa fa-check"
                         class=" btn btn-sm ui-button-success" style="margin-right: .5em" (click)="onRowEditSave(rowData)"></button>
-                      <button *ngIf="editing" pButton type="button"  pCancelEditableRow icon="pi pi-times"
+                      <button *ngIf="editing" pButton type="button"  pCancelEditableRow icon="fa fa-times"
                         class=" btn btn-sm ui-button-danger" (click)="onRowEditCancel(rowData, ri)"></button>
                     </ng-container>
                     <span *ngIf="col.field =='name' " pTooltip="{{rowData.name}}" tooltipPosition="top">
@@ -269,7 +358,7 @@
                           {{rowData[col.field]}}
                         </ng-template>
                     </p-cellEditor>
-                    <p-cellEditor *ngIf="col.field =='module' ">
+                    <p-cellEditor *ngIf="col.field =='module' " pTooltip="{{rowData.module}}" tooltipPosition="top">
                       <ng-template pTemplate="input">
                         <p-dropdown [options]="Mdata" [(ngModel)]="rowData.module" [style]="{'width':'100%'}">
                         </p-dropdown>
@@ -303,6 +392,9 @@
                           {{rowData[col.field]}}
                         </ng-template>
                     </p-cellEditor>
+                    <span *ngIf="col.field =='creditLine' " pTooltip="{{rowData.creditLine}}" tooltipPosition="top">
+                        {{rowData[col.field]}}
+                    </span>
                     <ng-container *ngIf="col.field =='thumb' && !!rowData.thumb" >
                         <button pButton icon="pi pi-search " class="btn btn-sm" (click)="selectedImages($event, rowData, op)"></button>
                     </ng-container>
@@ -378,9 +470,9 @@
                     <ng-container *ngIf="col.field =='facing' ">
                       {{rowData[col.field]}}
                     </ng-container>
-                    <ng-container *ngIf="col.field =='series' ">
+                    <span *ngIf="col.field =='series' " pTooltip="{{rowData[col.field]}}" tooltipPosition="top">
                       {{rowData[col.field]}}
-                    </ng-container>
+                    </span>
                     <ng-container *ngIf="col.field =='workflow' ">
                         {{rowData[col.field]}}
                     </ng-container>
@@ -403,12 +495,18 @@
       <img src="{{selectedData.thumb}}" *ngIf="selectedData" style="width: 250px; height: 25%;"/> 
   </p-overlayPanel>  
     <!--Modal dialog for add new records-->
-  <p-dialog header="Add new record(s)" (onHide)="hideNewRecord('$event')" [(visible)]="displayDialog" [modal]="true" showEffect="fade" [responsive]="true" [baseZIndex]="10000" [style]="{width: '900px', height:'300px', minHeight:'300px'}" [minY]="70" 
+   
+  <p-dialog  header="Add new record(s)" (onHide)="hideNewRecord('$event')" [(visible)]="displayDialog" [modal]="true" showEffect="fade" [responsive]="true" [baseZIndex]="10000" [style]="{width: '900px', height:'300px', minHeight:'300px'}" [minY]="70" 
   [maximizable]="true" [baseZIndex]="10000">
+  
       <form [formGroup]="form" (ngSubmit)="submit()" #documentEditForm="ngForm">
+          <!-- <p-blockUI [target]="pnl" [blocked]="blockedPanel">
+              <i class="fa fa-lock fa-5x" style="position:absolute;top:25%;left:50%"></i>
+          </p-blockUI> -->
         <div class="ui-g ui-fluid" >         
                 <div class="col-12 p-0">                 
                      <div class="card-body p-2">
+                      
                       <div class="row">
                         <div class="col-12">
                             <div class="row">
@@ -463,16 +561,19 @@
                             </div>
                           </div>
                         </div>
+                        
                       </div>
                 </div>       
       </div>      
     </form>
+    
     <p-footer>
       <div class="ui-dialog-buttonpane ui-helper-clearfix mt-2 text-right">
           <button type="button" class="btn btn-sm" pButton icon="fa fa-plus" (click)="addContact()" label="Insert Blank Row"></button>
           <button type="button" class="ml-1 btn btn-sm" pButton icon="fa fa-check" (click)="documentEditForm.ngSubmit.emit()" label="Save"></button>
       </div>
   </p-footer>
+  
   </p-dialog>
 <!--Modal dialog for Saved Search-->
 <p-dialog header="Save Search" [(visible)]="saveSearchModal"  [responsive]="true" showEffect="fade" [modal]="true"  [style]="{width: '30%'}">

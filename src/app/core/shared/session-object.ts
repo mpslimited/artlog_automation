@@ -5,6 +5,8 @@
 export interface UserDetailsI {
     Token: string;
     userInfo: string;
+    name: string;
+    roleName: string;
 }
 
 

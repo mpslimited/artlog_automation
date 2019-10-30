@@ -2,18 +2,48 @@
 app-cust-desktop{ width: 100%}
 .mt2{ margin-top:2px !important }
 /* body .ui-table .ui-table-tbody > tr:nth-child(even).ui-state-highlight{color:#000!important} */
+.searchFilterBar{
+  padding:3px 0 10px 0;
+  text-align: left!important;
+}
+.searchFilterBar .badge{
+  margin-right:2px;
+}
+.searchFilterBar .badge i.fa-times-circle{
+  font-size:14px!important
+}
+.searchFilterBar .badge i.fa-times-circle:hover{
+  color:blue;
+}
+.searchFilterBar .badge.badge-light{
+  background:none;
+  border:1px solid #ccc;
+  color: #666;
+}
+.searchFilterBar .badge.badge-info{
+  font-weight: 700;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
 .navbar-brand-wrapper{background:#07212d!important}
 .newrecord{ background:#c0fbc0!important }
 .newrecord.ui-state-highlight{ background:#007ad9!important }
 .navbar .navbar-menu-wrapper .navbar-nav .nav-item.dropdown .dropdown-menu.navbar-dropdown .dropdown-item{
   padding:10px!important;
   font-size:12px;
+  flex-direction: column-reverse;
 }
+.killed{
+  text-decoration: line-through;
+  background:#8a8a8a !important;
+}
+.killed .btn.btn-sm{font-size:11px!important}
+.ui-menubar .ui-menubar-root-list{display: none!important;}
 .form-check-label{font-size:12px!important;padding-top:2px;}
 .rowCountSummary {
   font-size: 12px;
-  float: left;
-  margin-left: 18px!important;
+  text-align:right;
+  padding:5px 8px 0 0;
 }
 /* .ui-overlaypanel-content img{
   width:40%!important;
@@ -35,6 +65,7 @@ body .ui-dialog{z-index:1031!important}
 .ui-table .ui-menubar{border:0 none!important}
 th .ui-multiselect-open{ position: absolute !important;top:39px!important;}
 .ui-splitbutton button{font-size:12px!important}
+.ui-menubar-custom{margin-bottom:8px!important}
 .ui-menubar .ui-menubar-custom, .ui-table-caption, .ui-table-summary, body .ui-table .ui-table-caption, body .ui-table .ui-table-summary{padding: 0!important}
 .ui-splitbutton .ui-menuitem-link{text-align: left!important;}
 .ui-menubar .ui-menubar-custom{float:none!important;;width:100%!important;}
@@ -42,6 +73,11 @@ th .ui-multiselect-open{ position: absolute !important;top:39px!important;}
 .dropdown .dropdown-menu .dropdown-item:hover{
   background:#f7f7f7;
   color:#000000;
+}
+.custom-clear-btn{
+  font-size:12px!important;
+  right: 8px;
+  top: 2px;
 }
 .custom-btn-dropdown{
   padding: 8px!important;

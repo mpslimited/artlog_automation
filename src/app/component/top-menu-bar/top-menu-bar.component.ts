@@ -35,13 +35,12 @@ export class TopMenuBarComponent extends BaseComponent implements OnInit {
   NAME_PROCESS_DETAILS = 'NAME_PROCESS_DETAILS';
   // click = 0;
   moduleSeleted = 0;
-
   readytoGo: any;
   readytoGo1: any;
   newProcessType: DropdownDataModel;
   docRefFlag: boolean;
   jobkey: any;
-
+  auth: any = {};
 
 
   constructor(
@@ -78,9 +77,8 @@ export class TopMenuBarComponent extends BaseComponent implements OnInit {
   }
 
   ngOnInit() {
-   
-
-  }
+    this.auth=SessionObject.getUserDetails();
+   }
 
   // getServiceUrl(name): any {
   //   if (name === this.NAME_NEW_PROCESS) {

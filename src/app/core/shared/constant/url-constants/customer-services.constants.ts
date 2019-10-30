@@ -3,6 +3,7 @@ import { UrlBase } from './url.base';
 export class CustomerServicesUrls extends UrlBase {
       public static ARTLOGAUTOMATION_URL="http://localhost:3000/";
       //public static ARTLOGAUTOMATION_URL = "https://gmartlogautomationdemo.mpstechnologies.com/";
+      //public static ARTLOGAUTOMATION_URL = "https://gmartlogautomation.mpstechnologies.com/";
       public static SMARTSHEET_LOGIN = CustomerServicesUrls.ARTLOGAUTOMATION_URL + "api/login";
       public static SMARTSHEET_LOGOUT = CustomerServicesUrls.ARTLOGAUTOMATION_URL + "api/logout";
       public static ARTLOG_INIT = CustomerServicesUrls.ARTLOGAUTOMATION_URL + "api/artloginit/";

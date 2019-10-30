@@ -33,11 +33,12 @@ import {OverlayPanelModule} from 'primeng/overlaypanel';
 import {DynamicDialogModule} from 'primeng/dynamicdialog';
 import {ConfirmDialogModule} from 'primeng/confirmdialog';
 import {SelectButtonModule} from 'primeng/selectbutton';
-
+import {BlockUIModule} from 'primeng/blockui';
 
 
 @NgModule({
       imports: [
+            BlockUIModule,
             SelectButtonModule,
             ConfirmDialogModule,
             DynamicDialogModule,

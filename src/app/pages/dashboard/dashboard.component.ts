@@ -21,6 +21,18 @@ import { OverlayPanel } from 'primeng/overlaypanel';
 
 import { ConfirmationService } from 'primeng/api';
 import { BehaviorSubject } from 'rxjs';
+
+export interface gGiltrt {
+  job_key: string;
+  name: string;
+  lessonlet: string;
+  tags: string;
+  comment: string;
+  description: string;
+  cstage: string;
+  stage: string;
+  creditLine: string;
+}
 @Component({
   selector: 'dashboard',
   templateUrl: './dashboard.component.html',
@@ -29,6 +41,7 @@ import { BehaviorSubject } from 'rxjs';
 })
 export class DashboardComponent extends BaseComponent implements OnInit, OnChanges {
   //@Input() jobId: string;
+  blockedPanel: boolean = false;
   clonedArtLog: { [s: string]: any; } = {};
   yearFilter: number;
   selectedColumn: any;
@@ -48,6 +61,7 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
   revisons: any = [];
   facings: any = [];
   seriess: any = [];
+  revisions: any = [];
   Gartcomplexs: any = [];
   Gartassions: any = [];
   Grisks: any = [];
@@ -115,6 +129,9 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
   selectedModes: string[];
   selectedModesDisabled: boolean;
   jobsTypes: any[];
+  criteria: boolean;
+  isScrollable: boolean = true;
+  g: any = {};
   public dataSource = new BehaviorSubject<AbstractControl[]>([]);
 
 
@@ -134,6 +151,7 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
     private fb: FormBuilder) {
     super(baseServices, router);
     //this.checkUserinfo();
+    this.criteria = false;
     this.selectedModesDisabled = false;
     this.modes = [
       { value: 'AddRow', title: 'Add Row', icon: 'fa fa-plus' },
@@ -179,7 +197,6 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
       { field: 'comment', header: 'Comments' },
       { field: 'tags', header: 'Tag Entry' },
       { field: 'mverification', header: 'M. Verification' },
-      // { field: 'damVerified', header: 'DAM Verified' },
       { field: 'isPaging', header: 'Paging Approved' },
       { field: 'revisionC', header: 'Revision Count' },
       { field: 'artcomplex', header: 'Art-Complexity' },
@@ -236,8 +253,13 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
     // set contactlist to the form control containing jobAdd
     this.duplicateJobsList = this.form.get('jobAdd') as FormArray;
     this.contactList = this.form.get('jobAdd') as FormArray;
-    let Wdata = ['Clip Art', 'Created Image', 'Permission', 'Shutterstock'];
-    this.workflows = Wdata.map(d => ({ value: d }));
+    let Wdata = [
+      { value: '', label: 'Select All' },
+      { value: 'Clip Art', label: 'Clip Art' },
+      { value: 'Created Image', label: 'Created Image' },
+      { value: 'Permission', label: 'Permission' },
+      { value: 'Shutterstock', label: 'Shutterstock' }];
+    this.workflows = Wdata;
     let Tdata = ["Permissions Team", "Art Team", "Clip Art & Storage Team", "Shutterstock Team", "Content Team", "On Hold Team"];
     this.Tdata = Tdata.map(d => ({ value: d, label: d }));
     let jobStatus = ['Active', 'Approved', 'Asset Bank'];
@@ -245,6 +267,10 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
     //scrollableCols
     this.getinit();
     this.editSetting = new CustomModalPopUpModel('Edit Job');
+  }
+  collapseChange(event) {
+    debugger
+    console.log(event);
   }
   addBatch() {
     if (this.selectedRows.length > 0) {
@@ -288,7 +314,7 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
     this.filteredValuesLength = event.filteredValue.length; // count of displayed rows 
   }
   ellipsisData(col) {
-    if (col.field == 'description' || col.field == 'cstage' || col.field == 'tags' || col.field == 'name') {
+    if ( col.field == 'series' ||  col.field == 'description' || col.field == 'module' || col.field == 'cstage' || col.field == 'tags' || col.field == 'name' || col.field == 'creditLine') {
       return "text-truncate";
     }
   }
@@ -366,7 +392,6 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
     body = body.set('selectedids', JSON.stringify(this.selectedRows.map(d => d._id)));
     let self = this;
     this.httpService.extractData(CustomerServicesUrls.ARTLOG_BULKTAGS, body, null).subscribe((data) => {
-      self.bulkTags = '';
       for (let dt of data) {
         let index = self.cartdata.indexOf(self.cartdata.filter((d, i) => d._id === dt._id)[0]);
         if (self.cartdata[index].tags != "") {
@@ -375,6 +400,7 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
           self.cartdata[index].tags = self.bulkTags;
       }
       this.bulkTagModal = false;
+      self.bulkTags = '';
       this.alert.showAlertScucess(['Bulk Batch has been updated successfully!'], 5000);
     });
   }
@@ -396,16 +422,17 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
   lockJobGenerateTags() {
     if (this.selectedRows.length == 0) {
       alert('Please select a row.')
+    } else {
+      let dt = [];
+      this.rowsmoveTags = [];
+      for (let t = 0; t < this.selectedRows.length; t++) {
+        let ind = this.cartdata.indexOf(this.selectedRows[t]);
+        //this.selectedRows[t].tags 
+        this.selectedRows[t].generatedTags = 'MPS artlog, ' + this.generateTags(this.cartdata[ind]);
+        this.rowsmoveTags.push(this.selectedRows[t]);
+      }
+      this.tagverificationModal = true;
     }
-    let dt = [];
-    this.rowsmoveTags = [];
-    for (let t = 0; t < this.selectedRows.length; t++) {
-      let ind = this.cartdata.indexOf(this.selectedRows[t]);
-      //this.selectedRows[t].tags 
-      this.selectedRows[t].generatedTags = 'Artlog automation, ' + this.generateTags(this.cartdata[ind]);
-      this.rowsmoveTags.push(this.selectedRows[t]);
-    }
-    this.tagverificationModal = true;
   }
   place(d) {
     d = parseInt(d);
@@ -418,8 +445,8 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
     if (!!dt.lesson) {
       if (!!dt.lesson.match(/[A-Z]/i)) {
         let splited = dt.lesson.split(/[A-Z]/i);
-        combination.push('G' + this.place(dt.grade) + '_M' + this.place(dt.module) + '_' + dt.component + '_L' + this.place(splited[0]));
-        combination.push('G' + this.place(dt.grade) + '_M' + this.place(dt.module) + '_' + dt.component + '_L' + this.place(splited[0]) + '_' + dt.lesson.match(/[A-Z]/i)[0]);
+        combination.push('G' + this.place(dt.grade) + '_M' + this.place(dt.module) + '_L' + this.place(splited[0]));
+        combination.push('G' + this.place(dt.grade) + '_M' + this.place(dt.module) + '_L' + this.place(splited[0]) + '_' + dt.lesson.match(/[A-Z]/i)[0]);
       } else {
         combination.push('G' + this.place(dt.grade) + '_M' + this.place(dt.module) + '_' + dt.component + '_L' + this.place(dt.lesson));
       }
@@ -437,6 +464,8 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
   clearGridState() {
     this.httpService.extractData(CustomerServicesUrls.ARTLOG_GRIDSTATECLEAR, null, null).subscribe((data) => {
       this.gridState = "";
+      debugger
+      this.scrollableCols = this.cols.filter(d => d.tid > 0);
       this.alert.showAlertScucess(['Grid state reset successfully!'], 3000);
     });
   }
@@ -479,6 +508,7 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
   getinit() {
     this.httpService.extractData(CustomerServicesUrls.ARTLOG_INIT, null, null).subscribe((data) => {
       if (data.hasOwnProperty('grade')) {
+        data.grade.splice(0, 1);
         this.Gdata = data.grade;
         data.grade.splice(0, 0, { id: '', value: '', label: 'Please Select' });
         this.addGdata = data.grade;
@@ -505,7 +535,7 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
         this.impacts = data.impact;
       }
       if (!!data.wip) {
-        data.wip.splice(0, 0, { id: '', value: '', label: 'Please Select' });
+        data.wip.splice(0, 0, { id: '', value: '', label: 'Select All' });
         this.wip = data.wip;
       }
       if (!!data.inData) {
@@ -568,8 +598,8 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
           this.Gworkflow = (!!data.GridFilters.workflow) ? data.GridFilters.workflow.map(d => ({ label: d, value: d })) : [];
           this.Gcurriculum = (!!data.GridFilters.curriculum) ? data.GridFilters.curriculum.map(d => ({ label: d, value: d })) : [];
           this.facings = (!!data.GridFilters.facing) ? data.GridFilters.facing.map(d => ({ label: d, value: d })) : [];
-          this.seriess = (!!data.GridFilters.series) ? data.GridFilters.series.map(d => ({ label: d, value: d })) : [];
           this.batchs = (!!data.GridFilters.batch) ? data.GridFilters.batch.map(d => ({ label: d, value: d })) : [];
+          this.revisions = (!!data.GridFilters.revision) ? data.GridFilters.revision.map(d => ({ label: d, value: d })) : [];
 
         }
         self.cartdata = data.artLogData;
@@ -637,17 +667,36 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
       grade: [null, Validators.compose([Validators.required])],
       module: [null, Validators.compose([Validators.required])],
       jobkey: [null, Validators.compose([Validators.required])],
-      component: [],
-      lesson: [],
+      component: [null],
+      lesson: [null],
+    });
+  }
+  createDuplicateJob(jk: String = '', g: any = {}, m: any = {}, c: String = '', l: String = ''): FormGroup {
+    return this.fb.group({
+      jobkey: [jk, Validators.compose([Validators.required])],
+      grade: [g, Validators.compose([Validators.required])],
+      module: [m, Validators.compose([Validators.required])],
+      component: [c],
+      lesson: [l],
     });
   }
   addContact() {
-    debugger
+    //debugger
     this.contactList.push(this.createContact());
   }
   // remove contact from group
   createClone(index) {
-    this.contactList.push(this.getContactsFormGroup(index));
+
+    let jobAdd = this.form.value.jobAdd[index];
+    var clone = this.createDuplicateJob(jobAdd.jobkey, jobAdd.grade, jobAdd.module, jobAdd.component, jobAdd.lesson);
+    this.contactList.push(clone);
+    //this.contactList.push(this.createContact());
+    //this.form.value.jobAdd[this.form.value.jobAdd.length-1].jobkey = this.form.value.jobAdd[index].jobkey;
+    // setTimeout(function(){ 
+    //   console.log("Data Changes:",this.form, this.form.value.jobAdd[this.form.value.jobAdd.length-1]);
+    //   this.form.value.jobAdd[this.form.value.jobAdd.length-1] = this.form.value.jobAdd[index];
+    //  }, 1000);
+    //this.form.value.jobAdd[this.form.value.jobAdd.length-1] = this.form.value.jobAdd[index];
   }
   removeContact(index) {
     this.contactList.removeAt(index);
@@ -660,15 +709,20 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
     const formGroup = this.contactList.controls[index] as FormGroup;
     return formGroup;
   }
+  // submit() {
+  //  console.log( "from data => ", this.form.value.jobAdd.map(d=> d.jobkey).join("") ); 
+  // }
   submit() {
-    debugger
+
     let valid = true;
     for (let test of this.form.value.jobAdd) {
-      if (test.jobkey === null) {
+      if (test.jobkey === null || !test.jobkey) {
         valid = false;
       }
     }
+
     if (valid) {
+
       const myheader = new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded');
       let body = new HttpParams();
       body = body.set('jobAdd', JSON.stringify(this.form.value.jobAdd));
@@ -690,6 +744,7 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
   }
   getSearchModel(name: string) {
     if (name === this.NAME_ARTLOG) {
+      // debugger
       try {
         if (this.frmdt.grade.length > 0) {
           this.artLogModel.grade.value = this.frmdt.grade.map(a => a.id);
@@ -700,9 +755,9 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
         if (this.frmdt.status.length > 0) {
           this.artLogModel.status.value = this.frmdt.status.map(a => a.field);
         } else { this.artLogModel.status.value = []; }
-        if (this.frmdt.workflow != "") {
-          this.artLogModel.workflow.value = this.frmdt.workflow.value;
-        } else { this.artLogModel.workflow.value = []; }
+        // if (this.frmdt.workflow != "") {
+        //   this.artLogModel.workflow.value = this.frmdt.workflow.value;
+        // } else { this.artLogModel.workflow.value = []; }
       } catch (err) {
         // console.log(err)
       }
@@ -731,5 +786,58 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
         columnApi: this.columnApi
       };
     }
+  }
+  clearAllFilter(dt: any) {
+    let Input: any = ['job_key', 'name', 'lessonlet', 'description', 'cstage', 'status', 'creditLine', 'comment', 'tags', 'mverification', 'isPaging'];
+    let InputOth: any = ['tags'];
+    let Select: any = ['grade', 'module', 'component', 'lesson', 'batch', 'currentRTeam', 'curriculum', 'facing', 'series', 'creditLine',
+      'revisionC', 'artcomplex', 'artassion', 'risk', 'impact', 'workflow'];
+    for (let a in Input) {
+      if (this.g.hasOwnProperty(Input[a]))
+        this.cleargInputFilter(dt, Input[a]);
+    }
+    for (let a in Select) {
+      if (this.g.hasOwnProperty(Select[a]))
+        this.cleargSelectFilter(dt, Select[a]);
+    }
+    if (this.g.hasOwnProperty(InputOth[0]))
+      this.cleargInputOtherFilter(dt, InputOth[0]);
+  }
+  cleargInputOtherFilter(gdt: any, col: string) {
+    this.g[col] = "";
+    gdt.filter(this.g[col], col, 'contains');
+  }
+  cleargInputFilter(gdt: any, col: string) {
+    this.g[col] = "";
+    gdt.filter(this.g[col], col, 'filterMatchMode');
+  }
+  cleargSelectFilter(dt: any, col: string) {
+    this.g[col] = "";
+    dt.filter(this.g[col], col, 'in');
+  }
+  hasData(): boolean{
+    let res= false;
+    for (let key in this.g) {
+      if(this.g[key]!=""){
+        res = true;
+      }
+    }
+    return res;
+  }
+  exportDataAsCSVSelected(dt: any) {
+    this.scrollableCols = this.cols;
+    let that = this;
+    setTimeout(function () {
+      dt.exportCSV({selectionOnly:true});
+      that.scrollableCols = that.cols.filter(d => d.tid > 0);
+    }, 1000);
+  }
+  exportDataAsCSV(dt: any) {
+    this.scrollableCols = this.cols;
+    let that = this;
+    setTimeout(function () {
+      dt.exportCSV();
+      that.scrollableCols = that.cols.filter(d => d.tid > 0);
+    }, 1000);
   }
 }
