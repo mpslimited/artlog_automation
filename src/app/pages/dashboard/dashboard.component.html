@@ -268,14 +268,17 @@
                   <input *ngSwitchCase="'tags'" [(ngModel)]="g.tags" placeholder="Tags" pInputText type="text" (input)="dt.filter($event.target.value, col.field, 'contains')" class="w-100">
                   <input *ngSwitchCase="'comment'" [(ngModel)]="g.comment" placeholder="Comment" pInputText type="text" (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)" class="w-100">
                   <input *ngSwitchCase="'description'" [(ngModel)]="g.description" placeholder="Description" pInputText type="text" (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)" class="w-100">
-                  <input *ngSwitchCase="'cstage'" [(ngModel)]="g.cstage" placeholder="" pInputText type="text" (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)" class="w-100">
+                  <p-multiSelect maxSelectedLabels="1" *ngSwitchCase="'cstage'" [(ngModel)]="g.cstage" [options]="cstages" defaultLabel="All Stages" (onChange)="dt.filter($event.value, col.field, 'in')" [style]="{minWidth: '155px'}"></p-multiSelect>
+                  <p-multiSelect maxSelectedLabels="1" *ngSwitchCase="'job_active_stage.status'" [(ngModel)]="g.status" [options]="cstatus" defaultLabel="All Status" (onChange)="dt.filter($event.value, col.field, 'in')" [style]="{minWidth: '155px'}"></p-multiSelect>
+                  
+                  <!-- <input *ngSwitchCase="'cstage'" [(ngModel)]="g.cstage" placeholder="" pInputText type="text" (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)" class="w-100">
                   <input *ngSwitchCase="'job_active_stage.status'" [(ngModel)]="g.status" placeholder="" pInputText type="text" (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)" class="w-100">
+                   -->
                   <input *ngSwitchCase="'creditLine'" [(ngModel)]="g.creditLine" placeholder="" pInputText type="text" (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)" class="w-100">
                   <input *ngSwitchCase="'mverification'" [(ngModel)]="g.mverification" placeholder="" pInputText type="text" (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)" class="w-100">
                   <input *ngSwitchCase="'isPaging'" [(ngModel)]="g.isPaging" placeholder="" pInputText type="text" (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)" class="w-100">
                   
-                  <p-multiSelect maxSelectedLabels="1" *ngSwitchCase="'lesson'" [(ngModel)]="g.lesson" [options]="lessons" defaultLabel="All Lessons"
-                    (onChange)="dt.filter($event.value, col.field, 'in')" [style]="{minWidth: '155px'}"></p-multiSelect>
+                  <p-multiSelect maxSelectedLabels="1" *ngSwitchCase="'lesson'" [(ngModel)]="g.lesson" [options]="lessons" defaultLabel="All Lessons" (onChange)="dt.filter($event.value, col.field, 'in')" [style]="{minWidth: '155px'}"></p-multiSelect>
                   <p-multiSelect maxSelectedLabels="1" *ngSwitchCase="'component'" [(ngModel)]="g.component"  [options]="components" defaultLabel="All Components"
                     (onChange)="dt.filter($event.value, col.field, 'in')" [style]="{minWidth: '155px'}"></p-multiSelect>
                   <p-multiSelect maxSelectedLabels="1" *ngSwitchCase="'module'" [(ngModel)]="g.module" [options]="modules" defaultLabel="All Modules" 
@@ -342,7 +345,7 @@
                         {{rowData[col.field]}}
                       </ng-template>
                     </p-cellEditor>
-                    <p-cellEditor *ngIf="col.field =='component' ">
+                    <p-cellEditor *ngIf="col.field =='component' " pTooltip="{{rowData.component}}" tooltipPosition="top">
                         <ng-template pTemplate="input">
                           <input pInputText type="text" [(ngModel)]="rowData.component" required>
                         </ng-template>
@@ -405,7 +408,7 @@
                         {{rowData[col.field]}}
                     </ng-container>
                     <ng-container *ngIf="col.field =='job_active_stage.status' ">
-                        {{rowData[col.field]}}
+                        <!-- {{rowData[col.field]}} -->
                         {{rowData.job_active_stage.status}}
                     </ng-container>
                     <ng-container *ngIf="col.field =='curriculum' " >
@@ -626,6 +629,7 @@
                       <th style="width: 8em">Module</th>
                       <th style="width: 8em">Components</th>
                       <th style="width: 8em">Lesson</th>
+                      <th style="width: 8em">Lesson Letter</th>
                       <th style="width: 8em">Batch</th>
                       <th style="width: 20em">Pre-exist Tags</th>
                       <th style="width: 20em">Generated Tags</th>
@@ -641,6 +645,7 @@
                       <td>{{rowsmoveTags.module}}</td>
                       <td>{{rowsmoveTags.component}}</td>
                       <td>{{rowsmoveTags.lesson}}</td>
+                      <td>{{rowsmoveTags.lessonlet}}</td>
                       <td>{{rowsmoveTags.batch}}</td>
                       <td>{{rowsmoveTags.tags}}</td>
                       <td> <textarea pInputTextarea type="text" [(ngModel)]="rowsmoveTags.generatedTags" ></textarea></td>

@@ -62,6 +62,9 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
   facings: any = [];
   seriess: any = [];
   revisions: any = [];
+  cstages: any = [];
+  cstatus: any = [];
+
   Gartcomplexs: any = [];
   Gartassions: any = [];
   Grisks: any = [];
@@ -314,7 +317,7 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
     this.filteredValuesLength = event.filteredValue.length; // count of displayed rows 
   }
   ellipsisData(col) {
-    if ( col.field == 'series' ||  col.field == 'description' || col.field == 'module' || col.field == 'cstage' || col.field == 'tags' || col.field == 'name' || col.field == 'creditLine') {
+    if (  col.field == 'component' ||  col.field == 'series' ||  col.field == 'description' || col.field == 'module' || col.field == 'cstage' || col.field == 'tags' || col.field == 'name' || col.field == 'creditLine') {
       return "text-truncate";
     }
   }
@@ -364,23 +367,27 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
     });
   }
   confirm() {
-    this.confirmationService.confirm({
-      message: 'Are you sure that you want to proceed?',
-      accept: () => {
-        let body = new HttpParams();
-        for (let dt of this.selectedTagsData) {
-          let ind = this.cartdata.indexOf(dt);
-          this.cartdata[ind].duplicate = false;
+    debugger
+    if ( this.selectedTagsData.length == 0) {
+      this.alert.showAlertDanger(['Please select at lease one record.'], 10000);
+    } else {
+      this.confirmationService.confirm({
+        message: 'Are you sure that you want to proceed?',
+        accept: () => {
+          let body = new HttpParams();
+          for (let dt of this.selectedTagsData) {
+            let ind = this.cartdata.indexOf(dt);
+            this.cartdata[ind].duplicate = false;
+          }
+          body = body.set('data', JSON.stringify(this.selectedTagsData));
+          this.httpService.extractData(CustomerServicesUrls.UPDATEASSETTAGS, body, null).subscribe((data) => {
+            console.log("res=>", data);
+            this.alert.showAlertScucess(['Update in progress! An email notification will be send, once it has been completed.'], 3000);
+            this.tagverificationModal = false;
+          });
         }
-        body = body.set('data', JSON.stringify(this.selectedTagsData));
-        this.httpService.extractData(CustomerServicesUrls.UPDATEASSETTAGS, body, null).subscribe((data) => {
-          console.log("res=>", data);
-          this.alert.showAlertScucess(['Update in progress! An email notification will be send, once it has been completed.'], 3000);
-          this.tagverificationModal = false;
-        });
-        //Actual logic to perform a confirmation
-      }
-    });
+      });
+    }
   }
   deleteMoveTagList(dt: any) {
     let index = this.rowsmoveTags.indexOf(dt);
@@ -439,16 +446,44 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
     return (d < 10) ? '0' + d.toString() : d.toString();
   }
   generateTags(dt: any) {
+    let prfx='';
+    if(!!dt.job_key && dt.job_key.indexOf("SCI-") > -1){
+      prfx="SC_"
+    }else if(!!dt.job_key && dt.job_key.indexOf("EM2-") > -1){
+      prfx="EM2_"
+    }
     let combination = Array();
-    combination.push('G' + this.place(dt.grade));
-    combination.push('G' + this.place(dt.grade) + '_M' + this.place(dt.module));
+    combination.push(prfx+'G' + this.place(dt.grade));
+    combination.push(prfx+'G' + this.place(dt.grade) + '_M' + this.place(dt.module));
     if (!!dt.lesson) {
-      if (!!dt.lesson.match(/[A-Z]/i)) {
-        let splited = dt.lesson.split(/[A-Z]/i);
-        combination.push('G' + this.place(dt.grade) + '_M' + this.place(dt.module) + '_L' + this.place(splited[0]));
-        combination.push('G' + this.place(dt.grade) + '_M' + this.place(dt.module) + '_L' + this.place(splited[0]) + '_' + dt.lesson.match(/[A-Z]/i)[0]);
-      } else {
-        combination.push('G' + this.place(dt.grade) + '_M' + this.place(dt.module) + '_' + dt.component + '_L' + this.place(dt.lesson));
+      let lett=false;
+      if(!!dt.lessonlet){
+        lett=true;
+        combination.push(prfx+'G' + this.place(dt.grade) + '_M' + this.place(dt.module) +'_L'+this.place(dt.lesson)+'_'+dt.lessonlet);
+      }
+      combination.push(prfx+'G' + this.place(dt.grade) + '_M' + this.place(dt.module) +'_L'+this.place(dt.lesson));
+      if(!!dt.component){
+        let comp= dt.component.substring(0,3).trim();
+        if(comp.indexOf('_') > -1){
+          comp=comp.split('_').join('');
+          combination.push(comp);
+        }
+        if(comp==comp.toUpperCase() && !lett){
+          combination.push(prfx + this.place(dt.grade)  + this.place(dt.module)+comp +'_L'+this.place(dt.lesson));
+        }else if(comp==comp.toUpperCase() && !!lett){
+          combination.push(prfx + this.place(dt.grade)  + this.place(dt.module) + comp + '_L'+ this.place(dt.lesson) + '_' + dt.lessonlet);
+        }else{
+          combination.push(prfx + this.place(dt.grade)  + this.place(dt.module)  + '_L'+ this.place(dt.lesson));
+        }
+      }else{
+        combination.push(prfx + this.place(dt.grade) +  this.place(dt.module) +'_L'+this.place(dt.lesson));
+      }
+      if(!dt.tags){
+        combination.push(dt.job_key);
+      }else{
+        if(dt.tags.split(',').indexOf(dt.job_key) != -1){
+          combination.push(dt.job_key);
+        }
       }
     }
     console.log("tagGenerated:", combination.join(', '));
@@ -600,7 +635,8 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
           this.facings = (!!data.GridFilters.facing) ? data.GridFilters.facing.map(d => ({ label: d, value: d })) : [];
           this.batchs = (!!data.GridFilters.batch) ? data.GridFilters.batch.map(d => ({ label: d, value: d })) : [];
           this.revisions = (!!data.GridFilters.revision) ? data.GridFilters.revision.map(d => ({ label: d, value: d })) : [];
-
+          this.cstatus =  (!!data.GridFilters.cstatus) ? data.GridFilters.cstatus.map(d => ({ label: d, value: d })) : [];
+          this.cstages =  (!!data.GridFilters.cstages) ? data.GridFilters.cstages.map(d => ({ label: d, value: d })) : [];
         }
         self.cartdata = data.artLogData;
         this.filteredValuesLength = data.artLogData.length;
@@ -608,6 +644,9 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
         resolve(data);
       });
     });
+  }
+  datatesting(d: any, dd: any){
+    console.log(d, dd);
   }
   updateSelection() {
     this.scrollableCols = this.scrollableCols.sort((a, b) => a.tid - b.tid);

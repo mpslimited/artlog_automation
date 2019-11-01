@@ -1,7 +1,7 @@
 import { UrlBase } from './url.base';
-
+import { environment } from '../../../../../environments/environment'//'./../environments/environment';
 export class CustomerServicesUrls extends UrlBase {
-      public static ARTLOGAUTOMATION_URL="http://localhost:3000/";
+      public static ARTLOGAUTOMATION_URL = environment.apiUrl; //"http://localhost:3000/";
       //public static ARTLOGAUTOMATION_URL = "https://gmartlogautomationdemo.mpstechnologies.com/";
       //public static ARTLOGAUTOMATION_URL = "https://gmartlogautomation.mpstechnologies.com/";
       public static SMARTSHEET_LOGIN = CustomerServicesUrls.ARTLOGAUTOMATION_URL + "api/login";
