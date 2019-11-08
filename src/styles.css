@@ -1,10 +1,20 @@
 /* You can add global styles to this file, and also import other style files */
 app-cust-desktop{ width: 100%}
+.font12{ font-size: 12px!important;}
 .mt2{ margin-top:2px !important }
 /* body .ui-table .ui-table-tbody > tr:nth-child(even).ui-state-highlight{color:#000!important} */
 .searchFilterBar{
   padding:3px 0 10px 0;
   text-align: left!important;
+}
+.form-group label{margin-bottom: 0.35rem!important;}
+.ui-dropdown label.ui-dropdown-label{
+  position: relative;
+  top:2px;
+}
+td .ui-dropdown label.ui-dropdown-label{
+  position: relative;
+  top:0!important;
 }
 .searchFilterBar .badge{
   margin-right:2px;
@@ -27,7 +37,9 @@ app-cust-desktop{ width: 100%}
 }
 .navbar-brand-wrapper{background:#07212d!important}
 .newrecord{ background:#c0fbc0!important }
+.flagedrecord{ background:#efd4a7!important }
 .newrecord.ui-state-highlight{ background:#007ad9!important }
+.flagedrecord.ui-state-highlight{ background:#007ad9!important }
 .navbar .navbar-menu-wrapper .navbar-nav .nav-item.dropdown .dropdown-menu.navbar-dropdown .dropdown-item{
   padding:10px!important;
   font-size:12px;

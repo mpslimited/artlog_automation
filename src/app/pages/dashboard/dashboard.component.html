@@ -86,7 +86,7 @@
                       </div>
                   </div>
                   <div class="col-md-12 text-right">
-                      <button type="button" (click)="clearData()" class="btn btn-secondary btn-sm mr-1">Reset</button>
+                      <button type="button" (click)="clearData()" class="btn btn-danger btn-sm mr-1">Reset</button>
                       <button type="submit" class="btn btn-primary btn-sm mr-1">Search</button>
                       <button type="button" *ngIf="isSaveSearch" (click)="saveSearchDialog()" class="btn btn-primary btn-sm">Save Search</button>
                     </div>
@@ -262,7 +262,7 @@
                   
                   <!-- <p-dropdown *ngSwitchCase="'totalage'" [options]="totalage" [style]="{'width':'100%'}"
                     (onChange)="dt.filter($event.value, col.field, 'equals')"></p-dropdown>-->
-                  <input *ngSwitchCase="'job_key'" [(ngModel)]="g.job_key" placeholder="Search Job Key" pInputText type="text" (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)" class="w-100">
+                  <input *ngSwitchCase="'job_key'" [(ngModel)]="g.job_key" placeholder="Search Job Key" pInputText type="text" (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)" class="w-100" style="margin-bottom:1px">
                   <input *ngSwitchCase="'name'" [(ngModel)]="g.name" placeholder="Search Job Name" pInputText type="text" (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)" class="w-100">
                   <input *ngSwitchCase="'lessonlet'" [(ngModel)]="g.lessonlet" placeholder="Lesson Letter" pInputText type="text" (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)" class="w-100">
                   <input *ngSwitchCase="'tags'" [(ngModel)]="g.tags" placeholder="Tags" pInputText type="text" (input)="dt.filter($event.target.value, col.field, 'contains')" class="w-100">
@@ -286,6 +286,8 @@
                   <p-multiSelect maxSelectedLabels="1" *ngSwitchCase="'grade'" [(ngModel)]="g.grade" [options]="grades" defaultLabel="All Grades" 
                     (onChange)="dt.filter($event.value, col.field, 'in')" [style]="{minWidth: '155px'}"></p-multiSelect>
                   <p-multiSelect maxSelectedLabels="1" *ngSwitchCase="'batch'" [(ngModel)]="g.batch" [options]="batchs" defaultLabel="All Batches" 
+                    (onChange)="dt.filter($event.value, col.field, 'in')" [style]="{minWidth: '155px'}"></p-multiSelect>
+                  <p-multiSelect maxSelectedLabels="1" *ngSwitchCase="'topic'" [(ngModel)]="g.topic" [options]="batchs" defaultLabel="All Topics" 
                     (onChange)="dt.filter($event.value, col.field, 'in')" [style]="{minWidth: '155px'}"></p-multiSelect>
                   <p-multiSelect  maxSelectedLabels="1" *ngSwitchCase="'currentRTeam'" [(ngModel)]="g.currentRTeam" [options]="GcurrentRTeam" defaultLabel="All Team" 
                     (onChange)="dt.filter($event.value, col.field, 'in')" [style]="{minWidth: '155px'}"></p-multiSelect>
@@ -319,12 +321,23 @@
                     
                     <ng-container *ngIf="col.field =='job_key' " > <!-- *ngSwitchCase="'job_key'"-->
                       <ng-container  *ngIf="checkEdit(col.field, rowData)">
-                          <button *ngIf="!editing" pButton type="button" label="{{rowData[col.field]}}" pInitEditableRow icon="pi pi-pencil"
-                          class=" btn btn-sm btn-primary" (click)="onRowEditInit(rowData, editing)"></button>
+                          <button *ngIf="!editing && !rowData.killed" pButton type="button" label="{{rowData[col.field]}}" pInitEditableRow icon="pi pi-pencil"
+                          class=" btn btn-sm btn-primary " (click)="onRowEditInit(rowData, editing)"></button>
+                          <button *ngIf="!editing && rowData.flaged"  type="button" class="ml-1 btn btn-sm btn-primary" (click)="clearFlag(rowData)">
+                            <i class="font12 fa fa-flag"></i>
+                          </button>
+                          <button *ngIf="rowData.killed"  type="button" class="ml-1 btn btn-sm btn-secondary" (click)="reactiveJob(rowData)">
+                              <i class="font12 fa fa-undo"></i> {{rowData[col.field]}}
+                            </button>
                           <!-- <button *ngIf="!editing" pButton type="button" title="Kill" pInitEditableRow icon="fa fa-trash"
                           class="ml-1 btn btn-sm ui-button-danger" (click)="killJobs(rowData, editing)"></button> -->
                           <!-- <button *ngIf="!editing" pButton type="button" title="" pInitEditableRow icon="fa fa-undo"
                           class="ml-1 btn btn-sm ui-button-success" (click)="onRowEditInit(rowData, editing)"></button> -->
+                      </ng-container>
+                      <ng-container *ngIf="rowData.job_key==''">
+                          <a *ngIf="!checkEdit(col.field, rowData)" href="https://greatminds.getbynder.com/workflow/job/view/{{rowData.jobID}}" target="_blank">
+                            <sup>*</sup>
+                          </a>
                       </ng-container>
                       <a *ngIf="!checkEdit(col.field, rowData)" href="https://greatminds.getbynder.com/workflow/job/view/{{rowData[col.field]}}" target="_blank">
                       {{rowData[col.field]}}
@@ -333,9 +346,12 @@
                         class=" btn btn-sm ui-button-success" style="margin-right: .5em" (click)="onRowEditSave(rowData)"></button>
                       <button *ngIf="editing" pButton type="button"  pCancelEditableRow icon="fa fa-times"
                         class=" btn btn-sm ui-button-danger" (click)="onRowEditCancel(rowData, ri)"></button>
+                        <!-- <i class="fa fa-asterisk" aria-hidden="true"></i> -->
+                        <sup *ngIf="!rowData.hasOwnProperty('duplicate') && rowData.job_key!=''">*</sup>
                     </ng-container>
                     <span *ngIf="col.field =='name' " pTooltip="{{rowData.name}}" tooltipPosition="top">
                         {{rowData[col.field]}}
+                        
                     </span>
                     <p-cellEditor *ngIf="col.field =='lesson' ">
                       <ng-template pTemplate="input">
@@ -361,13 +377,13 @@
                           {{rowData[col.field]}}
                         </ng-template>
                     </p-cellEditor>
-                    <p-cellEditor *ngIf="col.field =='module' " pTooltip="{{rowData.module}}" tooltipPosition="top">
+                    <p-cellEditor *ngIf="col.field =='module' ">
                       <ng-template pTemplate="input">
                         <p-dropdown [options]="Mdata" [(ngModel)]="rowData.module" [style]="{'width':'100%'}">
                         </p-dropdown>
                       </ng-template>
                       <ng-template pTemplate="output">
-                          {{rowData[col.field]}}
+                        {{rowData[col.field]}}
                       </ng-template>
                     </p-cellEditor>
                     <p-cellEditor *ngIf="col.field =='grade' ">
@@ -387,6 +403,14 @@
                           {{rowData[col.field]}}
                         </ng-template>
                     </p-cellEditor>
+                    <p-cellEditor *ngIf="col.field =='topic' ">
+                      <ng-template pTemplate="input">
+                        <input pInputText type="text" [(ngModel)]="rowData.topic" required>
+                      </ng-template>
+                      <ng-template pTemplate="output">
+                        {{rowData[col.field]}}
+                      </ng-template>
+                  </p-cellEditor>
                     <p-cellEditor *ngIf="col.field =='description' " pTooltip="{{rowData.description}}" tooltipPosition="top">
                         <ng-template pTemplate="input">
                           <textarea pInputTextarea type="text" [(ngModel)]="rowData.description" required></textarea>
@@ -499,8 +523,7 @@
   </p-overlayPanel>  
     <!--Modal dialog for add new records-->
    
-  <p-dialog  header="Add new record(s)" (onHide)="hideNewRecord('$event')" [(visible)]="displayDialog" [modal]="true" showEffect="fade" [responsive]="true" [baseZIndex]="10000" [style]="{width: '900px', height:'300px', minHeight:'300px'}" [minY]="70" 
-  [maximizable]="true" [baseZIndex]="10000">
+  <p-dialog header="Add new record(s)" (onHide)="hideNewRecord('$event')" [(visible)]="displayDialog" [modal]="true" showEffect="fade" [responsive]="true" [style]="{width: '900px'}" [contentStyle]="{'min-height':'300px'}" [maximizable]="true" [baseZIndex]="10000" minY="70">
   
       <form [formGroup]="form" (ngSubmit)="submit()" #documentEditForm="ngForm">
           <!-- <p-blockUI [target]="pnl" [blocked]="blockedPanel">
@@ -508,8 +531,7 @@
           </p-blockUI> -->
         <div class="ui-g ui-fluid" >         
                 <div class="col-12 p-0">                 
-                     <div class="card-body p-2">
-                      
+                     <div class="card-body p-2" style="border:1px solid #ccc">                      
                       <div class="row">
                         <div class="col-12">
                             <div class="row">

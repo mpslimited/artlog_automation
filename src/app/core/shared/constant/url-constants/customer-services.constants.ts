@@ -12,6 +12,11 @@ export class CustomerServicesUrls extends UrlBase {
       //setDefaultSearch
       public static ARTLOG_JOBADD = CustomerServicesUrls.ARTLOGAUTOMATION_URL + "api/addnewjobs/";
       public static ARTLOG_UPDATEJOBS = CustomerServicesUrls.ARTLOGAUTOMATION_URL + "api/updateJob/";
+      public static ARTLOG_KILLEDSELECTEDJOBS = CustomerServicesUrls.ARTLOGAUTOMATION_URL + "api/killedRows/";
+      public static ARTLOG_UnKILLEDSELECTEDJOBS = CustomerServicesUrls.ARTLOGAUTOMATION_URL + "api/unkilledRows/";
+
+      public static ARTLOG_FLAGEDSELECTEDJOBS = CustomerServicesUrls.ARTLOGAUTOMATION_URL + "api/flagedRows/";
+      public static ARTLOG_UnFLAGEDSELECTEDJOBS = CustomerServicesUrls.ARTLOGAUTOMATION_URL + "api/unflagedRows/";
       public static ARTLOG_REDDRUSERINFO = CustomerServicesUrls.ARTLOGAUTOMATION_URL + "api/getUserInfo/";
       public static ARTLOG_SEARCHSAVE = CustomerServicesUrls.ARTLOGAUTOMATION_URL + "api/searchState/";
       public static ARTLOG_GRIDSTATESAVE = CustomerServicesUrls.ARTLOGAUTOMATION_URL + "api/gridStage/";

@@ -97,7 +97,7 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
   //optionsModel
   artLogModel: ArtLogModel;
   Gdata: any;
-  addGdata: any;
+  addGdata: any = [];
   Mdata: any;
   addMdata: any;
   Wdata: any;
@@ -161,13 +161,18 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
       { value: 'SaveGridState', title: 'Save Grid State', icon: 'fa fa-floppy-o' },
       { value: 'LockJobs', title: 'Lock Job & Generate Tags', icon: 'fa fa-lock' },
       { value: 'InsertBatch', title: 'Insert Batch', icon: 'fa fa-object-group' },
-      { value: 'InsertTags', title: 'Insert Tags', icon: 'fa fa-tags' }
+      { value: 'InsertTags', title: 'Insert Tags', icon: 'fa fa-tags' },
+      { value: 'RowFlagged', title: 'Row Flagged', icon: 'fa fa-flag-o' },
+      { value: 'killJobs', title: 'Kill Jobs', icon: 'fa fa-ban' }
     ];
     this.jobsTypes = [
       { value: '', label: 'All' },
       { value: 1, label: 'Index Jobs' },
       { value: 2, label: 'Created Jobs' },
-      { value: 3, label: 'Moved Jobs' }
+      { value: 3, label: 'Moved Jobs' },
+      { value: 4, label: 'Flagged Jobs'},
+      { value: 5, label: 'Killed Jobs'},
+      { value: 6, label: 'Non-Killed Jobs'}
     ];
     this.verificationsDt = [
       { value: '', label: 'All' },
@@ -186,6 +191,7 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
       { field: 'lesson', header: 'Lesson' },
       { field: 'lessonlet', header: 'Lesson Letter' },
       { field: 'batch', header: 'Batch' },
+      { field: 'topic', header: 'Topic' },
       { field: 'description', header: 'Description' },
       { field: 'thumb', header: 'Thumbnail' },
       { field: 'cstage', header: 'Current Stage' },
@@ -210,6 +216,30 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
     ]
     this.cols = this.cols.map(d => ({ field: d.field, header: d.header, tid: this.cols.indexOf(d) }));
   }
+  reactiveJob(d: any) {
+    this.confirmationService.confirm({
+      message: 'Are you sure, you want to be re-activate the job?',
+      accept: () => {
+        const myheader = new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded');
+        let body = new HttpParams();
+        body = body.set('UnkilledID', d._id);
+        this.httpService.extractPostData(CustomerServicesUrls.ARTLOG_UnKILLEDSELECTEDJOBS, body, { headers: myheader }).subscribe((data) => {
+          d.killed = false;
+          this.alert.showAlertScucess([data.msg], 5000);
+        });
+      }
+    });
+  }
+  clearFlag(d: any) {
+    debugger
+    const myheader = new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded');
+    let body = new HttpParams();
+    body = body.set('UnflagedID', d._id);
+    this.httpService.extractPostData(CustomerServicesUrls.ARTLOG_UnFLAGEDSELECTEDJOBS, body, { headers: myheader }).subscribe((data) => {
+      d.flaged = false;
+      this.alert.showAlertScucess([data.msg], 5000);
+    });
+  }
   optionChangeData() {
     //debugger
     //console.log(this.selectedModes);
@@ -218,13 +248,75 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
     } else if (this.selectedModes.indexOf('SaveGridState') > -1) {
       this.saveGridState();
     } else if (this.selectedModes.indexOf('LockJobs') > -1) {
-      this.lockJobGenerateTags();
+      if (this.selectedRows.filter(d => d.duplicate !== true).length > 0) {
+        alert('Index row(s) cannot be modified!');
+      } else if (this.selectedRows.length == 0) {
+        alert('No row(s) has been selected!');
+      } else if (this.selectedRows.filter(d => d.killed === true).length > 0) {
+        alert('You have selected a killed row(s)!');
+      } else {
+        this.lockJobGenerateTags();
+      }
     } else if (this.selectedModes.indexOf('InsertBatch') > -1) {
       this.addBatch();
     } else if (this.selectedModes.indexOf('InsertTags') > -1) {
-      this.addTags();
+      if (this.selectedRows.filter(d => d.duplicate != true).length > 0) {
+        alert('Index row(s) cannot be modified!');
+      } else if (this.selectedRows.length == 0) {
+        alert('No row(s) has been selected!');
+      } else if (this.selectedRows.filter(d => d.killed == true).length > 0) {
+        alert('You have selected a killed row(s)!');
+      } else {
+        this.addTags();
+      }
+    } else if (this.selectedModes.indexOf('killJobs') > -1) {
+      if (this.selectedRows.filter(d => d.duplicate != true).length > 0) {
+        alert('Index row(s) cannot be modified!');
+      } else if (this.selectedRows.length == 0) {
+        alert('No row(s) has been selected!');
+      } else if (this.selectedRows.filter(d => d.killed == true).length > 0) {
+        alert('You have selected a killed row(s)!');
+      } else {
+        // need code for update killed
+        this.confirmationService.confirm({
+          message: 'Are you sure, you want to kill the selected jobs?',
+          accept: () => {
+            for (let t in this.selectedRows) {
+              this.selectedRows[t].killed = true;
+            }
+            const myheader = new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded');
+            let body = new HttpParams();
+            body = body.set('killedID', JSON.stringify(this.selectedRows.map(d => d._id)));
+            this.httpService.extractPostData(CustomerServicesUrls.ARTLOG_KILLEDSELECTEDJOBS, body, { headers: myheader }).subscribe((data) => {
+              this.alert.showAlertScucess([data.msg], 5000);
+            });
+          }
+        });
+      }
     }
-
+    else if (this.selectedModes.indexOf('RowFlagged') > -1) {
+      // handle cases
+      if (this.selectedRows.filter(d => d.duplicate != true).length > 0) {
+        alert('Index row(s) cannot be modified!');
+      } else if (this.selectedRows.length == 0) {
+        alert('No row(s) has been selected!');
+      } else if (this.selectedRows.filter(d => d.flaged == true).length > 0) {
+        alert('You have selected a flagged row(s)!');
+      } else if (this.selectedRows.filter(d => d.killed == true).length > 0) {
+        alert('You have selected a killed row(s)!');
+      } else {
+        for (let t in this.selectedRows) {
+          this.selectedRows[t].flaged = true;
+        }
+        const myheader = new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded');
+        let body = new HttpParams();
+        body = body.set('flagedID', JSON.stringify(this.selectedRows.map(d => d._id)));
+        this.httpService.extractPostData(CustomerServicesUrls.ARTLOG_FLAGEDSELECTEDJOBS, body, { headers: myheader }).subscribe((data) => {
+          this.alert.showAlertScucess([data.msg], 5000);
+        });
+      }
+      //end handle cases
+    }
   }
   OnChanges() {
     if (this.selectedRows.length = 0) {
@@ -279,14 +371,14 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
     if (this.selectedRows.length > 0) {
       this.bulkBatchModal = true;
     } else {
-      alert('Please select a row');
+      alert('No row has been selected!');
     }
   }
   addTags() {
     if (this.selectedRows.length > 0) {
       this.bulkTagModal = true;
     } else {
-      alert('Please select a row');
+      alert('No row has been selected!');
     }
   }
   clearData() {
@@ -309,7 +401,14 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
     if (d.duplicate && edit) {
       return "newrecordEdited";
     }
-    if (d.duplicate) {
+
+    //killed
+    if (d.duplicate && d.killed) {
+      return "killed";
+    } else if (d.duplicate && d.flaged) {
+      return "flagedrecord";
+    }
+    else if (d.duplicate) {
       return "newrecord";
     }
   }
@@ -317,7 +416,7 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
     this.filteredValuesLength = event.filteredValue.length; // count of displayed rows 
   }
   ellipsisData(col) {
-    if (  col.field == 'component' ||  col.field == 'series' ||  col.field == 'description' || col.field == 'module' || col.field == 'cstage' || col.field == 'tags' || col.field == 'name' || col.field == 'creditLine') {
+    if (col.field == 'component' || col.field == 'series' || col.field == 'description' || col.field == 'cstage' || col.field == 'tags' || col.field == 'name' || col.field == 'creditLine') {
       return "text-truncate";
     }
   }
@@ -356,7 +455,13 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
     this.saveSearchModal = true;
   }
   filterData() {
-    this.isSaveSearch = true;
+    debugger
+    if(this.frmdt.grade.length > 0 || this.frmdt.module.length > 0  || this.artLogModel.batch.value!='' || this.artLogModel.workflow.value.length > 0 
+      || this.artLogModel.curricula.value.length > 0  || this.frmdt.status.length > 0  || this.artLogModel.added.value > 0 ){
+      this.isSaveSearch = true;
+    }else{
+      this.isSaveSearch = false;
+    }
     this.getMetaData(this.search);
   }
   checkUserinfo() {
@@ -367,12 +472,11 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
     });
   }
   confirm() {
-    debugger
-    if ( this.selectedTagsData.length == 0) {
+    if (this.selectedTagsData.length == 0) {
       this.alert.showAlertDanger(['Please select at lease one record.'], 10000);
     } else {
       this.confirmationService.confirm({
-        message: 'Are you sure that you want to proceed?',
+        message: 'Are you sure you want to proceed?',
         accept: () => {
           let body = new HttpParams();
           for (let dt of this.selectedTagsData) {
@@ -382,7 +486,7 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
           body = body.set('data', JSON.stringify(this.selectedTagsData));
           this.httpService.extractData(CustomerServicesUrls.UPDATEASSETTAGS, body, null).subscribe((data) => {
             console.log("res=>", data);
-            this.alert.showAlertScucess(['Update in progress! An email notification will be send, once it has been completed.'], 3000);
+            this.alert.showAlertScucess(['Asset Bank tag updation is in progress! You will receive an email notification once it has been completed.'], 3000);
             this.tagverificationModal = false;
           });
         }
@@ -406,9 +510,10 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
         } else
           self.cartdata[index].tags = self.bulkTags;
       }
+      self.selectedRows=[];
       this.bulkTagModal = false;
       self.bulkTags = '';
-      this.alert.showAlertScucess(['Bulk Batch has been updated successfully!'], 5000);
+      this.alert.showAlertScucess(['Bulk tags has been updated successfully!'], 5000);
     });
   }
   saveBatchData() {
@@ -423,6 +528,7 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
         self.cartdata[index].batch = dt.batch || self.bulkBatch;
       }
       this.bulkBatchModal = false;
+      self.selectedRows=[];
       this.alert.showAlertScucess(['Bulk Batch has been updated successfully!'], 5000);
     });
   }
@@ -435,55 +541,70 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
       for (let t = 0; t < this.selectedRows.length; t++) {
         let ind = this.cartdata.indexOf(this.selectedRows[t]);
         //this.selectedRows[t].tags 
-        this.selectedRows[t].generatedTags = 'MPS artlog, ' + this.generateTags(this.cartdata[ind]);
+        this.selectedRows[t].generatedTags = 'MPS_artlog, ' + this.generateTags(this.cartdata[ind]);
         this.rowsmoveTags.push(this.selectedRows[t]);
       }
       this.tagverificationModal = true;
     }
+  }
+  validG(d){
+   if(isNaN(parseInt(d))){
+     return d;
+   } else {
+     d=parseInt(d);
+    return (d < 10) ? '0' + d.toString() : d.toString();
+   }
   }
   place(d) {
     d = parseInt(d);
     return (d < 10) ? '0' + d.toString() : d.toString();
   }
   generateTags(dt: any) {
-    let prfx='';
-    if(!!dt.job_key && dt.job_key.indexOf("SCI-") > -1){
-      prfx="SC_"
-    }else if(!!dt.job_key && dt.job_key.indexOf("EM2-") > -1){
-      prfx="EM2_"
+    debugger
+    let prfx = '';
+    if (!!dt.job_key && dt.job_key.indexOf("SCI-") > -1) {
+      prfx = "SC_"
+    } else if (!!dt.job_key && dt.job_key.indexOf("EM2-") > -1) {
+      prfx = "EM2_"
     }
     let combination = Array();
-    combination.push(prfx+'G' + this.place(dt.grade));
-    combination.push(prfx+'G' + this.place(dt.grade) + '_M' + this.place(dt.module));
-    if (!!dt.lesson) {
-      let lett=false;
-      if(!!dt.lessonlet){
-        lett=true;
-        combination.push(prfx+'G' + this.place(dt.grade) + '_M' + this.place(dt.module) +'_L'+this.place(dt.lesson)+'_'+dt.lessonlet);
-      }
-      combination.push(prfx+'G' + this.place(dt.grade) + '_M' + this.place(dt.module) +'_L'+this.place(dt.lesson));
-      if(!!dt.component){
-        let comp= dt.component.substring(0,3).trim();
-        if(comp.indexOf('_') > -1){
-          comp=comp.split('_').join('');
-          combination.push(comp);
+    if((dt.grade!='' || dt.grade !='N/A') && (dt.module !='' && dt.module !='NA')){
+      debugger
+      combination.push(prfx + 'G' + this.validG(dt.grade));
+      combination.push(prfx + 'G' + this.validG(dt.grade) + '_M' + this.validG(dt.module));
+      if (!!dt.lesson) {
+        let lett = false;
+        if (!!dt.lessonlet) {
+          lett = true;
+          combination.push(prfx + 'G' + this.validG(dt.grade) + '_M' + this.validG(dt.module) + '_L' + this.validG(dt.lesson) + '_' + dt.lessonlet);
         }
-        if(comp==comp.toUpperCase() && !lett){
-          combination.push(prfx + this.place(dt.grade)  + this.place(dt.module)+comp +'_L'+this.place(dt.lesson));
-        }else if(comp==comp.toUpperCase() && !!lett){
-          combination.push(prfx + this.place(dt.grade)  + this.place(dt.module) + comp + '_L'+ this.place(dt.lesson) + '_' + dt.lessonlet);
-        }else{
-          combination.push(prfx + this.place(dt.grade)  + this.place(dt.module)  + '_L'+ this.place(dt.lesson));
+        combination.push(prfx + 'G' + this.validG(dt.grade) + '_M' + this.validG(dt.module) + '_L' + this.validG(dt.lesson));
+        if (!!dt.component) {
+          let comp = dt.component.substring(0, 3).trim();
+          if (comp.indexOf('_') > -1)
+            comp = comp.split('_').join('');
+            combination.push(comp);
+          if (comp == comp.toUpperCase() && !lett) {
+            combination.push(prfx + this.place(dt.grade) + this.place(dt.module) + comp + '_L' + this.place(dt.lesson));
+          } else if (comp == comp.toUpperCase() && !!lett) {
+            combination.push(prfx + this.place(dt.grade) + this.place(dt.module) + comp + '_L' + this.place(dt.lesson) + '_' + dt.lessonlet);
+          } else {
+            combination.push(prfx + this.place(dt.grade) + this.place(dt.module) + '_L' + this.place(dt.lesson));
+          }
+        } else {
+          combination.push(prfx + this.place(dt.grade) + this.place(dt.module) + '_L' + this.place(dt.lesson));
         }
-      }else{
-        combination.push(prfx + this.place(dt.grade) +  this.place(dt.module) +'_L'+this.place(dt.lesson));
-      }
-      if(!dt.tags){
-        combination.push(dt.job_key);
-      }else{
-        if(dt.tags.split(',').indexOf(dt.job_key) != -1){
+        if (!dt.tags) {
           combination.push(dt.job_key);
+        } else {
+          if (dt.tags.split(',').indexOf(dt.job_key) == -1) {
+            combination.push(dt.job_key);
+          }
         }
+      }
+    }else{
+      if (dt.tags.split(',').indexOf(dt.job_key) == -1) {
+        combination.push(dt.job_key);
       }
     }
     console.log("tagGenerated:", combination.join(', '));
@@ -501,7 +622,7 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
       this.gridState = "";
       debugger
       this.scrollableCols = this.cols.filter(d => d.tid > 0);
-      this.alert.showAlertScucess(['Grid state reset successfully!'], 3000);
+      this.alert.showAlertScucess(['Your grid state has been reset successfully!'], 3000);
     });
   }
   saveGridState() {
@@ -519,7 +640,7 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
     let body = new HttpParams();
     let frmDt = {
       grade: this.frmdt.grade, module: this.frmdt.module, status: this.frmdt.status, batch: this.artLogModel.batch.value,
-      workflow: this.frmdt.workflow, curricula: this.artLogModel.curricula.value, resTeam: this.artLogModel.resTeam.value,
+      workflow: this.artLogModel.workflow.value, curricula: this.artLogModel.curricula.value, resTeam: this.artLogModel.resTeam.value,
       added: this.artLogModel.added.value
     }
     body = body.set('frmdt', JSON.stringify(frmDt));
@@ -543,10 +664,14 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
   getinit() {
     this.httpService.extractData(CustomerServicesUrls.ARTLOG_INIT, null, null).subscribe((data) => {
       if (data.hasOwnProperty('grade')) {
-        data.grade.splice(0, 1);
+        debugger
+        //data.grade.splice(0, 1);
         this.Gdata = data.grade;
-        data.grade.splice(0, 0, { id: '', value: '', label: 'Please Select' });
-        this.addGdata = data.grade;
+        // data.grade.splice(0, 0, { id: '', value: '', label: 'Please Select' });
+        //for (let tpl of data.grade) {
+          this.addGdata= this.Gdata
+        //}
+        // this.addGdata = data.grade;
       }
       if (!!data.module) {
         this.Mdata = data.module.filter(d => d.value != '');
@@ -591,12 +716,13 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
           if (frmData.grade.length) {
             this.frmdt.grade = frmData.grade;
           }
+          debugger
           if (frmData.module.length > 0) {
             this.frmdt.module = frmData.module;
           } if (frmData.batch !== "") {
             this.artLogModel.batch.value = frmData.batch;
           } if (frmData.workflow !== "") {
-            this.frmdt.workflow = frmData.workflow;
+            this.artLogModel.workflow.value = frmData.workflow;
           } if (frmData.curricula !== "") {
             this.artLogModel.curricula.value = frmData.curricula;
           } if (frmData.status !== "") {
@@ -615,6 +741,7 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
   getMetaData(Obj: any) {
     this.dataloading = true;
     var self = this;
+    this.selectedRows=[];
     return new Promise(resolve => {
       this.loadDataFromApi(this.NAME_ARTLOG).subscribe((data) => {
         debugger
@@ -635,8 +762,9 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
           this.facings = (!!data.GridFilters.facing) ? data.GridFilters.facing.map(d => ({ label: d, value: d })) : [];
           this.batchs = (!!data.GridFilters.batch) ? data.GridFilters.batch.map(d => ({ label: d, value: d })) : [];
           this.revisions = (!!data.GridFilters.revision) ? data.GridFilters.revision.map(d => ({ label: d, value: d })) : [];
-          this.cstatus =  (!!data.GridFilters.cstatus) ? data.GridFilters.cstatus.map(d => ({ label: d, value: d })) : [];
-          this.cstages =  (!!data.GridFilters.cstages) ? data.GridFilters.cstages.map(d => ({ label: d, value: d })) : [];
+          this.seriess = (!!data.GridFilters.series) ? data.GridFilters.series.map(d => ({ label: d, value: d })) : [];
+          this.cstatus = (!!data.GridFilters.cstatus) ? data.GridFilters.cstatus.map(d => ({ label: d, value: d })) : [];
+          this.cstages = (!!data.GridFilters.cstages) ? data.GridFilters.cstages.map(d => ({ label: d, value: d })) : [];
         }
         self.cartdata = data.artLogData;
         this.filteredValuesLength = data.artLogData.length;
@@ -645,7 +773,7 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
       });
     });
   }
-  datatesting(d: any, dd: any){
+  datatesting(d: any, dd: any) {
     console.log(d, dd);
   }
   updateSelection() {
@@ -664,11 +792,12 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
     //this.getHTTPOption
     let body = new HttpParams();
     body = body.set('newData', JSON.stringify(artdt));
+    //ARTLOG_FLAGEDSELECTEDJOBS
     this.httpService.extractPostData(CustomerServicesUrls.ARTLOG_UPDATEJOBS, body, { headers: myheader }).subscribe((data) => {
       if (data.length > 0 && data[0].msg === 'SUCCESS') {
-        this.alert.showAlertScucess([' Job updated successfully!'], 3000);
+        this.alert.showAlertScucess(['Job(s) updated successfully!'], 3000);
       } else {
-        this.alert.showAlertDanger([' Job updated have some issue!'], 3000);
+        this.alert.showAlertDanger(['Updated job(s) have some issue!'], 3000);
       }
     });
     //CustomerServicesUrls.ARTLOG_UPDATEJOBS
@@ -703,11 +832,13 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
   // }
   createContact(): FormGroup {
     return this.fb.group({
-      grade: [null, Validators.compose([Validators.required])],
-      module: [null, Validators.compose([Validators.required])],
-      jobkey: [null, Validators.compose([Validators.required])],
-      component: [null],
-      lesson: [null],
+      grade : [null, Validators.compose([Validators.required])],
+      module : [null, Validators.compose([Validators.required])],
+      jobkey : [null, Validators.compose([Validators.required])],
+      component : [null],
+      lesson : [null],
+      topic : [null],
+      facing : [null],
     });
   }
   createDuplicateJob(jk: String = '', g: any = {}, m: any = {}, c: String = '', l: String = ''): FormGroup {
@@ -767,15 +898,29 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
       body = body.set('jobAdd', JSON.stringify(this.form.value.jobAdd));
       let self = this;
       this.httpService.extractPostData(CustomerServicesUrls.ARTLOG_JOBADD, body, { headers: myheader }).subscribe((data) => {
+        debugger
+        var jobsInfo = data.jobsInfo;
+        var data = data.resDt;
         for (let dt of data) {
           let index = self.cartdata.indexOf(self.cartdata.filter((d, i) => d.job_key === dt.job_key)[0]);
           self.cartdata.splice((index + 1), 0, dt);
         }
         this.displayDialog = false;
-        this.alert.showAlertScucess([data.length + ' Jobs added successfully!'], 3000);
+        var saved = jobsInfo.filter(d => d.exist == true);
+        var invalid = jobsInfo.filter(d => d.exist == false);
+        var msg='';
+        if(saved.length >0){
+          msg= saved.length +" Jobs ("+ saved.map(d=>d.jobkey).join()+") has been saved successfully ";
+        }
+        if(invalid.length >0){
+          msg=(!msg)?' ':msg+', ';
+          msg= msg + invalid.length +" Jobs ("+ invalid.map(d=>d.jobkey).join()+") not exist or invalid ";
+        }
+        msg=msg+'!';
+        this.alert.showAlertScucess([msg], 10000);
       });
     } else {
-      this.alert.showAlertDanger([' Job Key required !'], 5000);
+      this.alert.showAlertDanger(['Job key required !'], 5000);
     }
   }
   initSearchModels() {
@@ -854,22 +999,26 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
     this.g[col] = "";
     dt.filter(this.g[col], col, 'in');
   }
-  hasData(): boolean{
-    let res= false;
+  hasData(): boolean {
+    let res = false;
     for (let key in this.g) {
-      if(this.g[key]!=""){
+      if (this.g[key] != "") {
         res = true;
       }
     }
     return res;
   }
   exportDataAsCSVSelected(dt: any) {
-    this.scrollableCols = this.cols;
-    let that = this;
-    setTimeout(function () {
-      dt.exportCSV({selectionOnly:true});
-      that.scrollableCols = that.cols.filter(d => d.tid > 0);
-    }, 1000);
+    if(this.selectedRows.length ==0){
+      alert('No row(s) has been selected!');
+    }else{
+      this.scrollableCols = this.cols;
+      let that = this;
+      setTimeout(function () {
+        dt.exportCSV({ selectionOnly: true });
+        that.scrollableCols = that.cols.filter(d => d.tid > 0);
+      }, 1000);
+    }
   }
   exportDataAsCSV(dt: any) {
     this.scrollableCols = this.cols;
