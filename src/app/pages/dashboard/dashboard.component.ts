@@ -75,6 +75,7 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
   verificationsDt: any = [];
   pagins: any = [];
   freezeCols: any = [];
+  facingData: any =['TE','SE'];
   pagingCol: any = [
     { value: '', label: 'N/A' },
     { value: 'Yes', label: 'Yes' },
@@ -200,7 +201,7 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
       { field: 'curriculum', header: 'Curriculum' },
       { field: 'totalage', header: 'Cumulative Age' },
       { field: 'lastage', header: 'Last Age' },
-      { field: 'facing', header: 'Facing' },
+      { field: 'facing', header: 'P.Category' },
       { field: 'series', header: 'Series' },
       { field: 'creditLine', header: 'Credit Line' },
       { field: 'comment', header: 'Comments' },
@@ -326,6 +327,7 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
     }
   }
   ngOnInit() {
+    this.facingData=[{label:'Select', value:''},{ label:'TE', value:'TE'}, { label:'SE', value:'SE'}];
     this.dataloading = true;
     this.isSaveSearch = false;
     this.searchText = "Search List1";
@@ -665,18 +667,15 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
     this.httpService.extractData(CustomerServicesUrls.ARTLOG_INIT, null, null).subscribe((data) => {
       if (data.hasOwnProperty('grade')) {
         debugger
-        //data.grade.splice(0, 1);
         this.Gdata = data.grade;
-        // data.grade.splice(0, 0, { id: '', value: '', label: 'Please Select' });
-        //for (let tpl of data.grade) {
-          this.addGdata= this.Gdata
-        //}
-        // this.addGdata = data.grade;
+        let GradeData=JSON.parse(JSON.stringify(data.grade));
+        GradeData.splice(0, 0, { id: '', value: '', label: 'Select' });
+        this.addGdata=GradeData;
       }
       if (!!data.module) {
         this.Mdata = data.module.filter(d => d.value != '');
         this.addMdata = data.module.filter(d => d.value != '');
-        this.addMdata.splice(0, 0, { id: '', value: '', label: 'Please Select' });
+        this.addMdata.splice(0, 0, { id: '', value: '', label: ' Select' });
       }
       if (!!data.artAssign) {
         data.artAssign.splice(0, 0, { id: '', value: '', label: 'Please Select' });
@@ -841,13 +840,15 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
       facing : [null],
     });
   }
-  createDuplicateJob(jk: String = '', g: any = {}, m: any = {}, c: String = '', l: String = ''): FormGroup {
+  createDuplicateJob(jk: String = '', g: any = {}, m: any = {}, c: String = '', l: String = '', f:String='', t:String='' ): FormGroup {
     return this.fb.group({
       jobkey: [jk, Validators.compose([Validators.required])],
       grade: [g, Validators.compose([Validators.required])],
       module: [m, Validators.compose([Validators.required])],
       component: [c],
       lesson: [l],
+      topic: [t],
+      facing : [f],
     });
   }
   addContact() {
@@ -856,9 +857,9 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
   }
   // remove contact from group
   createClone(index) {
-
+    debugger
     let jobAdd = this.form.value.jobAdd[index];
-    var clone = this.createDuplicateJob(jobAdd.jobkey, jobAdd.grade, jobAdd.module, jobAdd.component, jobAdd.lesson);
+    var clone = this.createDuplicateJob(jobAdd.jobkey, jobAdd.grade, jobAdd.module, jobAdd.component, jobAdd.lesson, jobAdd.facing, jobAdd.topic);
     this.contactList.push(clone);
     //this.contactList.push(this.createContact());
     //this.form.value.jobAdd[this.form.value.jobAdd.length-1].jobkey = this.form.value.jobAdd[index].jobkey;

@@ -86,13 +86,12 @@
                       </div>
                   </div>
                   <div class="col-md-12 text-right">
-                      <button type="button" (click)="clearData()" class="btn btn-danger btn-sm mr-1">Reset</button>
-                      <button type="submit" class="btn btn-primary btn-sm mr-1">Search</button>
-                      <button type="button" *ngIf="isSaveSearch" (click)="saveSearchDialog()" class="btn btn-primary btn-sm">Save Search</button>
-                    </div>
+                    <button type="button" (click)="clearData()" class="btn btn-danger btn-sm mr-1">Reset</button>
+                    <button type="submit" class="btn btn-primary btn-sm mr-1">Search</button>
+                    <button type="button" *ngIf="isSaveSearch" (click)="saveSearchDialog()" class="btn btn-primary btn-sm">Save Search</button>
+                  </div>
               </div>            
             </div>
-            
           </div>
         </div>
       </div>
@@ -154,8 +153,8 @@
                             <a href="javascript:void(0)" pTooltip="Curriculum: {{g.curriculum}}" tooltipPosition="top" class="badge badge-light" *ngIf="g.hasOwnProperty('curriculum') && g.curriculum!=''">
                                 <i class="fa fa-filter"></i> <span class="d-inline-block text-truncate" style="max-width: 100px;"><strong>Curriculum</strong>: {{g.curriculum}} </span><i class="fa fa-times-circle" (click)="cleargSelectFilter(dt,'curriculum')"></i>
                             </a>
-                            <a href="javascript:void(0)" pTooltip="Facing: {{g.facing}}" tooltipPosition="top" class="badge badge-light" *ngIf="g.hasOwnProperty('facing') && g.facing!=''">
-                                <i class="fa fa-filter"></i> <span class="d-inline-block text-truncate" style="max-width: 100px;"><strong>Facing</strong>: {{g.facing}} </span><i class="fa fa-times-circle" (click)="cleargSelectFilter(dt,'facing')"></i>
+                            <a href="javascript:void(0)" pTooltip="P.Category: {{g.facing}}" tooltipPosition="top" class="badge badge-light" *ngIf="g.hasOwnProperty('facing') && g.facing!=''">
+                                <i class="fa fa-filter"></i> <span class="d-inline-block text-truncate" style="max-width: 100px;"><strong>P.Category</strong>: {{g.facing}} </span><i class="fa fa-times-circle" (click)="cleargSelectFilter(dt,'facing')"></i>
                             </a>
                             <a href="javascript:void(0)" pTooltip="Series: {{g.series}}" tooltipPosition="top" class="badge badge-light" *ngIf="g.hasOwnProperty('series') && g.series!=''">
                                 <i class="fa fa-filter"></i> <span class="d-inline-block text-truncate" style="max-width: 100px;"><strong>Series</strong>: {{g.series}} </span><i class="fa fa-times-circle" (click)="cleargSelectFilter(dt,'series')"></i>
@@ -303,7 +302,7 @@
                     (onChange)="dt.filter($event.value, col.field, 'in')" [style]="{minWidth: '155px'}"></p-multiSelect>
                   <p-multiSelect maxSelectedLabels="1" *ngSwitchCase="'impact'" [(ngModel)]="g.impact" [options]="Gimpact" defaultLabel="All Impact" 
                   (onChange)="dt.filter($event.value, col.field, 'in')" [style]="{minWidth: '155px'}"></p-multiSelect>
-                  <p-multiSelect maxSelectedLabels="1" *ngSwitchCase="'facing'" [(ngModel)]="g.facing" [(ngModel)]="grid.facing" [options]="facings" defaultLabel="All Facings" 
+                  <p-multiSelect maxSelectedLabels="1" *ngSwitchCase="'facing'" [(ngModel)]="g.facing" [(ngModel)]="grid.facing" [options]="facings" defaultLabel="All P.Categorys" 
                     (onChange)="dt.filter($event.value, col.field, 'in')" [style]="{minWidth: '155px'}"></p-multiSelect>
                   <p-multiSelect maxSelectedLabels="1" *ngSwitchCase="'series'" [(ngModel)]="g.series" [options]="seriess" defaultLabel="All Series" 
                     (onChange)="dt.filter($event.value, col.field, 'in')" [style]="{minWidth: '155px'}"></p-multiSelect>
@@ -523,7 +522,7 @@
   </p-overlayPanel>  
     <!--Modal dialog for add new records-->
    
-  <p-dialog header="Add new record(s)" (onHide)="hideNewRecord('$event')" [(visible)]="displayDialog" [modal]="true" showEffect="fade" [responsive]="true" [style]="{width: '900px'}" [contentStyle]="{'min-height':'300px'}" [maximizable]="true" [baseZIndex]="10000" minY="70">
+  <p-dialog header="Add new record(s)" (onHide)="hideNewRecord('$event')" [(visible)]="displayDialog" [modal]="true" showEffect="fade" [responsive]="true"  [contentStyle]="{'min-height':'300px'}" [maximizable]="true" [baseZIndex]="10000" minY="70">
   
       <form [formGroup]="form" (ngSubmit)="submit()" #documentEditForm="ngForm">
           <!-- <p-blockUI [target]="pnl" [blocked]="blockedPanel">
@@ -536,10 +535,12 @@
                         <div class="col-12">
                             <div class="row">
                             <div class="col-2 font-weight-bold">Job Key</div>
-                            <div class="col-2 font-weight-bold">Grade</div>
-                            <div class="col-2 font-weight-bold">Module</div>
+                            <div class="col-1 font-weight-bold">Grade</div>
+                            <div class="col-1 font-weight-bold">Module</div>
                             <div class="col-2 font-weight-bold">Component</div>
                             <div class="col-2 font-weight-bold">Lesson</div>
+                            <div class="col-1 font-weight-bold">P.Category</div>
+                            <div class="col-2 font-weight-bold">Topic</div>
                             <div class="col-1">*</div>
                             </div>
                         </div>
@@ -552,14 +553,14 @@
                                     <span class="text-danger" *ngIf="getContactsFormGroup(i).controls['jobkey'].touched && getContactsFormGroup(i).controls['jobkey'].hasError('required')">
                                       Job Key is required! </span>
                                   </div>
-                              <div class="form-group col-md-2 pr-0">
-                                  <p-dropdown formControlName="grade" [options]="addGdata" name="grade" optionLabel="label"
+                              <div class="form-group col-md-1 pr-0">
+                                  <p-dropdown formControlName="grade" [options]="addGdata" name="grade" 
                                       selectedItemsLabel="{0} selected" 
                                       defaultLabel="Choose Grade" >
                                   </p-dropdown>
                               </div>
-                              <div class="form-group col-md-2 pr-0">
-                                  <p-dropdown formControlName="module" [options]="addMdata" optionLabel="label"
+                              <div class="form-group col-md-1 pr-0">
+                                  <p-dropdown formControlName="module" [options]="addMdata" 
                                       selectedItemsLabel="{0} selected" 
                                       defaultLabel="Choose Grade" name="module">
                                   </p-dropdown>
@@ -574,8 +575,15 @@
                                   <!-- <span class="text-danger" *ngIf="getContactsFormGroup(i).controls['lesson'].touched && getContactsFormGroup(i).controls['lesson'].hasError('required')">
                                       Lesson is required! </span> -->
                               </div>
-                              
+                              <div class="form-group col-md-1 pr-0">
+                                <p-dropdown formControlName="facing" [options]="facingData"
+                                selectedItemsLabel="{0} selected"  defaultLabel="Select" name="facing"></p-dropdown>
+                                
+                              </div>
                               <div class="form-group col-md-2 pr-0">
+                                  <input type="text" pInputText formControlName="topic" name="topic"/>
+                              </div>
+                              <div class="form-group col-md-1 pr-0">
                                 <button pButton type="button" icon="pi pi-plus"
                                   class="ui-button-primary btn btn-sm" (click)="createClone(i)"></button>
                                 <ng-container *ngIf="i!=0">
