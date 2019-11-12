@@ -496,6 +496,7 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
     }
   }
   deleteMoveTagList(dt: any) {
+    debugger
     let index = this.rowsmoveTags.indexOf(dt);
     this.rowsmoveTags.splice(index, 1);
   }
