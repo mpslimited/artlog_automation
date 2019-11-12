@@ -327,7 +327,7 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
     }
   }
   ngOnInit() {
-    this.facingData=[{label:'Select', value:''},{ label:'TE', value:'TE'}, { label:'SE', value:'SE'}];
+    this.facingData=[{ label:'TE', value:'TE'}, { label:'SE', value:'SE'}];
     this.dataloading = true;
     this.isSaveSearch = false;
     this.searchText = "Search List1";
