@@ -215,7 +215,7 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
       { field: 'currentRTeam', header: 'CR Team' },
       { field: 'curriculum', header: 'Curriculum' },
       { field: 'dateCreated', header: 'Date Created' },
-      { field: 'job_date_finished', header: 'Date Complated' },
+      { field: 'job_date_finished', header: 'Date Completed' },
       { field: 'totalage', header: 'Cumulative Age' },
       { field: 'lastage', header: 'Last Age' },
       { field: 'facing', header: 'P.Category' },
@@ -311,8 +311,10 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
             const myheader = new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded');
             let body = new HttpParams();
             body = body.set('killedID', JSON.stringify(this.selectedRows.map(d => d._id)));
+            let self=this;
             this.httpService.extractPostData(CustomerServicesUrls.ARTLOG_KILLEDSELECTEDJOBS, body, { headers: myheader }).subscribe((data) => {
-              this.alert.showAlertScucess([data.msg], 5000);
+              self.alert.showAlertScucess([data.msg], 5000);
+              self.selectedRows=[];
             });
           }
         });
@@ -337,19 +339,20 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
   }
   saveFlagged(){
     debugger
-    if( this.flaggedTeam!="" ){
+    if( !!this.flaggedTeam ){
       for (let t in this.selectedRows) {
         this.selectedRows[t].flaged = true;
         this.selectedRows[t].flagedTeam = this.flaggedTeam ;
-
       }
       const myheader = new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded');
       let body = new HttpParams();
       body = body.set('flagedID', JSON.stringify(this.selectedRows.map(d => d._id)));
       body = body.set('flagedTeam', this.flaggedTeam.toString());
+      let self=this;
       this.httpService.extractPostData(CustomerServicesUrls.ARTLOG_FLAGEDSELECTEDJOBS, body, { headers: myheader }).subscribe((data) => {
-        this.alert.showAlertScucess([data.msg], 5000);
-        this.rowFlaggedModal = false;
+        self.alert.showAlertScucess([data.msg], 5000);
+        self.rowFlaggedModal = false;
+        self.selectedRows=[];
       });
     }else{
       alert('please select a team');
@@ -364,9 +367,9 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
     }
   }
   ngOnInit() {
-    let teamsGrpup = ["Permissions Team", "Art Team","Clip Art & Storage Team", "Shutterstock Team","On Hold Team", "DAM Team"];
+    let teamsGrpup = ["Permissions Team", "Art Team","Clip Art & Storage Team","Design Team","DAM Team"];
     this.teamsGrpup=teamsGrpup.map(d=>({ label:d, value:d}));
-    this.teamsGrpup.splice(0,0, { label:'Selelct Team', value:''});
+    this.teamsGrpup.splice(0,0, { label:'Select Team', value:''});
     this.facingData=[{ label:'TE', value:'TE'}, { label:'SE', value:'SE'}];
     this.dataloading = true;
     this.isSaveSearch = false;
@@ -413,14 +416,14 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
     if (this.selectedRows.length > 0) {
       this.bulkBatchModal = true;
     } else {
-      alert('No row has been selected!');
+      alert('No row(s) has been selected!');
     }
   }
   addTags() {
     if (this.selectedRows.length > 0) {
       this.bulkTagModal = true;
     } else {
-      alert('No row has been selected!');
+      alert('No row(s) has been selected!');
     }
   }
   verifyMData() {
@@ -428,7 +431,7 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
       this.bulkDataVerifyModal = true;
       this.bulkVerificationData=this.selectedRows;
     } else {
-      alert('No row has been selected!');
+      alert('No row(s) has been selected!');
     }
   }
   // this.bulkDataVerifyModal = true;
@@ -450,30 +453,33 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
   }
   isDuplicate(d, edit) {
     let t='';
-    if (d.duplicate && d.flaged) {
-      return  t="flagedrecord";
-    }
-    if (d.duplicate && edit) {
-      return t+" newrecordEdited";
-    }
-
-    //killed
-    if (d.duplicate && d.killed) {
+    if ( d.killed) {
       return t+" killed";
     } 
+    else if ( d.flaged) {
+      return  t="flagedrecord";
+    }
+    else if (d.duplicate && edit) {
+      return t+" newrecordEdited";
+    }
     else if (d.duplicate) {
       return t+" newrecord";
     }
   }
   saveVerifiedData(){
-    debugger
-    console.log(this.selectedVerifyData)
-    let body = new HttpParams();
-    body = body.set('newData', JSON.stringify(this.selectedVerifyData));
-    this.httpService.extractData(CustomerServicesUrls.ARTLOG_UPDATEJOBS_Verified, body, null).subscribe((data) => {
-      console.log(data);
-    })
-    
+    if(this.selectedVerifyData.length ==0){
+      alert('Please select at least one row')
+    }else{
+      let body = new HttpParams();
+      body = body.set('newData', JSON.stringify(this.selectedVerifyData));
+      let self=this;
+      this.httpService.extractData(CustomerServicesUrls.ARTLOG_UPDATEJOBS_Verified, body, null).subscribe((data) => {
+        console.log(data);
+        self.bulkDataVerifyModal=false;
+        self.selectedRows=[];
+        self.alert.showAlertScucess(['row(s) verification has been complated!'], 5000);
+      })
+    }
   }
   onFilter(event, dt) {
     this.filteredValuesLength = event.filteredValue.length; // count of displayed rows 

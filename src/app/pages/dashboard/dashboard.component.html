@@ -352,7 +352,7 @@
                       class=" btn btn-sm ui-button-danger" (click)="onRowEditCancel(rowData, ri)"></button>
                       <!-- <i class="fa fa-asterisk" aria-hidden="true"></i> -->
                       <sup *ngIf="!rowData.hasOwnProperty('duplicate') && rowData.job_key!=''">*</sup>
-                      <button *ngIf="rowData.flaged"  type="button" class="ml-1 btn btn-sm btn-primary" (click)="clearFlag(rowData)">
+                      <button *ngIf="rowData.flaged && !rowData.killed"  type="button" class="ml-1 btn btn-sm btn-primary" (click)="clearFlag(rowData)">
                           <i class="font12 fa fa-flag"></i>
                         </button>
                   </ng-container>
@@ -739,10 +739,12 @@
   </p-footer>
 </p-dialog>
 <!--Modal dialog for Flagged Row generation-->
-<p-dialog header="Row Flagging" [(visible)]="rowFlaggedModal" [responsive]="true" showEffect="fade" [modal]="true"  [contentStyle]="{'min-height':'300px'}" [style]="{width: '30%'}">
+<p-dialog header="Row Flagging" [(visible)]="rowFlaggedModal" [responsive]="true" showEffect="fade" [modal]="true"  [contentStyle]="{'min-height':'100px','overflow':'visible' }" [style]="{width: '30%'}">
   <div class="ui-g ui-fluid">
-       Flagged for Team :        
-      <p-dropdown class="ml-1" [options]="teamsGrpup" [(ngModel)]="flaggedTeam"></p-dropdown>
+      <div class="form-group w-100">
+          <label for="email">Flagged for Team:</label>              
+      <p-dropdown [options]="teamsGrpup" [(ngModel)]="flaggedTeam"></p-dropdown>
+      </div>
     </div>
     <p-footer>
      <button type="button" pButton icon="fa fa-floppy-o" class="ui-button-success btn btn-sm" (click)="saveFlagged()" label="Save"></button>
@@ -759,7 +761,7 @@
   </p-footer>
 </p-dialog>
 <!--Modal dialog for bulk data verification-->
-<p-dialog header="Manuscript Verification & Paging Approval" [(visible)]="bulkDataVerifyModal" [responsive]="true" showEffect="fade" [modal]="true"  [style]="{width: '70%'}">
+<p-dialog header="Manuscript Verification & Paging Approval" [(visible)]="bulkDataVerifyModal" [responsive]="true" showEffect="fade" [modal]="true"  [contentStyle]="{'min-height':'100px','overflow':'visible' }" [style]="{width: '70%'}" [maximizable]="true">
 <div class="ui-g ui-fluid">           
   <p-table [value]="bulkVerificationData" [(selection)]="selectedVerifyData">
       <ng-template pTemplate="header">
