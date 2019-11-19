@@ -12,6 +12,8 @@ export class CustomerServicesUrls extends UrlBase {
       //setDefaultSearch
       public static ARTLOG_JOBADD = CustomerServicesUrls.ARTLOGAUTOMATION_URL + "api/addnewjobs/";
       public static ARTLOG_UPDATEJOBS = CustomerServicesUrls.ARTLOGAUTOMATION_URL + "api/updateJob/";
+      public static ARTLOG_UPDATEJOBS_Verified = CustomerServicesUrls.ARTLOGAUTOMATION_URL + "api/updateJobVerified/";
+      
       public static ARTLOG_KILLEDSELECTEDJOBS = CustomerServicesUrls.ARTLOGAUTOMATION_URL + "api/killedRows/";
       public static ARTLOG_UnKILLEDSELECTEDJOBS = CustomerServicesUrls.ARTLOGAUTOMATION_URL + "api/unkilledRows/";
 
