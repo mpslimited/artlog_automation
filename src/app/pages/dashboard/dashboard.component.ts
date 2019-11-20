@@ -352,6 +352,7 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
       this.httpService.extractPostData(CustomerServicesUrls.ARTLOG_FLAGEDSELECTEDJOBS, body, { headers: myheader }).subscribe((data) => {
         self.alert.showAlertScucess([data.msg], 5000);
         self.rowFlaggedModal = false;
+        self.flaggedTeam ='';
         self.selectedRows=[];
       });
     }else{
@@ -359,7 +360,6 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
     }
   }
   OnChanges() {
-
     if (this.selectedRows.length = 0) {
       this.selectedModesDisabled = false;
     } else {
