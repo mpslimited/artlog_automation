@@ -68,7 +68,8 @@ export class LoginComponent extends BaseComponent implements OnInit {
           'userInfo': data.id,
           'Token': data.token,
           'name' : data.name,
-          'roleName': data.roleName
+          'roleName': data.roleName,
+          'userGroupName': data.userGroupName
         });
         localStorage.setItem('isLogin', 'true');
 

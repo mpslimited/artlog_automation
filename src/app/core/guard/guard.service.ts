@@ -44,16 +44,13 @@ export class GuardService {
       }
 
       navigateFromLogin() {
-             debugger
             if ( localStorage.getItem('isLogin')=="true") {
                   this.router.navigate(['/pages/admin']);
             } else {
-
                   localStorage.clear();
                   this.navigateToLogin();
             }
       }
-
       navigateToLogin() {
             this.router.navigate(['']);
       }

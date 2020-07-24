@@ -18,6 +18,7 @@ export class CustomerServicesUrls extends UrlBase {
       public static ARTLOG_UnKILLEDSELECTEDJOBS = CustomerServicesUrls.ARTLOGAUTOMATION_URL + "api/unkilledRows/";
 
       public static ARTLOG_FLAGEDSELECTEDJOBS = CustomerServicesUrls.ARTLOGAUTOMATION_URL + "api/flagedRows/";
+      public static ARTLOG_ASSIGNAUDITORS = CustomerServicesUrls.ARTLOGAUTOMATION_URL + "api/assignAuditors/";
       public static ARTLOG_UnFLAGEDSELECTEDJOBS = CustomerServicesUrls.ARTLOGAUTOMATION_URL + "api/unflagedRows/";
       public static ARTLOG_REDDRUSERINFO = CustomerServicesUrls.ARTLOGAUTOMATION_URL + "api/getUserInfo/";
       public static ARTLOG_SEARCHSAVE = CustomerServicesUrls.ARTLOGAUTOMATION_URL + "api/searchState/";
@@ -28,6 +29,10 @@ export class CustomerServicesUrls extends UrlBase {
       public static ARTLOG_SETDEFAULT_SEARCH = CustomerServicesUrls.ARTLOGAUTOMATION_URL + "api/setDefaultSearch/";
 
       public static ARTLOG_BULKBATCH = CustomerServicesUrls.ARTLOGAUTOMATION_URL + "api/updateBulkBatch/";
+      public static ARTLOG_BULK_EXCEPTIONCAT = CustomerServicesUrls.ARTLOGAUTOMATION_URL + "api/updateBulkExceptionCat/";
+      public static ARTLOG_BULK_BULKBATCHCDATE = CustomerServicesUrls.ARTLOGAUTOMATION_URL + "api/updateBulkBatchCDate/";
+      
+      public static ARTLOG_BULK_EXCEPTION = CustomerServicesUrls.ARTLOGAUTOMATION_URL + "api/updateBulkException/";
       public static ARTLOG_BULKTAGS  = CustomerServicesUrls.ARTLOGAUTOMATION_URL + "api/updateBulkTags/";
 
       public static JOBSMETA_DATA = CustomerServicesUrls.ARTLOGAUTOMATION_URL + "api/jobsMetadata/";
@@ -35,8 +40,10 @@ export class CustomerServicesUrls extends UrlBase {
       
       public static USERINFO_DATA = "https://mpstrakdemo.mpstechnologies.com/mpstrak/production/taskTrakingReport";
       public static JOBSMETA_DATA1 = CustomerServicesUrls.ARTLOGAUTOMATION_URL + "api/artlogdata/";
-
-
+      public static ARTLOG_TeamData = CustomerServicesUrls.ARTLOGAUTOMATION_URL + "api/artlogteamdata/";
+      public static ARTLOG_DCASUMMARY = CustomerServicesUrls.ARTLOGAUTOMATION_URL + "api/dsmsummary/";
+      public static ARTLOG_JOBS_REFRESH = CustomerServicesUrls.ARTLOGAUTOMATION_URL + "api/refreshjobs/";
+      public static ARTLOG_JOBS_REFRESH_SHOW = CustomerServicesUrls.ARTLOGAUTOMATION_URL + "api/showrefreshjobs/";
 
       public static TK_CUSTOMER_BASE_URL = 'https://democswebservices.mps-think.com/';
 

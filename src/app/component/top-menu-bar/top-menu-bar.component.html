@@ -6,10 +6,11 @@
     </button>
   
     <div class="collapse navbar-collapse navbar-menu-wrapper" id="navbarSupportedContent">
-      <ul class="navbar-nav mr-auto col-8">
+      <ul class="navbar-nav mr-auto col-4">
         <li class="nav-item">
           <h4 class="nav-link m-0 ml-n4" href="#">Art Log Automation</h4>
         </li>
+        
       </ul>
       
       <ul class="navbar-nav navbar-nav-right">
@@ -21,12 +22,15 @@
             </div>
             <div class="nav-profile-text">
               <p class="mb-1 text-white">{{auth.name}}</p>
+              
             </div>
           </a>
           <div class="dropdown-menu navbar-dropdown" aria-labelledby="profileDropdown">
-            <a class="dropdown-item" href="#">
-              <strong>{{auth.roleName}}</strong> </a>
-            <div class="dropdown-divider"></div>
+           
+            <a class="dropdown-item">
+                <strong>{{auth.roleName}}</strong> </a>
+           
+            <div class="dropdown-divider"> </div>
             <a class="dropdown-item" (click)="logout()">
               <i class="pi pi-sign-out mr-2 text-primary"></i>  </a>
           </div>

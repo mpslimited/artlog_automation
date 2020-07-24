@@ -21,6 +21,8 @@ import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
 import { ScrollingModule } from '@angular/cdk/scrolling';
+import { SyncJobsComponent } from './pages/sync-jobs/sync-jobs.component';
+import { ScorecardComponent } from './pages/scorecard/scorecard.component';
 
 
 
@@ -29,6 +31,8 @@ import { ScrollingModule } from '@angular/cdk/scrolling';
 @NgModule({
   declarations: [
     AppComponent,
+    SyncJobsComponent,
+    ScorecardComponent,
     // EditjobComponent,
 
   ],

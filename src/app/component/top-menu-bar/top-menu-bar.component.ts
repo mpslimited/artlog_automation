@@ -8,7 +8,7 @@ import { DropdownDataModel } from '../select';
 declare var $: any;
 
 import { GlobalProcessRoutingService } from '../../core/services';
-import { Subscription } from 'rxjs';
+import { Subscription, from } from 'rxjs';
 
 import { SessionObject, Utils, ProjectUtils } from '../../core/shared/index';
 import { BaseComponent, BaseService } from '../../core/base';
@@ -16,6 +16,7 @@ import { GuardService } from '../../core/guard/guard.service';
 import { TopMenuBarModel } from './top-menu-bar.model';
 import { HttpService } from '../../core/services/http.service';
 import { CustomerServicesUrls } from '../../core/shared/constant/url-constants/customer-services.constants';
+import { DashboardModule } from '../../pages/dashboard/dashboard.module'
 @Component({
   selector: 'app-top-menu-bar',
   templateUrl: './top-menu-bar.component.html',

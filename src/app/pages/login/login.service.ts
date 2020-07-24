@@ -33,6 +33,7 @@ export class LoginService extends BaseService {
                   'userInfo': data.id,
                   'Token': data.token,
                   'name' : data.name,
+                  'userGroupName': data.userGroupName,
                   'roleName': data.roleName
                 });
                 console.log(data);

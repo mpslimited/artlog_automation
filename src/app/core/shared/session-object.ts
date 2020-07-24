@@ -7,10 +7,8 @@ export interface UserDetailsI {
     userInfo: string;
     name: string;
     roleName: string;
+    userGroupName: string;
 }
-
-
-
 
 export class SessionObject {
     status: any;

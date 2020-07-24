@@ -7,11 +7,10 @@ import { LoginGuard } from './core/guard/login-guard';
 
 export const routes: Routes = [
       {
-            path: '',
-            canActivate: [LoginGuard],
-            pathMatch: 'full',
-            loadChildren: './pages/login/login.module#LoginModule'
-
+            path : '',
+            canActivate : [LoginGuard],
+            pathMatch : 'full',
+            loadChildren : './pages/login/login.module#LoginModule'
       },
       {
             path: '**',
@@ -19,7 +18,6 @@ export const routes: Routes = [
             canActivate: [AuthGuard]
       }
 ];
-
 const extraOptions: ExtraOptions = {
       enableTracing: false,
       useHash: false
