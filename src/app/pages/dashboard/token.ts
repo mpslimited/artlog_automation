@@ -17,8 +17,5 @@ export class HeaderOpt {
     getTokenData(){
         return JSON.parse(this.tokenData);
     }
-    
-    
-   //  httpOptions.set('Authorization', tokenId);
+     //  httpOptions.set('Authorization', tokenId);
 }
-      

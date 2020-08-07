@@ -67,13 +67,20 @@ export class ArtLogModel implements BaseSearchModelI {
             apiKey: 'added',
             placeholder: ''
       };
-      // limitToOc: BasicSearchModelI = {
-      //       value: '',
-      //       defaultValue: null,
-      //       label: 'limitToOc',
-      //       apiKey: 'limitToOc',
-      //       placeholder: ''
-      // };
+      fromPage: BasicSearchModelI = {
+             value: '',
+             defaultValue: 0,
+             label: 'fromPage',
+             apiKey: 'fromPage',
+             placeholder: ''
+       };
+       toPage: BasicSearchModelI = {
+            value: '',
+            defaultValue: 50,
+            label: 'toPage',
+            apiKey: 'toPage',
+            placeholder: ''
+      };
       // ocDescrip: BasicSearchModelI = {
       //       value: '',
       //       defaultValue: null,

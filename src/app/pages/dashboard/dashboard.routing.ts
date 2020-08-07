@@ -1,27 +1,42 @@
 import { Routes, RouterModule } from '@angular/router';
 import { ModuleWithProviders } from '@angular/core';
 import { DashboardComponent } from './dashboard.component';
+import { ArtDashboardComponent } from './art-dashboard/art-dashboard.component';
+import { ArtProductivityComponent } from './art-productivity/art-productivity.component';
+import { ScorecardviewComponent } from './scorecardview/scorecardview.component';
+
+// import { DataGridComponent  } from './DataGrid.Component';
 import { AuthGuard } from '../../core/guard';
 //import { AuthGuard } from '../dashboard/dashboard.module';
 export const routes: Routes = [
       {
             path: '',
             component: DashboardComponent,
-            // children: [
-
-            //       {
-            //             path: '',
-
-            //             //loadChildren: '../dashboard/dashboard.module#DashboardModule'
-            //             //'../cust-service/cust-desktop.module#DashboardModule'
-            //   }//,{
-            //       //       path: 'admin',
-            //       //       loadChildren: '../cust-service/cust-desktop.module#CustDestTopModule'
-            //       // }
-            // ],
-             canActivate: [AuthGuard],
-            // // canActivateChild: [AuthGuard]
-      }
+            canActivate: [AuthGuard],
+      },
+      {
+            path: 'home',
+            component: DashboardComponent,
+            canActivate: [AuthGuard],
+      },
+      {
+            path: 'artdashboard',
+            component: ArtDashboardComponent,
+            canActivate: [AuthGuard],
+      },
+      {
+            path: 'dashboard',
+            component: ArtProductivityComponent,
+            canActivate: [AuthGuard],
+      },
+      {
+            path: 'scorecardview',
+            component: ScorecardviewComponent,
+            canActivate: [AuthGuard],
+      }/*,{
+            path: 'datagrid', dashboard
+            component: DataGridComponent,
+      }*/
 ];
 
 

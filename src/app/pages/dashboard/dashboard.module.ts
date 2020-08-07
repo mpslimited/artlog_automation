@@ -4,12 +4,11 @@ import { CommonModule } from '@angular/common';
 //import { AgGridModule } from 'ag-grid-angular/main';
 import { routing } from './dashboard.routing';
 import { ComponentModule } from './../../component/component.module';
-import { EditjobComponent } from '../dashboard/editjob/editjob.component';
 import { DashboardComponent } from './dashboard.component';
+// import { DataGridComponent  } from './DataGrid.Component';
 import { RootSharedModule } from '../../core/sharedModules';
-import { AddjobComponent } from './addjob/addjob.component';
 import { AccordionModule } from 'primeng/accordion';
-import { MenuItem } from 'primeng/api';                 //api
+import { MenuItem } from 'primeng/api';
 import { TableModule } from 'primeng/table';
 import { InputTextModule } from 'primeng/inputtext';
 import {InputTextareaModule} from 'primeng/inputtextarea';
@@ -34,8 +33,19 @@ import {DynamicDialogModule} from 'primeng/dynamicdialog';
 import {ConfirmDialogModule} from 'primeng/confirmdialog';
 import {SelectButtonModule} from 'primeng/selectbutton';
 import {BlockUIModule} from 'primeng/blockui';
+import { AgGridModule } from 'ag-grid-angular';
+import { HttpClientModule } from "@angular/common/http";
+import { ArtDashboardComponent } from './art-dashboard/art-dashboard.component';
+import { ArtProductivityComponent } from './art-productivity/art-productivity.component';
+import { SyncJobsComponent } from './sync-jobs/sync-jobs.component';
+import { ApprovedjobsComponent } from './approvedjobs/approvedjobs.component';
+import { ScorecardviewComponent } from './scorecardview/scorecardview.component';
+import { JobcardviewComponent } from './jobcardview/jobcardview.component';
+import { EditjobComponent } from './editjob/editjob.component';
+import { PerformanceComponent } from './performance/performance.component';
+//import { AgGridModule } from "@ag-grid-community/angular";
 
-
+//import { DashboardComponent } from './dashboard.component';
 @NgModule({
       imports: [
             BlockUIModule,
@@ -64,12 +74,23 @@ import {BlockUIModule} from 'primeng/blockui';
             RootSharedModule,
             MultiSelectModule,
             DropdownModule,
-            ReactiveFormsModule
+            ReactiveFormsModule,
+            HttpClientModule,
+            AgGridModule.withComponents([]),
       ], exports: [DashboardComponent],
       declarations: [
             DashboardComponent,
+            ArtDashboardComponent,
+            ArtProductivityComponent,
+            SyncJobsComponent,
+            ApprovedjobsComponent,
+            ScorecardviewComponent,
+            JobcardviewComponent,
             EditjobComponent,
-            AddjobComponent
+            PerformanceComponent,
+           // DataGridComponent,
+           // EditjobComponent,
+           // AddjobComponent
             // TopMenuBarComponent
       ]
 })

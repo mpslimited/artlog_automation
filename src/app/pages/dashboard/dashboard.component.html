@@ -2,6 +2,32 @@
   <div class="content-wrapper">
     <div class="row mt-5">
       <div class="col-12">
+        <ul class="nav nav-tabs border-bottom-0">
+          <li class="nav-item">
+            <a class="nav-link " [routerLinkActive]="['active', '']" [routerLink]="['/pages/admin/home']">Active Jobs</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link " [routerLinkActive]="['active', '']" [routerLink]="['/pages/admin/approved']">Approved Jobs</a>
+          </li>
+          <li class="nav-item" *ngIf="auth.roleName == 'Art Designer'">
+            <a class="nav-link" [routerLinkActive]="['active', '']" [routerLink]="['/pages/admin/artdashboard']">Art Dashboard</a>
+          </li>
+          <li class="nav-item" *ngIf="auth.roleName == 'Art Designer'">
+            <a class="nav-link" [routerLinkActive]="['active', '']" [routerLink]="['/pages/admin/dashboard']">Art Productivity</a>
+          </li>
+          <li class="nav-item" *ngIf="auth.roleName == 'Art Designer'">
+            <a class="nav-link" [routerLinkActive]="['active', '']" [routerLink]="['/pages/admin/scorecardview']">Scorecard View</a>
+          </li>
+          <li class="nav-item" *ngIf="auth.roleName == 'Art Designer'">
+            <a class="nav-link" [routerLinkActive]="['active', '']" [routerLink]="['/pages/admin/scorecardview']">Api Performance</a>
+          </li>
+          <li class="nav-item" *ngIf="auth.roleName == 'Art Designer'">
+            <a class="nav-link" [routerLinkActive]="['active', '']" [routerLink]="['/pages/admin/scorecardview']">Recent Log</a>
+          </li>
+          <li class="nav-item" *ngIf="auth.roleName == 'Digital Asset Lead'">
+            <a class="nav-link " [routerLinkActive]="['active', '']" [routerLink]="['/pages/admin/jobrefres']">Job Refresh</a>
+          </li>
+        </ul>
       </div>
     </div>
     <form #baseForm="ngForm" class="form-horizontal" (submit)="filterData()">
@@ -97,11 +123,13 @@
     </div>
   </form>
     <div class="row">
-      <div class="col-lg-12">          
-          <p-table #dt editMode="row" dataKey="_id" [value]="cartdata" 
+      <div class="col-lg-12">     
+          <p-table #dt editMode="row" dataKey="_id" [value]="cartdata" [totalRecords]='totalRecords' 
+          [rowsPerPageOptions]='[5,10,50,100,150]' 
+          [lazy]="true" (onLazyLoad)="lazyLoadEnv($event)"
           selectionMode="multiple" [(selection)]="selectedRows" scrollable="isScrollable" [loading]="dataloading" 
           [frozenColumns]="freezeCols" [columns]="scrollableCols" frozenWidth="170px"
-          scrollHeight="450px" (onFilter)="onFilter($event, dt)" [paginator]="true" [rows]="50">
+          scrollHeight="600px" (onFilter)="onFilter($event, dt)" [paginator]="true" [rows]="100">
           <ng-template pTemplate="colgroup" let-columns>
             <colgroup>
                 <col *ngFor="let col of columns" style="width:175px">
@@ -119,6 +147,12 @@
                           </a>
                           <a href="javascript:void(0)" pTooltip="Job Name: {{g.name}}" tooltipPosition="top"  class="badge badge-light" *ngIf="g.hasOwnProperty('name') && g.name!=''">
                               <i class="fa fa-filter"></i> <span class="d-inline-block text-truncate" style="max-width: 100px;"> {{g.name}} </span><i class="fa fa-times-circle" (click)="cleargInputFilter(dt,'name')"></i>
+                          </a>
+                          <a href="javascript:void(0)" pTooltip="Flagged: {{g.flagedTeam}}" tooltipPosition="top" class="badge badge-light" *ngIf="g.hasOwnProperty('flagedTeam') && g.flagedTeam!=''">
+                            <i class="fa fa-filter"></i> <span class="d-inline-block text-truncate" style="max-width: 100px;"><strong>Flagged</strong>: {{g.flagedTeam}} </span><i class="fa fa-times-circle" (click)="cleargSelectFilter(dt,'flagedTeam')"></i>
+                          </a>
+                          <a href="javascript:void(0)" pTooltip="Math Auditors: {{g.mathAuditor}}" tooltipPosition="top" class="badge badge-light" *ngIf="g.hasOwnProperty('mathAuditor') && g.mathAuditor!=''">
+                            <i class="fa fa-filter"></i> <span class="d-inline-block text-truncate" style="max-width: 100px;"><strong>Math Auditor</strong>: {{g.mathAuditor}} </span><i class="fa fa-times-circle" (click)="cleargSelectFilter(dt,'mathAuditor')"></i>
                           </a>
                           <a href="javascript:void(0)" pTooltip="Grade: {{g.grade}}" tooltipPosition="top" class="badge badge-light" *ngIf="g.hasOwnProperty('grade') && g.grade!=''">
                               <i class="fa fa-filter"></i> <span class="d-inline-block text-truncate" style="max-width: 100px;"><strong>Grade</strong>: {{g.grade}} </span><i class="fa fa-times-circle" (click)="cleargSelectFilter(dt,'grade')"></i>
@@ -260,6 +294,7 @@
               <th *ngFor="let col of columns">
                 <input *ngIf="col.field=='job_key'" [(ngModel)]="g.job_key" placeholder="Search Job Key" pInputText type="text" (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)" class="w-100" style="margin-bottom:1px">
                 <p-multiSelect maxSelectedLabels="1" *ngIf="col.field=='flagedTeam'" [(ngModel)]="g.flagedTeam" [options]="flagedTeams" defaultLabel="All Teams" (onChange)="dt.filter($event.value, col.field, 'in')" [style]="{minWidth: '155px'}"></p-multiSelect>
+                <p-multiSelect maxSelectedLabels="1" *ngIf="col.field=='mathAuditor'" [(ngModel)]="g.mathAuditor" [options]="mathAuditors" defaultLabel="All Auditors" (onChange)="dt.filter($event.value, col.field, 'in')" [style]="{minWidth: '155px'}"></p-multiSelect>
                 <input *ngIf="col.field=='name'" [(ngModel)]="g.name" placeholder="Search Job Name" pInputText type="text" (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)" class="w-100">
                 <input *ngIf="col.field=='lessonlet'" [(ngModel)]="g.lessonlet" placeholder="Lesson Letter" pInputText type="text" (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)" class="w-100">
                 <input *ngIf="col.field=='tags'" [(ngModel)]="g.tags" placeholder="Tags" pInputText type="text" (input)="dt.filter($event.target.value, col.field, 'contains')" class="w-100">
@@ -363,6 +398,12 @@
                 <ng-container *ngIf="col.field =='flagedTeam' ">
                     {{rowData[col.field]}}
                 </ng-container>
+                <ng-container *ngIf="col.field =='mathAuditor' ">
+                  {{rowData[col.field]}}
+                </ng-container>
+                <ng-container *ngIf="col.field =='mathAuditRC' ">
+                  {{rowData[col.field]}}
+                </ng-container>
                   <p-cellEditor *ngIf="col.field =='lesson' ">
                     <ng-template pTemplate="input">
                       <input pInputText type="text" [(ngModel)]="rowData.lesson" required>
@@ -455,7 +496,7 @@
                       {{rowData[col.field]}}
                   </ng-container>
                   <ng-container *ngIf="col.field =='totalage' " >
-                      {{rowData[col.field]}}
+                     <a (click)="addGraph(rowData)"> {{ rowData[col.field] }}</a>
                   </ng-container>
                   <ng-container *ngIf="col.field =='lastage' ">
                       {{rowData[col.field]}}
@@ -538,7 +579,27 @@
                   <ng-container *ngIf="col.field =='permissionType' ">
                       {{rowData[col.field]}}
                   </ng-container>
-                  
+                  <ng-container *ngIf="col.field =='batchCDate' ">
+                    {{rowData[col.field]}}
+                  </ng-container>
+                  <ng-container *ngIf="col.field =='receiveddate' ">
+                    {{rowData[col.field]}}
+                  </ng-container>
+                  <ng-container *ngIf="col.field =='mpsDueDate' ">
+                    {{rowData[col.field]}}
+                  </ng-container>
+                  <ng-container *ngIf="col.field =='artTeamStatus' ">
+                    {{rowData[col.field]}}
+                  </ng-container>
+                  <ng-container *ngIf="col.field =='artTeamPriority' ">
+                    {{rowData[col.field]}}
+                  </ng-container>
+                  <ng-container *ngIf="col.field =='exceptionCategory' ">
+                    {{rowData[col.field]}}
+                  </ng-container>
+                  <ng-container *ngIf="col.field =='exception' ">
+                    {{rowData[col.field]}}
+                  </ng-container>
                 </td>
             </tr>
           </ng-template>
@@ -553,7 +614,6 @@
 </div>
 </div>
 </div>
-
 <p-overlayPanel #op [showTransitionOptions]="'0ms'" [hideTransitionOptions]="'0ms'" [dismissable]="true" [showCloseIcon]="true">
     <img src="{{selectedData.thumb}}" *ngIf="selectedData" style="width: 250px; height: 25%;"/> 
 </p-overlayPanel>  
@@ -656,11 +716,11 @@
     </div>
 </div>
 </p-dialog>
-<app-custom-modal-pop-up [basicSetting]="editSetting" [template]="editPopup"></app-custom-modal-pop-up>
+<!--<app-custom-modal-pop-up [basicSetting]="editSetting" [template]="editPopup"></app-custom-modal-pop-up>
 <ng-template #editPopup>
 <app-editjob [jobdataid]="jobID">
 </app-editjob>
-</ng-template>
+</ng-template> -->
 <!--Modal dialog for Saved Search List-->
 <p-dialog header="Saved Search List" [(visible)]="savedSearchListModal" [responsive]="true" showEffect="fade" [modal]="true"  [style]="{width: '30%'}">
       <div class="ui-g ui-fluid">           
@@ -738,6 +798,36 @@
       <button type="button" pButton icon="fa fa-floppy-o" class="ui-button-success btn btn-sm" (click)="saveBatchData()" label="Save"></button>
   </p-footer>
 </p-dialog>
+<!--Modal dialog for bulk bulkExceptionCatModal generation-->
+<p-dialog header="Bulk Insert Exception Cat" [(visible)]="bulkExceptionCatModal" [responsive]="true" showEffect="fade" [modal]="true"  [contentStyle]="{'min-height':'100px','overflow':'visible' }" [style]="{width: '70%'}" [maximizable]="true">
+  <div class="ui-g ui-fluid">           
+     <!-- <input type="text" pInputText [(ngModel)]="bulkExceptionCat"/>-->
+     <p-dropdown  class="ml-1" [options]="excCat" [(ngModel)]="bulkExceptionCat" ></p-dropdown >
+    </div>
+    <p-footer>
+      <button type="button" pButton icon="fa fa-floppy-o" class="ui-button-success btn btn-sm" (click)="savebulkExceptionCat()" label="Save"></button>
+  </p-footer>
+</p-dialog>
+<!--Modal dialog for bulk bulkExceptionModal generation-->
+<p-dialog header="Bulk Insert Exception " [(visible)]="bulkExceptionModal" [responsive]="true" showEffect="fade" [modal]="true"  [style]="{width: '30%'}">
+  <div class="ui-g ui-fluid">           
+      <input type="text" pInputText [(ngModel)]="bulkException"/>
+    </div>
+    <p-footer>
+      <button type="button" pButton icon="fa fa-floppy-o" class="ui-button-success btn btn-sm" (click)="savebulkException()" label="Save"></button>
+  </p-footer>
+</p-dialog>
+<!--Modal dialog for bulk bulkBatchCDateModal generation-->
+<p-dialog header="Bulk Batch Complation Date " [(visible)]="bulkBatchCDateModal" [responsive]="true" showEffect="fade" [modal]="true"  [style]="{width: '30%'}">
+  <div class="ui-g ui-fluid"> 
+    <span class="">Formate : MM-DD-YYYY</span>          
+      <input type="text" pInputText [(ngModel)]="bulkBatchCDate" placeholder="MM-DD-YYYY"/>
+    </div>
+    <p-footer>
+      <button type="button" pButton icon="fa fa-floppy-o" class="ui-button-success btn btn-sm" (click)="savebulkBatchCDate()" label="Save"></button>
+  </p-footer>
+</p-dialog>
+
 <!--Modal dialog for Flagged Row generation-->
 <p-dialog header="Row Flagging" [(visible)]="rowFlaggedModal" [responsive]="true" showEffect="fade" [modal]="true"  [contentStyle]="{'min-height':'100px','overflow':'visible' }" [style]="{width: '30%'}">
   <div class="ui-g ui-fluid">
@@ -748,6 +838,19 @@
     </div>
     <p-footer>
      <button type="button" pButton icon="fa fa-floppy-o" class="ui-button-success btn btn-sm" (click)="saveFlagged()" label="Save"></button>
+  </p-footer>
+</p-dialog>
+
+<!--Modal dialog for Flagged Row generation-->
+<p-dialog header="Assign Math Auditor" [(visible)]="assignMathAuditModal" [responsive]="true" showEffect="fade" [modal]="true"  [contentStyle]="{'min-height':'100px','overflow':'visible' }" [style]="{width: '30%'}">
+  <div class="ui-g ui-fluid">
+      <div class="form-group w-100">
+          <label for="email">Math Auditor:</label>              
+      <p-dropdown [options]="MathAuditors" optionLabel="name" [(ngModel)]="assignAuthor"></p-dropdown>
+      </div>
+    </div>
+    <p-footer>
+     <button type="button" pButton icon="fa fa-floppy-o" class="ui-button-success btn btn-sm" (click)="assignAuditors()" label="Save"></button>
   </p-footer>
 </p-dialog>
 
@@ -797,4 +900,14 @@
 <p-footer>
     <button type="button" pButton icon="pi pi-check" class="ui-button-success btn btn-sm" (click)="saveVerifiedData()" label="Submit"></button>
 </p-footer>
+</p-dialog>
+<!--Modal dialog for time duration graph-->
+<p-dialog header="Stage Duration Graph" [(visible)]="stageDurationGraph" [responsive]="true" showEffect="fade" [modal]="true"  [contentStyle]="{'min-height':'100px','overflow':'visible' }" [style]="{width: '70%'}" [maximizable]="true">
+<div class="ui-g ui-fluid">  
+        
+  <p> <!--Here is graph code  : -->{{selectedTagsData| json}}</p> 
+</div> 
+<p-footer>
+   <!-- <button type="button" pButton icon="pi pi-check" class="ui-button-success btn btn-sm" (click)="saveVerifiedData()" label="Submit"></button>
+--></p-footer>
 </p-dialog>

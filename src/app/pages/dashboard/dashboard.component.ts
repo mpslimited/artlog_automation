@@ -12,16 +12,17 @@ import { DropdownDataModel, AlertMessageService } from '../../component';
 import { Router } from '@angular/router';
 import { GridAPII } from '../../core/base/base.component';
 import { SessionObject } from '../../core/shared';
-import { MenuItem, SelectItem } from 'primeng/api';
-//ARTLOG_SEARCHSAVE
+import { MenuItem, SelectItem, LazyLoadEvent } from 'primeng/api';
 import { HttpHeaders, HttpParams } from '@angular/common/http';
 import { HeaderOpt } from './token';
 import { OverlayPanel } from 'primeng/overlaypanel';
-
+import * as moment from 'moment';
+import { unitOfTime } from 'moment';
 
 import { ConfirmationService } from 'primeng/api';
 import { BehaviorSubject } from 'rxjs';
 
+// tslint:disable-next-line: class-name
 export interface gGiltrt {
   job_key: string;
   name: string;
@@ -34,14 +35,14 @@ export interface gGiltrt {
   creditLine: string;
 }
 @Component({
+  // tslint:disable-next-line: component-selector
   selector: 'dashboard',
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css'],
   providers: [ConfirmationService]
 })
 export class DashboardComponent extends BaseComponent implements OnInit, OnChanges {
-  //@Input() jobId: string;
-  blockedPanel: boolean = false;
+  blockedPanel = false;
   clonedArtLog: { [s: string]: any; } = {};
   yearFilter: number;
   selectedColumn: any;
@@ -65,12 +66,12 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
   revisions: any = [];
   cstages: any = [];
   cstatus: any = [];
-  printAssets : any = [];
-  printReadys : any = [];
-  permissionTypes : any = [];
-  pageNos : any = [];
- flagedTeams : any = [];
-
+  printAssets: any = [];
+  printReadys: any = [];
+  permissionTypes: any = [];
+  pageNos: any = [];
+ flagedTeams: any = [];
+ mathAuditors: any = [];
   Gartcomplexs: any = [];
   Gartassions: any = [];
   Grisks: any = [];
@@ -81,11 +82,15 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
   verificationsDt: any = [];
   pagins: any = [];
   freezeCols: any = [];
-  facingData: any =['TE','SE'];
+  facingData: any = ['TE', 'SE'];
   pagingCol: any = [
     { value: '', label: 'N/A' },
     { value: 'Yes', label: 'Yes' },
     { value: 'No', label: 'No' }
+  ];
+  excCat: any = [
+    { value: 'On Track', label: 'On Track' },
+    { value: 'Not On Track', label: 'Not On Track' }
   ];
   scrollableCols: any[];
   selectedRows: any = [];
@@ -101,7 +106,6 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
   dropdownSettings = {};
   editSetting: any;
   selectedData: any = [];
-  //optionsModel
   artLogModel: ArtLogModel;
   Gdata: any;
   addGdata: any = [];
@@ -132,32 +136,37 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
   grid: any = {};
   dataloading: boolean;
   bulkBatchModal: boolean;
+  bulkExceptionCatModal: boolean;
+  bulkExceptionModal: boolean;
+  bulkBatchCDateModal: boolean;
   rowFlaggedModal: boolean;
+  assignMathAuditModal: boolean;
   bulkBatch: any;
+  bulkExceptionCat: any; bulkException: any; bulkBatchCDate: any;
   bulkTags: any;
   bulkDataVerifyModal: boolean;
-  bulkVerificationData: any=[] ;
-  selectedVerifyData: any =[];
+  stageDurationGraph: boolean;
+  bulkVerificationData: any = [] ;
+  selectedVerifyData: any = [];
   bulkTagModal: boolean;
   modes: SelectItem[];
   selectedModes: string[];
   selectedModesDisabled: boolean;
   jobsTypes: any[];
   criteria: boolean;
-  isScrollable: boolean = true;
+  isScrollable = true;
+  auth: any ;
   g: any = {};
-  teamsGrpup: any =[];
+  teamsGrpup: any = [];
   flaggedTeam: String;
+  MathAuditors: any;
+  assignAuthor: any;
   public dataSource = new BehaviorSubject<AbstractControl[]>([]);
-
-
-  //@Input("edit-jobs") editJobID: string;
   public form: FormGroup;
   public contactList: FormArray;
   public duplicateJobsList: FormArray;
-
-
-  constructor(
+  totalRecords: number;
+constructor(
     private confirmationService: ConfirmationService,
     protected baseServices: BaseService,
     protected router: Router,
@@ -166,18 +175,60 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
     protected alert: AlertMessageService,
     private fb: FormBuilder) {
     super(baseServices, router);
-    //this.checkUserinfo();
     this.criteria = false;
     this.selectedModesDisabled = false;
+    const user = SessionObject.getUserDetails();
+    this.auth = user;
+      console.log('User Details : ', user);
+      let auth = [
+        { value: 'SaveGridState', title: 'Save Grid State', icon: 'fa fa-floppy-o', ord: 2 },
+        { value: 'RowFlagged', title: 'Row Flagged', icon: 'fa fa-flag-o', ord: 7 },
+      ];
+      if (!!user.userGroupName && (user.userGroupName === 'Admin' || user.userGroupName === 'DAM Team' )  ) {
+        auth.push( { value: 'AddRow', title: 'Add Row', icon: 'fa fa-plus', ord: 1 });
+        auth.push({ value: 'AddBatchCDate', title: 'Batch Complation Date', icon: 'fa fa-clock-o', ord: 1 });
+        auth.push( { value: 'AddExceptionCat', title: 'Add Exception Cat', icon: 'fa fa-address-book-o', ord: 1 });
+        auth.push( { value: 'AddException', title: 'Add Exception', icon: 'fa fa-wpexplorer', ord: 1 });
+        auth.push({ value: 'LockJobs', title: 'Lock Job & Generate Tags', icon: 'fa fa-lock', ord: 3 });
+        auth.push({ value: 'InsertBatch', title: 'Insert Batch', icon: 'fa fa-object-group', ord: 4 });
+        auth.push({ value: 'InsertTags', title: 'Insert Tags', icon: 'fa fa-tags' , ord: 5});
+        auth.push({ value: 'VerifyData', title: 'Manuscript Verification & Paging Approval', icon: 'fa fa-check', ord: 6 });
+        auth.push({ value: 'killJobs', title: 'Kill Jobs', icon: 'fa fa-ban', ord: 8 });
+      } else if ( !!user.userGroupName && (user.userGroupName === 'Page Production' ||
+      user.userGroupName === 'Art Team' || user.userGroupName === 'Permission Team' || user.userGroupName === 'Content Team'
+      )) {
+         auth.push( { value: 'AddRow', title: 'Add Row', icon: 'fa fa-plus', ord: 1 });
+         auth.push( { value: 'AddBatchCDate', title: 'Batch Complation Date', icon: 'fa fa-clock-o', ord: 1 } );
+         auth.push( { value: 'AddExceptionCat', title: 'Add Exception Cat', icon: 'fa fa-address-book-o', ord: 1 });
+         auth.push( { value: 'AddException', title: 'Add Exception', icon: 'fa fa-wpexplorer', ord: 1 });
+         auth.push({ value: 'killJobs', title: 'Kill Jobs', icon: 'fa fa-ban', ord: 8 });
+      } else if ( !!user.userGroupName && user.userGroupName === 'MPS Art') {
+        auth.push({ value: 'VerifyData', title: 'Manuscript Verification & Paging Approval', icon: 'fa fa-check', ord: 6 });
+      }
+      auth.push( { value: 'AssignAuditors', title: 'Assign Auditors', icon: 'fa fa-user', ord: 9 });
+      auth = auth.sort(function (a, b) {
+        if (a.ord > b.ord) {
+            return 1;
+        }
+        if (b.ord > a.ord) {
+            return -1;
+        }
+        return 0;
+    });
+
     this.modes = [
-      { value: 'AddRow', title: 'Add Row', icon: 'fa fa-plus' },
-      { value: 'SaveGridState', title: 'Save Grid State', icon: 'fa fa-floppy-o' },
-      { value: 'LockJobs', title: 'Lock Job & Generate Tags', icon: 'fa fa-lock' },
-      { value: 'InsertBatch', title: 'Insert Batch', icon: 'fa fa-object-group' },
-      { value: 'InsertTags', title: 'Insert Tags', icon: 'fa fa-tags' },
-      { value: 'VerifyData', title: 'Manuscript Verification & Paging Approval', icon: 'fa fa-check' },
-      { value: 'RowFlagged', title: 'Row Flagged', icon: 'fa fa-flag-o' },
-      { value: 'killJobs', title: 'Kill Jobs', icon: 'fa fa-ban' }
+      { value: 'AddRow', title: 'Add Row', icon: 'fa fa-plus', ord: 1 },
+      { value: 'AddBatchCDate', title: 'Batch Complation Date', icon: 'fa fa-clock-o', ord: 1 },
+      { value: 'AddExceptionCat', title: 'Add Exception Cat', icon: 'fa fa-address-book-o', ord: 1 },
+      { value: 'AddException', title: 'Add Exception', icon: 'fa fa-wpexplorer', ord: 1 },
+      { value: 'SaveGridState', title: 'Save Grid State', icon: 'fa fa-floppy-o', ord: 2 },
+      { value: 'LockJobs', title: 'Lock Job & Generate Tags', icon: 'fa fa-lock', ord: 3 },
+      { value: 'InsertBatch', title: 'Insert Batch', icon: 'fa fa-object-group', ord: 4 },
+      { value: 'InsertTags', title: 'Insert Tags', icon: 'fa fa-tags' , ord: 5},
+      { value: 'VerifyData', title: 'Manuscript Verification & Paging Approval', icon: 'fa fa-check', ord: 6 },
+      { value: 'RowFlagged', title: 'Row Flagged', icon: 'fa fa-flag-o', ord: 7 },
+      { value: 'killJobs', title: 'Kill Jobs', icon: 'fa fa-ban', ord: 8 },
+      { value: 'AssignAuditors', title: 'Assign Auditors', icon: 'fa fa-user', ord: 8 },
     ];
     this.jobsTypes = [
       { value: '', label: 'All' },
@@ -196,11 +247,11 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
     ];
 
     this.cols = [
-      //{ field: '', header: 'Action' },
       { field: 'job_key', header: 'Job Key' },
-      //{ field : 't', header : 'tt'},
       { field: 'name', header: 'Job Name' },
-      { field: 'flagedTeam', header:'Flagged Team'},
+      { field: 'flagedTeam', header: 'Flagged Team'},
+      { field: 'mathAuditor', header: 'Math Auditors'},
+      { field: 'mathAuditRC', header: 'Math Audit RC'},
       { field: 'grade', header: 'Grade' },
       { field: 'module', header: 'Module' },
       { field: 'component', header: 'Component' },
@@ -234,8 +285,16 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
       { field: 'risk', header: 'Permission-Risk' },
       { field: 'impact', header: 'Permission-Impact' },
       { field: 'workflow', header: 'Workflow' },
-      { field: 'permissionType', header: 'Permission Type' }
-    ]
+      { field: 'permissionType', header: 'Permission Type' },
+
+      { field: 'batchCDate', header: 'Batch CDate ' },
+      { field: 'receiveddate', header: 'ArtTeam RDate' },
+      { field: 'mpsDueDate', header: 'MPS DueDate' },
+      { field: 'artTeamStatus', header: 'ArtTeam Status' },
+      { field: 'artTeamPriority', header: 'ArtTeam Priority' },
+      { field: 'exceptionCategory', header: 'Exception Cat.' },
+      { field: 'exception', header: 'Exceptoin' },/**/
+    ];
     this.cols = this.cols.map(d => ({ field: d.field, header: d.header, tid: this.cols.indexOf(d) }));
   }
   reactiveJob(d: any) {
@@ -245,6 +304,7 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
         const myheader = new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded');
         let body = new HttpParams();
         body = body.set('UnkilledID', d._id);
+        // tslint:disable-next-line: max-line-length
         this.httpService.extractPostData(CustomerServicesUrls.ARTLOG_UnKILLEDSELECTEDJOBS, body, { headers: myheader }).subscribe((data) => {
           d.killed = false;
           this.alert.showAlertScucess([data.msg], 5000);
@@ -253,7 +313,6 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
     });
   }
   clearFlag(d: any) {
-    debugger
     const myheader = new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded');
     let body = new HttpParams();
     body = body.set('UnflagedID', d._id);
@@ -265,10 +324,14 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
     });
   }
   optionChangeData() {
-    //debugger
-    //console.log(this.selectedModes);
     if (this.selectedModes.indexOf('AddRow') > -1) {
       this.showDialogToAdd();
+    } else if (this.selectedModes.indexOf('AddBatchCDate') > -1) {
+      this.addBatchCDate();
+    } else if (this.selectedModes.indexOf('AddExceptionCat') > -1) {
+      this.addExceptionCat();
+    } else if (this.selectedModes.indexOf('AddException') > -1) {
+      this.addException();
     } else if (this.selectedModes.indexOf('SaveGridState') > -1) {
       this.saveGridState();
     } else if (this.selectedModes.indexOf('LockJobs') > -1) {
@@ -305,42 +368,69 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
         this.confirmationService.confirm({
           message: 'Are you sure, you want to kill the selected jobs?',
           accept: () => {
-            for (let t in this.selectedRows) {
+            // tslint:disable-next-line: forin
+            for (const t in this.selectedRows) {
               this.selectedRows[t].killed = true;
             }
-            const myheader = new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded');
+            const myheader = new HttpHeaders().set('Content-Type', 'application/json');
             let body = new HttpParams();
             body = body.set('killedID', JSON.stringify(this.selectedRows.map(d => d._id)));
-            let self=this;
+            const self = this;
+            // tslint:disable-next-line: max-line-length
             this.httpService.extractPostData(CustomerServicesUrls.ARTLOG_KILLEDSELECTEDJOBS, body, { headers: myheader }).subscribe((data) => {
               self.alert.showAlertScucess([data.msg], 5000);
-              self.selectedRows=[];
+              self.selectedRows = [];
             });
           }
         });
       }
-    }
-    else if (this.selectedModes.indexOf('RowFlagged') > -1) {
-      // handle cases
-      debugger
+    } else if (this.selectedModes.indexOf('RowFlagged') > -1) {
       if (this.selectedRows.length == 0) {
         alert('Please select at least a row(s)!');
       } else if (this.selectedRows.filter(d => d.killed == true).length > 0) {
         alert('You have selected a killed row(s)!');
       } else {
         this.rowFlaggedModal = true;
-       /* 
-        */
       }
-      //end handle cases
-    }else if (this.selectedModes.indexOf('VerifyData') > -1) {
+    } else if (this.selectedModes.indexOf('VerifyData') > -1) {
       this.verifyMData();
-    } 
+    } else if (this.selectedModes.indexOf('AssignAuditors') > -1) {
+      console.log(this.selectedModes);
+      if (this.selectedRows.length === 0) {
+        alert('Please select at least a row(s)!');
+      } else if (this.selectedRows.filter(d => d.killed === true).length > 0) {
+        alert('You have selected a killed row(s)!');
+      } else {
+        this.assignMathAuditModal = true;
+      }
+    }
   }
-  saveFlagged(){
-    debugger
-    if( !!this.flaggedTeam ){
-      for (let t in this.selectedRows) {
+  assignAuditors() {
+    console.log( this.assignAuthor, this.selectedRows );
+    if ( this.assignAuthor.email === '' ) {
+      alert('Please select Auditor');
+    } else {
+      // tslint:disable-next-line: forin
+      for (const t in this.selectedRows) {
+        this.selectedRows[t].mathAuditor = this.assignAuthor.name ;
+      }
+      const myheader = new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded');
+      let body = new HttpParams();
+      body = body.set('selectedData', JSON.stringify(this.selectedRows.map(d => d._id)));
+      body = body.set('mathAuditor', JSON.stringify(this.assignAuthor));
+      const self = this;
+      this.httpService.extractPostData(CustomerServicesUrls.ARTLOG_ASSIGNAUDITORS, body, { headers: myheader }).subscribe((data) => {
+        self.alert.showAlertScucess([data.msg], 5000);
+        self.assignMathAuditModal = false;
+        self.assignAuthor = '';
+        self.selectedRows = [];
+      });
+    }
+  }
+  saveFlagged() {
+    if ( !!this.flaggedTeam ) {
+      // tslint:disable-next-line: forin
+      for (const t in this.selectedRows) {
         this.selectedRows[t].flaged = true;
         this.selectedRows[t].flagedTeam = this.flaggedTeam ;
       }
@@ -348,14 +438,14 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
       let body = new HttpParams();
       body = body.set('flagedID', JSON.stringify(this.selectedRows.map(d => d._id)));
       body = body.set('flagedTeam', this.flaggedTeam.toString());
-      let self=this;
+      const self = this;
       this.httpService.extractPostData(CustomerServicesUrls.ARTLOG_FLAGEDSELECTEDJOBS, body, { headers: myheader }).subscribe((data) => {
         self.alert.showAlertScucess([data.msg], 5000);
         self.rowFlaggedModal = false;
-        self.flaggedTeam ='';
-        self.selectedRows=[];
+        self.flaggedTeam = '';
+        self.selectedRows = [];
       });
-    }else{
+    } else {
       alert('please select a team');
     }
   }
@@ -367,21 +457,45 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
     }
   }
   ngOnInit() {
-    let teamsGrpup = ["Permissions Team", "Art Team","Clip Art & Storage Team","Design Team","DAM Team"];
-    this.teamsGrpup=teamsGrpup.map(d=>({ label:d, value:d}));
-    this.teamsGrpup.splice(0,0, { label:'Select Team', value:''});
-    this.facingData=[{ label:'TE', value:'TE'}, { label:'SE', value:'SE'}];
+    this.bulkBatchCDate = moment().format('MM-DD-YYYY');
+    this.MathAuditors = Array(
+      {name: '--Please Select--', email: ''},
+      {name: 'Allison Witcraft', email: 'allison.witcraft@greatminds.org'},
+      {name: 'Robyn Sorenson', email: 'robyn.sorenson@greatminds.org'},
+      {name: 'Theresa Streeter', email: 'theresa.streeter@greatminds.org'},
+      {name: 'Amy Rome', email: 'amy.rome@greatminds.org'},
+      {name: 'Jessica Sims', email: 'jessica.sims@greatminds.org'},
+      {name: 'Mary Drayer', email: 'mary.drayer@greatminds.org'},
+      {name: 'Andrew Senkowski', email: 'andrew.senkowski@greatminds.org'},
+      {name: 'Dawn Burns', email: 'dawn.burns@greatminds.org'},
+      {name: 'Philippa Walker', email: 'philippa.walker@greatminds.org'},
+      {name: 'Karen Hall', email: 'karen.hall@greatminds.org'},
+      {name: 'Carla VanWinkle', email: 'carla.vanwinkle@greatminds.org'},
+      {name: 'Amanda Aleksiak', email: 'amanda.aleksiak@greatminds.org'},
+      {name: 'Karen Eckberg', email: 'karen.eckberg@greatminds.org'},
+      {name: 'Carla VanWinkle', email: 'carla.vanwinkle@greatminds.org'},
+      {name: 'Karen Eckberg', email: 'karen.eckberg@greatminds.org'},
+      {name: 'Lora Podgorny', email: 'lora.podgorny@greatminds.org'},
+      {name: 'Brian Petras', email: 'brian.petras@greatminds.org'},
+      {name: 'Lisa Babcock', email: 'lisa.babcock@greatminds.org'},
+      {name: 'Bobbe Maier', email: 'bobbe.maier@greatminds.org'},
+      {name: 'Bob Hollister', email: 'bob.hollister@greatminds.org'}
+      );
+    const teamsGrpup = ['Permissions Team', 'Art Team', 'Clip Art & Storage Team', 'Design Team', 'DAM Team'];
+    this.teamsGrpup = teamsGrpup.map( d => ({ label: d, value: d}));
+    this.teamsGrpup.splice(0, 0, { label: 'Select Team', value: ''});
+    this.facingData = [{ label: 'TE', value: 'TE'}, { label: 'SE', value: 'SE'}];
     this.dataloading = true;
     this.isSaveSearch = false;
-    this.searchText = "Search List1";
+    this.searchText = 'Search List1';
     this.freezeCols = this.cols.filter(d => d.tid < 1);
     this.scrollableCols = this.cols.filter(d => d.tid > 0);
     this.cols.forEach(element => {
-      if (!(element.field == '' || element.field == 'job_key')) {
+      if (!(element.field === '' || element.field === 'job_key')) {
         this.fixCol.push(element);
       }
     });
-    this.frmdt = { grade: '', module: '', status: '', workflow: '' }
+    this.frmdt = { grade: '', module: '', status: '', workflow: '' };
     this.form = this.fb.group({
       jobkey: [null, Validators.compose([Validators.required])],
       grade: [null, Validators.compose([Validators.required])],
@@ -393,24 +507,43 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
     // set contactlist to the form control containing jobAdd
     this.duplicateJobsList = this.form.get('jobAdd') as FormArray;
     this.contactList = this.form.get('jobAdd') as FormArray;
-    let Wdata = [
+    const Wdata = [
       { value: '', label: 'Select All' },
       { value: 'Clip Art', label: 'Clip Art' },
       { value: 'Created Image', label: 'Created Image' },
       { value: 'Permission', label: 'Permission' },
       { value: 'Shutterstock', label: 'Shutterstock' }];
     this.workflows = Wdata;
-    let Tdata = ["Permissions Team", "Art Team", "Clip Art & Storage Team", "Shutterstock Team", "Content Team", "On Hold Team"];
+    const Tdata = ['Permissions Team', 'Art Team', 'Clip Art & Storage Team', 'Shutterstock Team', 'Content Team', 'On Hold Team'];
     this.Tdata = Tdata.map(d => ({ value: d, label: d }));
-    let jobStatus = ['Active', 'Approved', 'Asset Bank'];
+    const jobStatus = ['Active', 'Approved', 'Asset Bank', 'On Hold'];
     this.jobStatus = jobStatus.map(d => ({ field: d, header: d }));
-    //scrollableCols
     this.getinit();
     this.editSetting = new CustomModalPopUpModel('Edit Job');
   }
   collapseChange(event) {
-    debugger
     console.log(event);
+  }
+  addExceptionCat(){
+    if (this.selectedRows.length > 0) {
+      this.bulkExceptionCatModal = true;
+    } else {
+      alert('No row(s) has been selected!');
+    }
+  }
+  addBatchCDate(){
+    if (this.selectedRows.length > 0) {
+      this.bulkBatchCDateModal = true;
+    } else {
+      alert('No row(s) has been selected!');
+    }
+  }
+  addException(){
+    if (this.selectedRows.length > 0) {
+      this.bulkExceptionModal = true;
+    } else {
+      alert('No row(s) has been selected!');
+    }
   }
   addBatch() {
     if (this.selectedRows.length > 0) {
@@ -429,64 +562,62 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
   verifyMData() {
     if (this.selectedRows.length > 0) {
       this.bulkDataVerifyModal = true;
-      this.bulkVerificationData=this.selectedRows;
+      this.bulkVerificationData = this.selectedRows;
     } else {
       alert('No row(s) has been selected!');
     }
   }
   // this.bulkDataVerifyModal = true;
   clearData() {
-    this.artLogModel.jobkey.value = "";
-    this.artLogModel.grade.value = "";
-    this.artLogModel.module.value = "";
-    this.artLogModel.batch.value = "";
-    this.artLogModel.workflow.value = "";
-    this.artLogModel.curricula.value = "";
-    this.artLogModel.status.value = "";
-    this.frmdt.grade = "";
-    this.frmdt.module = "";
-    this.artLogModel.batch.value = "";
-    this.frmdt.workflow = "";
-    this.artLogModel.curricula.value = "";
-    this.frmdt.status = "";
-    this.artLogModel.added.value = "";
+    this.artLogModel.jobkey.value = '';
+    this.artLogModel.grade.value = '';
+    this.artLogModel.module.value = '';
+    this.artLogModel.batch.value = '';
+    this.artLogModel.workflow.value = '';
+    this.artLogModel.curricula.value = '';
+    this.artLogModel.status.value = '';
+    this.frmdt.grade = '';
+    this.frmdt.module = '';
+    this.artLogModel.batch.value = '';
+    this.frmdt.workflow = '';
+    this.artLogModel.curricula.value = '';
+    this.frmdt.status = '';
+    this.artLogModel.added.value = '';
   }
   isDuplicate(d, edit) {
-    let t='';
+    let t = '';
     if ( d.killed) {
-      return t+" killed";
-    } 
-    else if ( d.flaged) {
-      return  t="flagedrecord";
-    }
-    else if (d.duplicate && edit) {
-      return t+" newrecordEdited";
-    }
-    else if (d.duplicate) {
-      return t+" newrecord";
+      return t + ' killed';
+    } else if ( d.flaged) {
+      return  t = 'flagedrecord';
+    } else if (d.duplicate && edit) {
+      return t + ' newrecordEdited';
+    } else if (d.duplicate) {
+      return t + ' newrecord';
     }
   }
-  saveVerifiedData(){
-    if(this.selectedVerifyData.length ==0){
-      alert('Please select at least one row')
-    }else{
+  saveVerifiedData() {
+    if (this.selectedVerifyData.length == 0) {
+      alert('Please select at least one row');
+    } else {
       let body = new HttpParams();
       body = body.set('newData', JSON.stringify(this.selectedVerifyData));
-      let self=this;
+      const self = this;
       this.httpService.extractData(CustomerServicesUrls.ARTLOG_UPDATEJOBS_Verified, body, null).subscribe((data) => {
         console.log(data);
-        self.bulkDataVerifyModal=false;
-        self.selectedRows=[];
+        self.bulkDataVerifyModal = false;
+        self.selectedRows = [];
         self.alert.showAlertScucess(['row(s) verification has been complated!'], 5000);
-      })
+      });
     }
   }
   onFilter(event, dt) {
-    this.filteredValuesLength = event.filteredValue.length; // count of displayed rows 
+    this.filteredValuesLength = event.filteredValue.length; // count of displayed rows
   }
   ellipsisData(col) {
+    // tslint:disable-next-line: max-line-length
     if (col.field == 'component' || col.field == 'series' || col.field == 'description' || col.field == 'cstage' || col.field == 'tags' || col.field == 'name' || col.field == 'creditLine') {
-      return "text-truncate";
+      return 'text-truncate';
     }
   }
   setEditableHeight(isEdited) {
@@ -508,7 +639,7 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
 
   ngOnChanges() {
     this.artLogModel.jobkey.value = this.baseService.getMessage();
-    let obj = {};
+    const obj = {};
     this.getMetaData(obj);
   }
   searchByjobKey(evt: any) {
@@ -523,21 +654,84 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
   saveSearchDialog() {
     this.saveSearchModal = true;
   }
+  lazyLoadEnv(event: LazyLoadEvent ) {
+    this.loading = true;
+    console.log('Data TEsting ==> Skip:', event.first, 'Getting :', event.rows);
+    this.artLogModel.fromPage.value = event.first;
+    this.artLogModel.toPage.value = event.rows;
+    let self = this;
+    let promis1 = new Promise(resolve => {
+      this.loadDataFromApi(this.NAME_ARTLOG).subscribe((data) => {
+        this.dataloading = false;
+        if (data.hasOwnProperty('GridFilters')) {
+          this.lessons = (!!data.GridFilters.lesson) ? data.GridFilters.lesson.map(d => ({ label: d, value: d })) : [];
+          this.lessonLets = (!!data.GridFilters.lessonlet) ? data.GridFilters.lessonlet.map(d => ({ label: d, value: d })) : [];
+          this.components = (!!data.GridFilters.component) ? data.GridFilters.component.map(d => ({ label: d, value: d })) : [];
+          this.modules = (!!data.GridFilters.module) ? data.GridFilters.module.map(d => ({ label: d, value: d })) : [];
+          this.grades = (!!data.GridFilters.grade) ? data.GridFilters.grade.map(d => ({ label: d, value: d })) : [];
+          this.Gartcomplexs = (!!data.GridFilters.artcomplex) ? data.GridFilters.artcomplex.map(d => ({ label: d, value: d })) : [];
+          this.Gartassions = (!!data.GridFilters.artassion) ? data.GridFilters.artassion.map(d => ({ label: d, value: d })) : [];
+          this.Grisks = (!!data.GridFilters.risk) ? data.GridFilters.risk.map(d => ({ label: d, value: d })) : [];
+          this.Gimpact = (!!data.GridFilters.impact) ? data.GridFilters.impact.map(d => ({ label: d, value: d })) : [];
+          this.GcurrentRTeam = (!!data.GridFilters.currentRTeam) ? data.GridFilters.currentRTeam.map(d => ({ label: d, value: d })) : [];
+          this.Gworkflow = (!!data.GridFilters.workflow) ? data.GridFilters.workflow.map(d => ({ label: d, value: d })) : [];
+          this.Gcurriculum = (!!data.GridFilters.curriculum) ? data.GridFilters.curriculum.map(d => ({ label: d, value: d })) : [];
+          this.facings = (!!data.GridFilters.facing) ? data.GridFilters.facing.map(d => ({ label: d, value: d })) : [];
+          this.batchs = (!!data.GridFilters.batch) ? data.GridFilters.batch.map(d => ({ label: d, value: d })) : [];
+          this.topics = (!!data.GridFilters.topic) ? data.GridFilters.topic.map(d => ({ label: d, value: d })) : [];
+          this.revisions = (!!data.GridFilters.revision) ? data.GridFilters.revision.map(d => ({ label: d, value: d })) : [];
+          this.seriess = (!!data.GridFilters.series) ? data.GridFilters.series.map(d => ({ label: d, value: d })) : [];
+          this.cstatus = (!!data.GridFilters.cstatus) ? data.GridFilters.cstatus.map(d => ({ label: d, value: d })) : [];
+          this.cstages = (!!data.GridFilters.cstages) ? data.GridFilters.cstages.map(d => ({ label: d, value: d })) : [];
+          this.printAssets = (!!data.GridFilters.printAssets) ? data.GridFilters.printAssets.map(d => ({ label: d, value: d })) : [];
+          this.printReadys = (!!data.GridFilters.printReadys) ? data.GridFilters.printReadys.map(d => ({ label: d, value: d })) : [];
+          // tslint:disable-next-line: max-line-length
+          this.permissionTypes = (!!data.GridFilters.permissionTypes) ? data.GridFilters.permissionTypes.map(d => ({ label: d, value: d })) : [];
+          this.pageNos = (!!data.GridFilters.pageNos) ? data.GridFilters.pageNos.map(d => ({ label: d, value: d })) : [];
+          this.flagedTeams = (!!data.GridFilters.flagedTeams) ? data.GridFilters.flagedTeams.map(d => ({ label: d, value: d })) : [];
+          this.mathAuditors = (!!data.GridFilters.mathAuditors) ? data.GridFilters.mathAuditors.map(d => ({ label: d, value: d })) : [];
+        }
+        this.totalRecords = data.totalCount;
+        // tslint:disable-next-line: forin
+        for ( const d in data.artLogData ) {
+          data.artLogData[d].totalage = parseFloat(data.artLogData[d].totalage);
+          data.artLogData[d].lastage = parseFloat(data.artLogData[d].lastage);
+        }
+        self.cartdata = data.artLogData;
+        this.filteredValuesLength = data.artLogData.length;
+        self.selectedColumn = this.cols;
+        resolve(data);
+      });
+    });
+    //in a real application, make a remote request to load data using state metadata from event
+        //event.first = First row offset
+        //event.rows = Number of rows per page
+        //event.sortField = Field name to sort with
+        //event.sortOrder = Sort order as number, 1 for asc and -1 for dec
+        //filters: FilterMetadata object having field as key and filter value, filter matchMode as value
+
+        //imitate db connection over a network
+        /*setTimeout(() => {
+          if (this.datasource) {
+              this.cars = this.datasource.slice(event.first, (event.first + event.rows));
+              this.loading = false;
+          }
+      }, 1000);
+      */
+  }
   filterData() {
-    debugger
-    if(this.frmdt.grade.length > 0 || this.frmdt.module.length > 0  || this.artLogModel.batch.value!='' || this.artLogModel.workflow.value.length > 0 
-      || this.artLogModel.curricula.value.length > 0  || this.frmdt.status.length > 0  || this.artLogModel.added.value > 0 ){
+    // tslint:disable-next-line: triple-equals
+    if ( this.frmdt.grade.length > 0 || this.frmdt.module.length > 0  || this.artLogModel.batch.value != '' || this.artLogModel.workflow.value.length > 0
+      || this.artLogModel.curricula.value.length > 0  || this.frmdt.status.length > 0  || this.artLogModel.added.value > 0 ) {
       this.isSaveSearch = true;
-    }else{
+    } else {
       this.isSaveSearch = false;
     }
-    this.getMetaData(this.search);
+    //this.getMetaData(this.search);
   }
   checkUserinfo() {
-    debugger
     this.httpService.extractPostData(CustomerServicesUrls.USERINFO_DATA, null, null).subscribe((data) => {
-      debugger
-      console.log("getting data=>", data);
+      console.log('getting data=>', data);
     });
   }
   confirm() {
@@ -548,14 +742,15 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
         message: 'Are you sure you want to proceed?',
         accept: () => {
           let body = new HttpParams();
-          for (let dt of this.selectedTagsData) {
-            let ind = this.cartdata.indexOf(dt);
+          for (const dt of this.selectedTagsData) {
+            const ind = this.cartdata.indexOf(dt);
            /* if( this.cartdata[ind].duplicate === true)
             this.cartdata[ind].duplicate = false; */
           }
           body = body.set('data', JSON.stringify(this.selectedTagsData));
           this.httpService.extractData(CustomerServicesUrls.UPDATEASSETTAGS, body, null).subscribe((data) => {
-            console.log("res=>", data);
+            console.log('res=>', data);
+            // tslint:disable-next-line: max-line-length
             this.alert.showAlertScucess(['Asset Bank tag updation is in progress! You will receive an email notification once it has been completed.'], 3000);
             this.tagverificationModal = false;
           });
@@ -564,120 +759,186 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
     }
   }
   deleteMoveTagList(dt: any) {
-    let index = this.rowsmoveTags.indexOf(dt);
+    const index = this.rowsmoveTags.indexOf(dt);
     this.rowsmoveTags.splice(index, 1);
   }
   saveTagData() {
     let body = new HttpParams();
     body = body.set('tags', this.bulkTags);
     body = body.set('selectedids', JSON.stringify(this.selectedRows.map(d => d._id)));
-    let self = this;
+    const self = this;
     this.httpService.extractData(CustomerServicesUrls.ARTLOG_BULKTAGS, body, null).subscribe((data) => {
-      for (let dt of data) {
-        let index = self.cartdata.indexOf(self.cartdata.filter((d, i) => d._id === dt._id)[0]);
-        if (self.cartdata[index].tags != "") {
-          self.cartdata[index].tags = self.cartdata[index].tags + ',' + self.bulkTags
-        } else
+      for (const dt of data) {
+        const index = self.cartdata.indexOf(self.cartdata.filter((d, i) => d._id === dt._id)[0]);
+        if (self.cartdata[index].tags != '') {
+          self.cartdata[index].tags = self.cartdata[index].tags + ',' + self.bulkTags;
+        } else {
           self.cartdata[index].tags = self.bulkTags;
+        }
       }
-      self.selectedRows=[];
+      self.selectedRows = [];
       this.bulkTagModal = false;
       self.bulkTags = '';
       this.alert.showAlertScucess(['Bulk tags has been updated successfully!'], 5000);
+    });
+  }
+  savebulkBatchCDate(){
+    let body = new HttpParams();
+    body = body.set('batchCDate', this.bulkBatchCDate);
+    body = body.set('selectedids', JSON.stringify(this.selectedRows.map(d => d._id)));
+    const self = this;
+    this.httpService.extractData(CustomerServicesUrls.ARTLOG_BULK_BULKBATCHCDATE, body, null).subscribe((data) => {
+     debugger
+      for (const dt of data) {
+        const index = self.cartdata.indexOf(self.cartdata.filter((d, i) => d._id === dt._id)[0]);
+        self.cartdata[index].batchCDate = dt.batchCDate || self.bulkBatchCDate;
+        const unit = 'day';
+        const days  = moment(self.cartdata[index].batchCDate).diff( moment(self.cartdata[index].receiveddate), unit as unitOfTime.DurationConstructor );
+        if( days > 7 ){
+          self.cartdata[index].artTeamPriority='Low';
+        } else if( days <= 7 && days > 1  ) {
+          self.cartdata[index].artTeamPriority='Medium';
+        } else if (days <= 1){
+          self.cartdata[index].artTeamPriority ='High';
+        }
+      }
+      self.bulkBatchCDate =  moment().format('MM-DD-YYYY');;
+      this.bulkBatchCDateModal = false;
+      self.selectedRows = [];
+      this.alert.showAlertScucess(['Bulk  Batch Complation Date has been updated successfully!'], 5000);
+    });
+  }
+  savebulkExceptionCat(){
+    let body = new HttpParams();
+    body = body.set('exceptionCategory', this.bulkExceptionCat);
+    body = body.set('selectedids', JSON.stringify(this.selectedRows.map(d => d._id)));
+    const self = this;
+    this.httpService.extractData(CustomerServicesUrls.ARTLOG_BULK_EXCEPTIONCAT, body, null).subscribe((data) => {
+      self.bulkExceptionCat = '';
+      for (const dt of data) {
+        const index = self.cartdata.indexOf(self.cartdata.filter((d, i) => d._id === dt._id)[0]);
+        self.cartdata[index].exceptionCategory = dt.exceptionCategory || self.bulkExceptionCat;
+      }
+      this.bulkExceptionCatModal = false;
+      self.selectedRows = [];
+      this.alert.showAlertScucess(['Bulk exceptionCategory has been updated successfully!'], 5000);
+    });
+  }
+  savebulkException(){
+    debugger
+    let body = new HttpParams();
+    body = body.set('exception', this.bulkException);
+    body = body.set('selectedids', JSON.stringify(this.selectedRows.map(d => d._id)));
+    const self = this;
+    this.httpService.extractData(CustomerServicesUrls.ARTLOG_BULK_EXCEPTION, body, null).subscribe((data) => {
+      debugger
+      self.bulkException = '';
+      for (const dt of data) {
+        const index = self.cartdata.indexOf(self.cartdata.filter((d, i) => d._id === dt._id)[0]);
+        self.cartdata[index].exception = dt.exception || self.bulkException;
+      }
+      this.bulkExceptionModal = false;
+      self.selectedRows = [];
+      this.alert.showAlertScucess(['Bulk exception has been updated successfully!'], 5000);
     });
   }
   saveBatchData() {
     let body = new HttpParams();
     body = body.set('batch', this.bulkBatch);
     body = body.set('selectedids', JSON.stringify(this.selectedRows.map(d => d._id)));
-    let self = this;
+    const self = this;
     this.httpService.extractData(CustomerServicesUrls.ARTLOG_BULKBATCH, body, null).subscribe((data) => {
       self.bulkBatch = '';
-      for (let dt of data) {
-        let index = self.cartdata.indexOf(self.cartdata.filter((d, i) => d._id === dt._id)[0]);
+      for (const dt of data) {
+        const index = self.cartdata.indexOf(self.cartdata.filter((d, i) => d._id === dt._id)[0]);
         self.cartdata[index].batch = dt.batch || self.bulkBatch;
       }
       this.bulkBatchModal = false;
-      self.selectedRows=[];
+      self.selectedRows = [];
       this.alert.showAlertScucess(['Bulk Batch has been updated successfully!'], 5000);
     });
   }
   lockJobGenerateTags() {
-    if (this.selectedRows.length == 0) {
-      alert('Please select a row.')
+    if (this.selectedRows.length === 0) {
+      alert('Please select a row.');
     } else {
-      let dt = [];
+      const dt = [];
       this.rowsmoveTags = [];
       for (let t = 0; t < this.selectedRows.length; t++) {
-        let ind = this.cartdata.indexOf(this.selectedRows[t]);
-        //this.selectedRows[t].tags 
+        const ind = this.cartdata.indexOf(this.selectedRows[t]);
         this.selectedRows[t].generatedTags = 'MPS_artlog, ' + this.generateTags(this.cartdata[ind]);
         this.rowsmoveTags.push(this.selectedRows[t]);
       }
       this.tagverificationModal = true;
     }
   }
-  validG(d){
-   if(isNaN(parseInt(d))){
+  validG(d) {
+    // tslint:disable-next-line: radix
+   if (isNaN(parseInt(d))) {
      return d;
    } else {
-     d=parseInt(d);
+     // tslint:disable-next-line: radix
+     d = parseInt(d);
     return (d < 10) ? '0' + d.toString() : d.toString();
    }
   }
   place(d) {
+    // tslint:disable-next-line: radix
     d = parseInt(d);
     return (d < 10) ? '0' + d.toString() : d.toString();
   }
   generateTags(dt: any) {
-    debugger
     let prfx = '';
-    if (!!dt.job_key && dt.job_key.indexOf("SCI-") > -1) {
-      prfx = "SC_"
-    } else if (!!dt.job_key && dt.job_key.indexOf("EM2-") > -1) {
-      prfx = "EM2_"
+    if (!!dt.job_key && dt.job_key.indexOf('SCI-') > -1) {
+      prfx = 'SC_';
+    } else if (!!dt.job_key && dt.job_key.indexOf('EM2-') > -1) {
+      prfx = 'EM2_';
     }
-    let combination = Array();
-    if((dt.grade!='' || dt.grade !='N/A') && (dt.module !='' && dt.module !='NA')){
-      debugger
+    const combination = Array();
+    if ((dt.grade !== '' || dt.grade !== 'N/A') && (dt.module !== '' && dt.module !== 'NA')) {
       combination.push(prfx + 'G' + this.validG(dt.grade));
       combination.push(prfx + 'G' + this.validG(dt.grade) + '_M' + this.validG(dt.module));
       if (!!dt.lesson) {
         let lett = false;
         if (!!dt.lessonlet) {
           lett = true;
+          // tslint:disable-next-line: max-line-length
           combination.push(prfx + 'G' + this.validG(dt.grade) + '_M' + this.validG(dt.module) + '_L' + this.validG(dt.lesson) + '_' + dt.lessonlet);
         }
         combination.push(prfx + 'G' + this.validG(dt.grade) + '_M' + this.validG(dt.module) + '_L' + this.validG(dt.lesson));
         if (!!dt.component) {
           let comp = dt.component.substring(0, 3).trim();
-          if (comp.indexOf('_') > -1)
+          if (comp.indexOf('_') > -1) {
             comp = comp.split('_').join('');
-            combination.push(comp);
+          }
+          combination.push(comp);
+          // tslint:disable-next-line: triple-equals
           if (comp == comp.toUpperCase() && !lett) {
-            combination.push(prfx + this.place(dt.grade) + this.place(dt.module) + comp + '_L' + this.place(dt.lesson));
+            combination.push(prfx + this.validG(dt.grade) + this.place(dt.module) + comp + '_L' + this.place(dt.lesson));
+          // tslint:disable-next-line: triple-equals
           } else if (comp == comp.toUpperCase() && !!lett) {
-            combination.push(prfx + this.place(dt.grade) + this.place(dt.module) + comp + '_L' + this.place(dt.lesson) + '_' + dt.lessonlet);
+            // tslint:disable-next-line: max-line-length
+            combination.push(prfx + this.validG(dt.grade) + this.place(dt.module) + comp + '_L' + this.place(dt.lesson) + '_' + dt.lessonlet);
           } else {
-            combination.push(prfx + this.place(dt.grade) + this.place(dt.module) + '_L' + this.place(dt.lesson));
+            combination.push(prfx + this.validG(dt.grade)  + this.place(dt.module) + '_L' + this.place(dt.lesson));
           }
         } else {
-          combination.push(prfx + this.place(dt.grade) + this.place(dt.module) + '_L' + this.place(dt.lesson));
+          combination.push(prfx + this.validG(dt.grade) + this.place(dt.module) + '_L' + this.place(dt.lesson));
         }
         if (!dt.tags) {
           combination.push(dt.job_key);
         } else {
-          if (dt.tags.split(',').indexOf(dt.job_key) == -1) {
+          if (dt.tags.split(',').indexOf(dt.job_key) === -1) {
             combination.push(dt.job_key);
           }
         }
       }
-    }else{
-      if (dt.tags.split(',').indexOf(dt.job_key) == -1) {
+    } else {
+      if (dt.tags.split(',').indexOf(dt.job_key) === -1) {
         combination.push(dt.job_key);
       }
     }
-    console.log("tagGenerated:", combination.join(', '));
+    console.log('tagGenerated:', combination.join(', '));
     return combination.join(', ');
   }
   setDefaltSearch(evt: any) {
@@ -689,15 +950,14 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
   }
   clearGridState() {
     this.httpService.extractData(CustomerServicesUrls.ARTLOG_GRIDSTATECLEAR, null, null).subscribe((data) => {
-      this.gridState = "";
-      debugger
+      this.gridState = '';
       this.scrollableCols = this.cols.filter(d => d.tid > 0);
       this.alert.showAlertScucess(['Your grid state has been reset successfully!'], 3000);
     });
   }
   saveGridState() {
     let body = new HttpParams();
-    let dt = { 'selectedColumn': this.scrollableCols, 'search': this.grid };
+    const dt = { 'selectedColumn': this.scrollableCols, 'search': this.grid };
     body = body.set('selectedColumn', JSON.stringify(dt));
     this.httpService.extractData(CustomerServicesUrls.ARTLOG_GRIDSTATESAVE, body, null).subscribe((data) => {
       if (!!data.searchTitle) {
@@ -708,11 +968,11 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
   }
   saveUserSerach() {
     let body = new HttpParams();
-    let frmDt = {
+    const frmDt = {
       grade: this.frmdt.grade, module: this.frmdt.module, status: this.frmdt.status, batch: this.artLogModel.batch.value,
       workflow: this.artLogModel.workflow.value, curricula: this.artLogModel.curricula.value, resTeam: this.artLogModel.resTeam.value,
       added: this.artLogModel.added.value
-    }
+    };
     body = body.set('frmdt', JSON.stringify(frmDt));
     body = body.set('searchText', JSON.stringify(this.searchText));
     this.httpService.extractData(CustomerServicesUrls.ARTLOG_SEARCHSAVE, body, null).subscribe((data) => {
@@ -725,20 +985,20 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
     let body = new HttpParams();
     body = body.set('_id', obj._id);
     this.httpService.extractData(CustomerServicesUrls.ARTLOG_DELETE_SEARCHSAVE, body, null).subscribe((data) => {
-      let d = this.savedsearchLists.find(d => d._id === data.did);
-      let index = this.savedsearchLists.indexOf(d);
+      const d = this.savedsearchLists.find(d => d._id === data.did);
+      const index = this.savedsearchLists.indexOf(d);
       this.savedsearchLists.splice(index, 1);
       this.alert.showAlertDanger(['Saved search removed successfully!'], 3000);
     });
   }
   getinit() {
     this.httpService.extractData(CustomerServicesUrls.ARTLOG_INIT, null, null).subscribe((data) => {
+      debugger
       if (data.hasOwnProperty('grade')) {
-        debugger
         this.Gdata = data.grade;
-        let GradeData=JSON.parse(JSON.stringify(data.grade));
+        const GradeData = JSON.parse(JSON.stringify(data.grade));
         GradeData.splice(0, 0, { id: '', value: '', label: 'Select' });
-        this.addGdata=GradeData;
+        this.addGdata = GradeData;
       }
       if (!!data.module) {
         this.Mdata = data.module.filter(d => d.value != '');
@@ -766,61 +1026,58 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
         this.wip = data.wip;
       }
       if (!!data.inData) {
-        let def = data.inData.filter(d => d.isDefault === true);
+        const def = data.inData.filter(d => d.isDefault === true);
         if (def.length > 0) {
           this.defaultSearch = def[0]._id;
         }
         this.gridState = data.inData.find(d => d.state === 'GridStage');
         // setting default grid state
         if (!!this.gridState && !!this.gridState.fields) {
-          let dt = JSON.parse(this.gridState.fields);
+          const dt = JSON.parse(this.gridState.fields);
           this.scrollableCols = dt.selectedColumn;
         }
         this.savedsearchLists = data.inData.filter(d => d.state !== 'GridStage');
-        let defalutSearch = this.savedsearchLists.filter(d => d.isDefault == true);
+        const defalutSearch = this.savedsearchLists.filter(d => d.isDefault == true);
         if (this.savedsearchLists.length && defalutSearch.length > 0) {
-          let frmData = JSON.parse(defalutSearch[0].fields);
+          const frmData = JSON.parse(defalutSearch[0].fields);
           if (frmData.grade.length) {
             this.frmdt.grade = frmData.grade;
           }
-          debugger
           if (frmData.module.length > 0) {
             this.frmdt.module = frmData.module;
-          } if (frmData.batch !== "") {
+          } if (frmData.batch !== '') {
             this.artLogModel.batch.value = frmData.batch;
-          } if (frmData.workflow !== "") {
+          } if (frmData.workflow !== '') {
             this.artLogModel.workflow.value = frmData.workflow;
-          } if (frmData.curricula !== "") {
+          } if (frmData.curricula !== '') {
             this.artLogModel.curricula.value = frmData.curricula;
-          } if (frmData.status !== "") {
+          } if (frmData.status !== '') {
             this.frmdt.status = frmData.status;
-          } if (frmData.added !== "") {
+          } if (frmData.added !== '') {
             this.artLogModel.added.value = frmData.added;
           }
           this.filterData();
         } else {
-          let obj: any = {};
+          const obj: any = {};
           this.getMetaData(obj);
         }
       }
     });
   }
-  changeMfilter( val: any, dt: any, colName: any){
-    debugger
+  changeMfilter( val: any, dt: any, colName: any) {
     this.dataloading = true;
-    var self=this;
-    setTimeout(function(){
-      dt.filter(val, colName, 'in')
+    const self = this;
+    setTimeout(function() {
+      dt.filter(val, colName, 'in');
       self.dataloading = false;
-    },200)
+    }, 200 );
   }
   getMetaData(Obj: any) {
     this.dataloading = true;
-    var self = this;
-    this.selectedRows=[];
+    const self = this;
+    this.selectedRows = [];
     return new Promise(resolve => {
       this.loadDataFromApi(this.NAME_ARTLOG).subscribe((data) => {
-        //debugger
         this.dataloading = false;
         if (data.hasOwnProperty('GridFilters')) {
           this.lessons = (!!data.GridFilters.lesson) ? data.GridFilters.lesson.map(d => ({ label: d, value: d })) : [];
@@ -837,23 +1094,40 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
           this.Gcurriculum = (!!data.GridFilters.curriculum) ? data.GridFilters.curriculum.map(d => ({ label: d, value: d })) : [];
           this.facings = (!!data.GridFilters.facing) ? data.GridFilters.facing.map(d => ({ label: d, value: d })) : [];
           this.batchs = (!!data.GridFilters.batch) ? data.GridFilters.batch.map(d => ({ label: d, value: d })) : [];
-          this.topics =(!!data.GridFilters.topic) ? data.GridFilters.topic.map(d => ({ label: d, value: d })) : [];
+          this.topics = (!!data.GridFilters.topic) ? data.GridFilters.topic.map(d => ({ label: d, value: d })) : [];
           this.revisions = (!!data.GridFilters.revision) ? data.GridFilters.revision.map(d => ({ label: d, value: d })) : [];
           this.seriess = (!!data.GridFilters.series) ? data.GridFilters.series.map(d => ({ label: d, value: d })) : [];
           this.cstatus = (!!data.GridFilters.cstatus) ? data.GridFilters.cstatus.map(d => ({ label: d, value: d })) : [];
           this.cstages = (!!data.GridFilters.cstages) ? data.GridFilters.cstages.map(d => ({ label: d, value: d })) : [];
           this.printAssets = (!!data.GridFilters.printAssets) ? data.GridFilters.printAssets.map(d => ({ label: d, value: d })) : [];
           this.printReadys = (!!data.GridFilters.printReadys) ? data.GridFilters.printReadys.map(d => ({ label: d, value: d })) : [];
+          // tslint:disable-next-line: max-line-length
           this.permissionTypes = (!!data.GridFilters.permissionTypes) ? data.GridFilters.permissionTypes.map(d => ({ label: d, value: d })) : [];
-          this.pageNos =(!!data.GridFilters.pageNos) ? data.GridFilters.pageNos.map(d => ({ label: d, value: d })) : [];
-          this.flagedTeams =(!!data.GridFilters.flagedTeams) ? data.GridFilters.flagedTeams.map(d => ({ label: d, value: d })) : [];
+          this.pageNos = (!!data.GridFilters.pageNos) ? data.GridFilters.pageNos.map(d => ({ label: d, value: d })) : [];
+          this.flagedTeams = (!!data.GridFilters.flagedTeams) ? data.GridFilters.flagedTeams.map(d => ({ label: d, value: d })) : [];
+          this.mathAuditors = (!!data.GridFilters.mathAuditors) ? data.GridFilters.mathAuditors.map(d => ({ label: d, value: d })) : [];
+        }
+        // tslint:disable-next-line: forin
+        for ( const d in data.artLogData ) {
+          data.artLogData[d].totalage = parseFloat(data.artLogData[d].totalage);
+          data.artLogData[d].lastage = parseFloat(data.artLogData[d].lastage);
         }
         self.cartdata = data.artLogData;
         this.filteredValuesLength = data.artLogData.length;
         self.selectedColumn = this.cols;
         resolve(data);
+        //self.getOtherData(this.NAME_ARTLOG);
       });
     });
+  }
+  getOtherData(action: string) {
+    debugger
+    // background Process
+    this.loadDataFromApi(this.NAME_ARTLOG).subscribe((data) => {
+      debugger 
+      console.log(data);
+    });
+    console.log(action);
   }
   datatesting(d: any, dd: any) {
     console.log(d, dd);
@@ -870,11 +1144,8 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
   }
   onRowEditSave(artdt: any) {
     const myheader = new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded');
-    //  httpOptions.set('Authorization', tokenId);
-    //this.getHTTPOption
     let body = new HttpParams();
     body = body.set('newData', JSON.stringify(artdt));
-    //ARTLOG_FLAGEDSELECTEDJOBS
     this.httpService.extractPostData(CustomerServicesUrls.ARTLOG_UPDATEJOBS, body, { headers: myheader }).subscribe((data) => {
       if (data.length > 0 && data[0].msg === 'SUCCESS') {
         this.alert.showAlertScucess(['Job(s) updated successfully!'], 3000);
@@ -882,7 +1153,6 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
         this.alert.showAlertDanger(['Updated job(s) have some issue!'], 3000);
       }
     });
-    //CustomerServicesUrls.ARTLOG_UPDATEJOBS
   }
   checkEdit(field, dt) {
     if (dt.hasOwnProperty('duplicate') && dt.duplicate == true && field === 'job_key') {
@@ -899,19 +1169,6 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
       dt.filter(event.value, 'year', 'gt');
     }, 1250);
   }
-  // add a contact form group
-  // addDuplicateJobs(){
-  //   this.duplicateJobsList.push( this.createDuplicateJob())
-  // }
-  // createDuplicateJob(){
-  //   return this.fb.group({
-  //     grade: [null, Validators.compose([Validators.required])],
-  //     module: [null, Validators.compose([Validators.required])],
-  //     component: [null, Validators.compose([Validators.required])],
-  //     batch: [null, Validators.compose([Validators.required])],
-  //     jobkey: [null, Validators.compose([Validators.required])],
-  //   });
-  // }
   createContact(): FormGroup {
     return this.fb.group({
       grade : [null, Validators.compose([Validators.required])],
@@ -923,7 +1180,7 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
       facing : [null],
     });
   }
-  createDuplicateJob(jk: String = '', g: any = {}, m: any = {}, c: String = '', l: String = '', f:String='', t:String='' ): FormGroup {
+  createDuplicateJob(jk: String = '', g: any = {}, m: any = {}, c: String = '', l: String = '', f: String= '', t: String= '' ): FormGroup {
     return this.fb.group({
       jobkey: [jk, Validators.compose([Validators.required])],
       grade: [g, Validators.compose([Validators.required])],
@@ -935,22 +1192,14 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
     });
   }
   addContact() {
-    //debugger
     this.contactList.push(this.createContact());
   }
   // remove contact from group
   createClone(index) {
-    debugger
-    let jobAdd = this.form.value.jobAdd[index];
-    var clone = this.createDuplicateJob(jobAdd.jobkey, jobAdd.grade, jobAdd.module, jobAdd.component, jobAdd.lesson, jobAdd.facing, jobAdd.topic);
+    const jobAdd = this.form.value.jobAdd[index];
+    // tslint:disable-next-line: max-line-length
+    const clone = this.createDuplicateJob(jobAdd.jobkey, jobAdd.grade, jobAdd.module, jobAdd.component, jobAdd.lesson, jobAdd.facing, jobAdd.topic);
     this.contactList.push(clone);
-    //this.contactList.push(this.createContact());
-    //this.form.value.jobAdd[this.form.value.jobAdd.length-1].jobkey = this.form.value.jobAdd[index].jobkey;
-    // setTimeout(function(){ 
-    //   console.log("Data Changes:",this.form, this.form.value.jobAdd[this.form.value.jobAdd.length-1]);
-    //   this.form.value.jobAdd[this.form.value.jobAdd.length-1] = this.form.value.jobAdd[index];
-    //  }, 1000);
-    //this.form.value.jobAdd[this.form.value.jobAdd.length-1] = this.form.value.jobAdd[index];
   }
   removeContact(index) {
     this.contactList.removeAt(index);
@@ -963,44 +1212,37 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
     const formGroup = this.contactList.controls[index] as FormGroup;
     return formGroup;
   }
-  // submit() {
-  //  console.log( "from data => ", this.form.value.jobAdd.map(d=> d.jobkey).join("") ); 
-  // }
   submit() {
-
     let valid = true;
-    for (let test of this.form.value.jobAdd) {
+    for (const test of this.form.value.jobAdd) {
       if (test.jobkey === null || !test.jobkey) {
         valid = false;
       }
     }
-
     if (valid) {
-
       const myheader = new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded');
       let body = new HttpParams();
       body = body.set('jobAdd', JSON.stringify(this.form.value.jobAdd));
-      let self = this;
+      const self = this;
       this.httpService.extractPostData(CustomerServicesUrls.ARTLOG_JOBADD, body, { headers: myheader }).subscribe((data) => {
-        debugger
-        var jobsInfo = data.jobsInfo;
-        var data = data.resDt;
-        for (let dt of data) {
-          let index = self.cartdata.indexOf(self.cartdata.filter((d, i) => d.job_key === dt.job_key)[0]);
+        const jobsInfo = data.jobsInfo;
+        const data1 = data.resDt;
+        for (const dt of data1) {
+          const index = self.cartdata.indexOf(self.cartdata.filter((d, i) => d.job_key === dt.job_key)[0]);
           self.cartdata.splice((index + 1), 0, dt);
         }
         this.displayDialog = false;
-        var saved = jobsInfo.filter(d => d.exist == true);
-        var invalid = jobsInfo.filter(d => d.exist == false);
-        var msg='';
-        if(saved.length >0){
-          msg= saved.length +" Jobs ("+ saved.map(d=>d.jobkey).join()+") has been saved successfully ";
+        const saved = jobsInfo.filter(d => d.exist === true);
+        const invalid = jobsInfo.filter(d => d.exist === false);
+        let msg = '';
+        if ( saved.length > 0 ) {
+          msg = saved.length + ' Jobs (' + saved.map(d => d.jobkey).join() + ') has been saved successfully ';
         }
-        if(invalid.length >0){
-          msg=(!msg)?' ':msg+', ';
-          msg= msg + invalid.length +" Jobs ("+ invalid.map(d=>d.jobkey).join()+") not exist or invalid ";
+        if ( invalid.length > 0) {
+          msg = (!msg) ? ' ' : msg + ', ';
+          msg = msg + invalid.length + ' Jobs (' + invalid.map( d => d.jobkey ).join() + ') not exist or invalid ';
         }
-        msg=msg+'!';
+        msg = msg + '!';
         this.alert.showAlertScucess([msg], 10000);
       });
     } else {
@@ -1012,7 +1254,6 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
   }
   getSearchModel(name: string) {
     if (name === this.NAME_ARTLOG) {
-      // debugger
       try {
         if (this.frmdt.grade.length > 0) {
           this.artLogModel.grade.value = this.frmdt.grade.map(a => a.id);
@@ -1023,9 +1264,6 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
         if (this.frmdt.status.length > 0) {
           this.artLogModel.status.value = this.frmdt.status.map(a => a.field);
         } else { this.artLogModel.status.value = []; }
-        // if (this.frmdt.workflow != "") {
-        //   this.artLogModel.workflow.value = this.frmdt.workflow.value;
-        // } else { this.artLogModel.workflow.value = []; }
       } catch (err) {
         // console.log(err)
       }
@@ -1056,60 +1294,91 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
     }
   }
   clearAllFilter(dt: any) {
-    let Input: any = ['job_key', 'name', 'lessonlet', 'description', 'cstage', 'status', 'creditLine', 'comment', 'tags', 'mverification', 'isPaging'];
-    let InputOth: any = ['tags'];
-    let Select: any = ['grade', 'module', 'component', 'lesson', 'batch', 'currentRTeam', 'curriculum', 'facing', 'series', 'creditLine',
+    // tslint:disable-next-line: max-line-length
+    const Input: any = ['job_key', 'name', 'lessonlet', 'description', 'cstage', 'status', 'creditLine', 'comment', 'tags', 'mverification', 'isPaging'];
+    const InputOth: any = ['tags'];
+    // tslint:disable-next-line: max-line-length
+    const Select: any = ['flagedTeam', 'mathAuditor', 'grade', 'module', 'component', 'lesson', 'batch', 'currentRTeam', 'curriculum', 'facing', 'series', 'creditLine',
       'revisionC', 'artcomplex', 'artassion', 'risk', 'impact', 'workflow'];
-    for (let a in Input) {
-      if (this.g.hasOwnProperty(Input[a]))
+    for (const a in Input) {
+      if (this.g.hasOwnProperty(Input[a])) {
         this.cleargInputFilter(dt, Input[a]);
+      }
     }
-    for (let a in Select) {
-      if (this.g.hasOwnProperty(Select[a]))
+    for (const a in Select) {
+      if (this.g.hasOwnProperty(Select[a])) {
         this.cleargSelectFilter(dt, Select[a]);
+      }
     }
-    if (this.g.hasOwnProperty(InputOth[0]))
+    if (this.g.hasOwnProperty(InputOth[0])) {
       this.cleargInputOtherFilter(dt, InputOth[0]);
+    }
   }
   cleargInputOtherFilter(gdt: any, col: string) {
-    this.g[col] = "";
+    this.g[col] = '';
     gdt.filter(this.g[col], col, 'contains');
   }
   cleargInputFilter(gdt: any, col: string) {
-    this.g[col] = "";
+    this.g[col] = '';
     gdt.filter(this.g[col], col, 'filterMatchMode');
   }
   cleargSelectFilter(dt: any, col: string) {
-    this.g[col] = "";
+    this.g[col] = '';
     dt.filter(this.g[col], col, 'in');
   }
   hasData(): boolean {
     let res = false;
-    for (let key in this.g) {
-      if (this.g[key] != "") {
+    for (const key in this.g) {
+      if (this.g[key] !== '') {
         res = true;
       }
     }
     return res;
   }
   exportDataAsCSVSelected(dt: any) {
-    if(this.selectedRows.length ==0){
+    if ( this.selectedRows.length === 0 ) {
       alert('No row(s) has been selected!');
-    }else{
-      this.scrollableCols = this.cols;
-      let that = this;
-      setTimeout(function () {
-        dt.exportCSV({ selectionOnly: true });
-        that.scrollableCols = that.cols.filter(d => d.tid > 0);
-      }, 1000);
+    } else {
+     // this.scrollableCols = this.cols;
+      const that = this;
+     // setTimeout(function () {
+     //   debugger;
+        let OtherCol = [{ field: 'job_key', header: 'Job Key' },
+        { field: '_id', header: 'ACHJob ID' }
+        ];
+        dt.exportCSV({ selectionOnly: true }, OtherCol );
+     // }, 1000);
     }
   }
   exportDataAsCSV(dt: any) {
-    this.scrollableCols = this.cols;
-    let that = this;
-    setTimeout(function () {
-      dt.exportCSV();
-      that.scrollableCols = that.cols.filter(d => d.tid > 0);
-    }, 1000);
+    //this.scrollableCols = this.cols;
+    // const that = this;
+    //setTimeout(function () {
+      let OtherCol = [
+          { field: 'job_key', header: 'Job Key' },
+          { field: '_id', header: 'ACHJob ID' },
+          { field: '', header: 'Stages'}
+        ];
+      dt.exportCSV({}, OtherCol);
+    // that.scrollableCols = that.cols.filter(d => d.tid > 0);
+    // }, 1000);
+  }
+  addGraph(rowData: any) {
+    console.log("garph data display::", rowData);
+    this.stageDurationGraph= true;
+    //debugger
+    console.log("data fund for graph", rowData.presetstages, rowData.Preset_Stages );
+    throw new Error("apex chart library not rendering. NPM dependency not found");
+    
+    //rowData.presetstages
+    /*const myheader = new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded');
+      let body = new HttpParams();
+      body = body.set('id',  rowData.id);
+      body = body.set('_id',  rowData._id);
+      const self = this;
+      this.httpService.extractPostData(CustomerServicesUrls.ARTLOG_JRAPHADD, body, { headers: myheader }).subscribe((data) => {
+        console.log("data finding test>", data);
+      });
+      */
   }
 }

@@ -23,6 +23,7 @@ import { DialogModule } from 'primeng/dialog';
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import { SyncJobsComponent } from './pages/sync-jobs/sync-jobs.component';
 import { ScorecardComponent } from './pages/scorecard/scorecard.component';
+//import { DashboardComponent } from './pages/dashboard/dashboard.component';
 
 
 
@@ -33,6 +34,7 @@ import { ScorecardComponent } from './pages/scorecard/scorecard.component';
     AppComponent,
     SyncJobsComponent,
     ScorecardComponent,
+    //DashboardComponent,
     // EditjobComponent,
 
   ],
