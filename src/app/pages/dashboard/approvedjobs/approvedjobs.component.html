@@ -113,7 +113,7 @@
                 </div>
                 <div class="col-md-12 text-right">
                   <button type="button" (click)="clearData()" class="btn btn-danger btn-sm mr-1">Reset</button>
-                  <button type="submit" class="btn btn-primary btn-sm mr-1">Search</button>
+                  <button type="submit" class="btn btn-primary btn-sm mr-1" [disabled]="dataloading">Search <span class="btnload" *ngIf="dataloading"></span></button>
                   <button type="button" *ngIf="isSaveSearch" (click)="saveSearchDialog()" class="btn btn-primary btn-sm">Save Search</button>
                 </div>
             </div>            
@@ -907,7 +907,7 @@
 <div class="ui-g ui-fluid">  
   <div class="col-12">
   <apx-chart  #chart [series]="apex.series" [xaxis]="apex.xaxis"
-  [plotOptions]="apex.plotOptions" [chart]="apex.chart"
+  [plotOptions]="apex.plotOptions" [chart]="apex.chart" 
   [dataLabels]="apex.dataLabels" [autoUpdateSeries]="false"></apx-chart>
 </div>
   <p> <!--Here is graph code  : type="BarChart" <google-chart [data]="myData"></google-chart> -->{{selectedTagsData| json}}</p> 

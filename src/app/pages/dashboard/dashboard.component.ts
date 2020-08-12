@@ -728,7 +728,7 @@ constructor(
     } else {
       this.isSaveSearch = false;
     }
-    //this.getMetaData(this.search);
+    this.getMetaData(this.search);
   }
   checkUserinfo() {
     this.httpService.extractPostData(CustomerServicesUrls.USERINFO_DATA, null, null).subscribe((data) => {

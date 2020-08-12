@@ -45,7 +45,7 @@ export class CustomerServicesUrls extends UrlBase {
       public static ARTLOG_JOBS_REFRESH = CustomerServicesUrls.ARTLOGAUTOMATION_URL + "api/refreshjobs/";
       public static ARTLOG_JOBS_REFRESH_SHOW = CustomerServicesUrls.ARTLOGAUTOMATION_URL + "api/showrefreshjobs/";
       public static ARTLOG_JRAPHADD = CustomerServicesUrls.ARTLOGAUTOMATION_URL + "api/artgraph/";
-
+      public static ARTLOG_SCORECARDINIT = CustomerServicesUrls.ARTLOGAUTOMATION_URL + "api/scorecardinit/";
       public static TK_CUSTOMER_BASE_URL = 'https://democswebservices.mps-think.com/';
 
 
