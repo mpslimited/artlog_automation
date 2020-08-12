@@ -904,8 +904,20 @@
 <!--Modal dialog for time duration graph-->
 <p-dialog header="Stage Duration Graph" [(visible)]="stageDurationGraph" [responsive]="true" showEffect="fade" [modal]="true"  [contentStyle]="{'min-height':'100px','overflow':'visible' }" [style]="{width: '70%'}" [maximizable]="true">
 <div class="ui-g ui-fluid">  
-        
-  <p> <!--Here is graph code  : -->{{selectedTagsData| json}}</p> 
+  <div class="col-12">
+  <apx-chart  #chart [series]="apex.series" [xaxis]="apex.xaxis"
+  [plotOptions]="apex.plotOptions" [chart]="apex.chart"
+  [dataLabels]="apex.dataLabels" [autoUpdateSeries]="false"></apx-chart>
+</div>
+      <!-- <google-chart #chart
+       [type]="type"
+           [data]="chartDisplayData"
+   
+   [options]="options"
+   [width]="width"
+   [height]="height">
+</google-chart>-->
+  <p> <!--Here is graph code  : type="BarChart" <google-chart [data]="myData"></google-chart> -->{{selectedTagsData| json}}</p> 
 </div> 
 <p-footer>
    <!-- <button type="button" pButton icon="pi pi-check" class="ui-button-success btn btn-sm" (click)="saveVerifiedData()" label="Submit"></button>

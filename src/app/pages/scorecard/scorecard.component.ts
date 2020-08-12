@@ -6,10 +6,11 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./scorecard.component.css']
 })
 export class ScorecardComponent implements OnInit {
-
+  apex : any = {};
   constructor() { }
 
   ngOnInit() {
+    
   }
-
+  
 }

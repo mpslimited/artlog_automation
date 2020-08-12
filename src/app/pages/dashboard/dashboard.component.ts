@@ -42,6 +42,7 @@ export interface gGiltrt {
   providers: [ConfirmationService]
 })
 export class DashboardComponent extends BaseComponent implements OnInit, OnChanges {
+  apex: any ={};
   blockedPanel = false;
   clonedArtLog: { [s: string]: any; } = {};
   yearFilter: number;
@@ -993,7 +994,7 @@ constructor(
   }
   getinit() {
     this.httpService.extractData(CustomerServicesUrls.ARTLOG_INIT, null, null).subscribe((data) => {
-      debugger
+      //debugger
       if (data.hasOwnProperty('grade')) {
         this.Gdata = data.grade;
         const GradeData = JSON.parse(JSON.stringify(data.grade));
@@ -1360,25 +1361,142 @@ constructor(
           { field: '', header: 'Stages'}
         ];
       dt.exportCSV({}, OtherCol);
-    // that.scrollableCols = that.cols.filter(d => d.tid > 0);
-    // }, 1000);
   }
+  
   addGraph(rowData: any) {
     console.log("garph data display::", rowData);
-    this.stageDurationGraph= true;
-    //debugger
-    console.log("data fund for graph", rowData.presetstages, rowData.Preset_Stages );
-    throw new Error("apex chart library not rendering. NPM dependency not found");
+    this.stageDurationGraph = true;
+    debugger
+    let that = this;
+    // tslint:disable-next-line: max-line-length
+    let rowDuration = rowData.Preset_Stages.map( d => ({ position: d.position, StageNames: d.StageNames ||d.name,
+      duration: parseFloat(that.dateDiffinDurationStage( d.job_date_finished ,  d.start_date))
+    }));
+    debugger
+    let newDrawPattern = [];
+    for ( let  i in  rowDuration) {
+      if ( newDrawPattern.filter( d => d.position == rowDuration[i].position).length==0) {
+        newDrawPattern.push(rowDuration[i]);
+        rowDuration[i].ispushed= true;
+      }
+    }
+    let nextRow = rowDuration.filter(d=> d.ispushed != true);
+    debugger
+    let newDrawPattern2 = [];
+    for ( let  i in  nextRow) {
+      if ( newDrawPattern2.filter( d => d.position == nextRow[i].position).length==0) {
+        newDrawPattern2.push(nextRow[i]);
+        nextRow[i].ispushed= true;
+      }
+    }
+    let nextRow3 =nextRow.filter(d=> d.ispushed!= true);
+    let newDrawPattern3 = [];
+    for ( let  i in  nextRow3) {
+      if ( newDrawPattern3.filter( d => d.position == nextRow3[i].position).length==0) {
+        newDrawPattern3.push(nextRow3[i]);
+        nextRow3[i].ispushed= true;
+      }
+    }
+    let nextRow4 =nextRow3.filter(d=> d.ispushed!= true);
+    let newDrawPattern4 = [];
+    for ( let  i in  nextRow4) {
+      if ( newDrawPattern4.filter( d => d.position == nextRow4[i].position).length==0) {
+        newDrawPattern4.push(nextRow4[i]);
+        nextRow4[i].ispushed= true;
+      }
+    }
+   // newDrawPattern newDrawPattern2 newDrawPattern3, newDrawPattern4
+   for(let dd in newDrawPattern){
+    if(newDrawPattern2.length > 0 && newDrawPattern2.filter(d=> d.position ==newDrawPattern[dd].position).length ==0){
+      newDrawPattern2.push({position: newDrawPattern[dd].position, StageNames: newDrawPattern[dd].StageNames,  duration:0});
+    }
+    if(newDrawPattern3.length > 0 && newDrawPattern3.filter(d=> d.position ==newDrawPattern[dd].position).length ==0){
+      newDrawPattern3.push({position: newDrawPattern[dd].position, StageNames: newDrawPattern[dd].StageNames, duration:0});
+    }
+    if(newDrawPattern4.length > 0 && newDrawPattern4.filter(d=> d.position ==newDrawPattern[dd].position).length ==0){
+      newDrawPattern4.push({position: newDrawPattern[dd].position, StageNames: newDrawPattern[dd].StageNames, duration:0});
+    }
+   }
+   newDrawPattern4=newDrawPattern4.sort((a,b)=> a.position-b.position);
+   newDrawPattern3=newDrawPattern3.sort((a,b)=> a.position-b.position);
+   newDrawPattern2=newDrawPattern2.sort((a,b)=> a.position-b.position);
+    debugger
+    console.log(newDrawPattern3);
+    this.apex = {
+      series: [
+      {
+        name: ['round','1'],
+        data: newDrawPattern.map(d=> ({x:d.StageNames, y: d.duration}))/*[
+          {
+            x: ['Stage A'],
+            y: 2.9
+          },
+          {
+            x: ['Stage B'],
+            y: 4.3
+          },
+          {
+            x: ['Stage C'],
+            y: 6.2
+          },
+          {
+            x: ['Stage D'],
+            y: 11.1
+          }
+        ]*/
+      },
+      {
+        name: ['round','2'],
+        data: newDrawPattern2.map(d=> ({x:d.StageNames, y: d.duration}))
+      },
+      {
+        name: ['round','3'],
+        data: newDrawPattern3.map(d=> ({x:d.StageNames, y: d.duration}))
+      },
+      {
+        name: ['round','4'],
+        data: newDrawPattern4.map(d=> ({x:d.StageNames, y: d.duration}))
+      }
+
+    ],
+      chart: {
+      type: 'bar',
+      stacked: true,
+      height: 450,
+      width: '70%'
+    },
+    plotOptions: {
+      bar: {
+        horizontal: true
+      }
+    },
+    dataLabels: {
+      enabled: true
+    },
+    yaxis: {
+      labels: {
+        align: 'center'
+      }
+    },
+    legend: {
+      horizontalAlign: 'center'
+    }
+    };
     
-    //rowData.presetstages
-    /*const myheader = new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded');
-      let body = new HttpParams();
-      body = body.set('id',  rowData.id);
-      body = body.set('_id',  rowData._id);
-      const self = this;
-      this.httpService.extractPostData(CustomerServicesUrls.ARTLOG_JRAPHADD, body, { headers: myheader }).subscribe((data) => {
-        console.log("data finding test>", data);
-      });
-      */
+    //throw new Error("apex chart library not rendering. NPM dependency not found");
+  }
+  dateDiffinDurationStage ( date1: string , date2: string) {
+    let d2, d1;
+    if ( typeof date1 === "undefined"|| date1 === null  || date1=="") {
+      d1 = new Date();
+    } else {
+      d1 = new Date(date1);
+    }
+    if ( typeof date2 === "undefined"|| date2 === null  || date2=="") {
+      d2 = new Date();
+    } else {
+      d2 = new Date(date2);
+    }
+    return parseFloat( (Math.abs(d2.getTime() - d1.getTime()) / 86400000).toString() ).toFixed(1);
   }
 }

@@ -20,6 +20,9 @@ import * as moment from 'moment';
 import { unitOfTime } from 'moment';
 import { ConfirmationService } from 'primeng/api';
 import { BehaviorSubject } from 'rxjs';
+import { GoogleChartsModule, ScriptLoaderService } from 'angular-google-charts';
+
+declare var google:any;
 
 
 @Component({
@@ -28,6 +31,7 @@ import { BehaviorSubject } from 'rxjs';
   styleUrls: ['./scorecardview.component.css'],
   providers: [ConfirmationService]
 })
+
 export class ScorecardviewComponent extends BaseComponent implements OnInit {
   // -- columans for filter Grid dropdown
   dcaSummary: any = [];
@@ -41,7 +45,10 @@ export class ScorecardviewComponent extends BaseComponent implements OnInit {
   public form: FormGroup;
   public contactList: FormArray;
   public duplicateJobsList: FormArray;
+  data = [];
+  apex: any = {};
   constructor(
+    private loaderService: ScriptLoaderService,
     private confirmationService: ConfirmationService,
     protected baseServices: BaseService,
     protected router: Router,
@@ -56,6 +63,102 @@ export class ScorecardviewComponent extends BaseComponent implements OnInit {
     }
 
   ngOnInit() {
+/*
+   this.data = new google.visualization.arrayToDataTable([
+      ['Element', 'Density', { role: 'style' }, { role: 'annotation' } ],
+      ['Copper', 8.94, '#b87333', 'Cu' ],
+      ['Silver', 10.49, 'silver', 'Ag' ],
+      ['Gold', 19.30, 'gold', 'Au' ],
+      ['Platinum', 21.45, 'color: #e5e4e2', 'Pt' ]
+   ]);
+    */
+   this.apex = {
+    series: [
+    {
+      name: 'round-1',
+      data: [
+        {
+          x: ['Stage', 'A'],
+          y: 2.9
+        },
+        {
+          x: ['Stage', 'B'],
+          y: 4.3
+        },
+        {
+          x: ['Stage', 'C'],
+          y: 6.2
+        },
+        {
+          x: ['Stage', 'D'],
+          y: 11.1
+        }
+      ]
+    },
+    {
+      name: 'round-2',
+      data: [
+        {
+          x: ['Stage', 'A'],
+          y: 4.5
+        },
+        {
+          x: ['Stage', 'B'],
+          y: 1.9
+        },
+        {
+          x: ['Stage', 'C'],
+          y: 9.2
+        },
+        {
+          x: ['Stage', 'D'],
+          y: 3.1
+        }
+      ]
+    }
+  ],
+    chart: {
+    type: 'bar',
+    height: 350
+  },
+  plotOptions: {
+    bar: {
+      horizontal: true
+    }
+  },
+  dataLabels: {
+    enabled: true
+  },
+  yaxis: {
+    labels: {
+      align: 'center'
+    }
+  },
+  legend: {
+    horizontalAlign: 'center'
+  }
+  };
+    google.charts.load('current', {'packages':['barchart']});
+  google.charts.setOnLoadCallback(drawChart);
+
+  function drawChart() {
+
+    var data  = new google.visualization.arrayToDataTable([
+      ['Element', 'Density', { role: 'style' }, { role: 'annotation' } ],
+      ['Copper', 8.94, '#b87333', 'Cu' ],
+      ['Silver', 10.49, 'silver', 'Ag' ],
+      ['Gold', 19.30, 'gold', 'Au' ],
+      ['Platinum', 21.45, 'color: #e5e4e2', 'Pt' ]
+   ]);
+
+    var options = {
+      title: 'My Daily Activities'
+    };
+
+    var chart = new google.visualization.PieChart(document.getElementById('piechart'));
+
+    chart.draw(data, options);
+  }
     this.finddsmsummary();
   }
   finddsmsummary() {
@@ -74,9 +177,6 @@ export class ScorecardviewComponent extends BaseComponent implements OnInit {
     console.log("function");
   }
   overdueDataOfDCATastsummary() {
-    console.log("function");
-  }
-  allDataOfDCATastsummary() {
     console.log("function");
   }
   highDataOfDCATastsummary() {

@@ -69,7 +69,7 @@ export class ArtDashboardComponent extends BaseComponent implements OnInit {
       that.OptData = data;
     });
   }
-  allDataOfDCATastsummary() {
+ /* allDataOfDCATastsummary() {
     console.log("function");
   }
   overdueDataOfDCATastsummary() {
@@ -87,4 +87,5 @@ export class ArtDashboardComponent extends BaseComponent implements OnInit {
   lowDataOfDCATastsummary() {
     console.log("function");
   }
+  */
 }

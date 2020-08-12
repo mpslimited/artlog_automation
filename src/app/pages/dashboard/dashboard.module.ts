@@ -1,7 +1,7 @@
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-//import { AgGridModule } from 'ag-grid-angular/main';
+import { AgGridModule } from 'ag-grid-angular/main';
 import { routing } from './dashboard.routing';
 import { ComponentModule } from './../../component/component.module';
 import { DashboardComponent } from './dashboard.component';
@@ -33,7 +33,8 @@ import {DynamicDialogModule} from 'primeng/dynamicdialog';
 import {ConfirmDialogModule} from 'primeng/confirmdialog';
 import {SelectButtonModule} from 'primeng/selectbutton';
 import {BlockUIModule} from 'primeng/blockui';
-import { AgGridModule } from 'ag-grid-angular';
+import { NgApexchartsModule } from 'ng-apexcharts';
+//import { AgGridModule } from 'ag-grid-angular';
 import { HttpClientModule } from "@angular/common/http";
 import { ArtDashboardComponent } from './art-dashboard/art-dashboard.component';
 import { ArtProductivityComponent } from './art-productivity/art-productivity.component';
@@ -43,11 +44,15 @@ import { ScorecardviewComponent } from './scorecardview/scorecardview.component'
 import { JobcardviewComponent } from './jobcardview/jobcardview.component';
 import { EditjobComponent } from './editjob/editjob.component';
 import { PerformanceComponent } from './performance/performance.component';
+import { GoogleChartsModule, ScriptLoaderService } from 'angular-google-charts';
 //import { AgGridModule } from "@ag-grid-community/angular";
+
 
 //import { DashboardComponent } from './dashboard.component';
 @NgModule({
       imports: [
+            NgApexchartsModule,
+            GoogleChartsModule,
             BlockUIModule,
             SelectButtonModule,
             ConfirmDialogModule,

@@ -1,6 +1,7 @@
 import { Routes, RouterModule } from '@angular/router';
 import { ModuleWithProviders } from '@angular/core';
 import { DashboardComponent } from './dashboard.component';
+import { ApprovedjobsComponent} from './approvedjobs/approvedjobs.component'
 import { ArtDashboardComponent } from './art-dashboard/art-dashboard.component';
 import { ArtProductivityComponent } from './art-productivity/art-productivity.component';
 import { ScorecardviewComponent } from './scorecardview/scorecardview.component';
@@ -11,12 +12,18 @@ import { AuthGuard } from '../../core/guard';
 export const routes: Routes = [
       {
             path: '',
-            component: DashboardComponent,
-            canActivate: [AuthGuard],
+            redirectTo: 'home', pathMatch: 'full',
+            //component: DashboardComponent,
+            //canActivate: [AuthGuard],
       },
       {
             path: 'home',
             component: DashboardComponent,
+            canActivate: [AuthGuard],
+      },
+      {
+            path: 'approved',
+            component: ApprovedjobsComponent,
             canActivate: [AuthGuard],
       },
       {
