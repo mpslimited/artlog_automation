@@ -42,6 +42,7 @@ export class CustomerServicesUrls extends UrlBase {
       public static JOBSMETA_DATA1 = CustomerServicesUrls.ARTLOGAUTOMATION_URL + "api/artlogdata/";
       public static ARTLOG_TeamData = CustomerServicesUrls.ARTLOGAUTOMATION_URL + "api/artlogteamdata/";
       public static ARTLOG_DCASUMMARY = CustomerServicesUrls.ARTLOGAUTOMATION_URL + "api/dsmsummary/";
+      public static ARTLOG_APIPERFORMANCE = CustomerServicesUrls.ARTLOGAUTOMATION_URL + "api/apiperformance/";
       public static ARTLOG_JOBS_REFRESH = CustomerServicesUrls.ARTLOGAUTOMATION_URL + "api/refreshjobs/";
       public static ARTLOG_JOBS_REFRESH_SHOW = CustomerServicesUrls.ARTLOGAUTOMATION_URL + "api/showrefreshjobs/";
       public static ARTLOG_JRAPHADD = CustomerServicesUrls.ARTLOGAUTOMATION_URL + "api/artgraph/";
@@ -49,6 +50,8 @@ export class CustomerServicesUrls extends UrlBase {
       public static ARTLOG_CREATEDCOMPLETEDJOBS = CustomerServicesUrls.ARTLOGAUTOMATION_URL + "api/createdcompletedjobs/";
       public static ARTLOG_SCORECARDDATA = CustomerServicesUrls.ARTLOGAUTOMATION_URL + "api/scorecarddata/";
       public static ARTLOG_SCORECARDLOAD = CustomerServicesUrls.ARTLOGAUTOMATION_URL + "api/scorecardload/";
+      public static ARTLOG_MEDIANOVERDUEPERTEAM = CustomerServicesUrls.ARTLOGAUTOMATION_URL + "api/medianoverdueperteam/";
+
       public static TK_CUSTOMER_BASE_URL = 'https://democswebservices.mps-think.com/';
 
       public static TK_CUSTOMER_LOGIN = CustomerServicesUrls.TK_CUSTOMER_BASE_URL + 'login';

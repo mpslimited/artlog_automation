@@ -5,6 +5,7 @@ import { ApprovedjobsComponent} from './approvedjobs/approvedjobs.component'
 import { ArtDashboardComponent } from './art-dashboard/art-dashboard.component';
 import { ArtProductivityComponent } from './art-productivity/art-productivity.component';
 import { ScorecardviewComponent } from './scorecardview/scorecardview.component';
+import { PerformanceComponent } from './performance/performance.component';
 
 // import { DataGridComponent  } from './DataGrid.Component';
 import { AuthGuard } from '../../core/guard';
@@ -40,7 +41,12 @@ export const routes: Routes = [
             path: 'scorecardview',
             component: ScorecardviewComponent,
             canActivate: [AuthGuard],
-      }/*,{
+      },
+      {
+            path: 'performance',
+            component: PerformanceComponent,
+            canActivate: [AuthGuard],
+      }/*,{ PerformanceComponent
             path: 'datagrid', dashboard
             component: DataGridComponent,
       }*/

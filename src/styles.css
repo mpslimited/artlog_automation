@@ -2,7 +2,7 @@
 /* You can add global styles to this file, and also import other style files */
 app-cust-desktop{ width: 100%}
 app-sync-jobs { width: 100%; }
-app-artload-dashboard, app-art-dashboard, app-approvedjobs, app-art-productivity,app-scorecardview{ width: 100%}
+app-artload-dashboard, app-performance, app-art-dashboard, app-approvedjobs, app-art-productivity,app-scorecardview{ width: 100%}
 .font12{ font-size: 12px!important;}
 .mt2{ margin-top:2px !important }
 /* body .ui-table .ui-table-tbody > tr:nth-child(even).ui-state-highlight{color:#000!important} */
