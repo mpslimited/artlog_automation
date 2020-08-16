@@ -52,34 +52,36 @@
               <div class="col-md-3">
                 <div class="form-group">
                   <label for="formGroupExampleInput2" class="col-sm-12 pl-0">Workflow Preset</label>
-                  <p-multiSelect [options]="Gdata" [(ngModel)]="frmdt.grade" name="grade" optionLabel="value"
+                  
+                  <p-dropdown [options]="Presets"  [(ngModel)]="frmdt.workflowPreset" name="preset"
                       selectedItemsLabel="{0} selected" [style]="{minWidth: '100%'}"
-                      defaultLabel="Choose Grade" name="grade">
-                  </p-multiSelect>
+                      defaultLabel="Choose Preset" name="grade">
+                  </p-dropdown>
                 </div>
               </div>
               <div class="col-md-3">
                 <div class="form-group">
                   <label for="formGroupExampleInput2" class="col-sm-12 pl-0">Campaigns</label>
-                  <p-multiSelect [options]="Mdata" [(ngModel)]="frmdt.module" optionLabel="value"
-                      selectedItemsLabel="{0} selected" [style]="{minWidth: '100%'}"
-                      defaultLabel="Choose Module" name="module">
-                  </p-multiSelect>
+                  <p-dropdown [options]="Campaigns" [(ngModel)]="frmdt.compaignId" [style]="{minWidth: '100%'}"
+                      defaultLabel="Choose Campaign" name="campaign">
+                  </p-dropdown>
                 </div>
               </div>
               <div class="col-md-3">
                 <div class="form-group">
                   <label for="formGroupExampleInput2">Current Status</label>
-                  <input type="text" name="batch" pInputText [(ngModel)]="artLogModel.batch.value" placeholder="Batch"
-                    class="form-control form-control-sm"  />
+                  <p-multiSelect [options]="StatusDt" [(ngModel)]="frmdt.currentStatus" 
+                      id="StatusDt" name="Status" [style]="{minWidth: '100%'}"
+                      placeholder="Choose Status" >
+                  </p-multiSelect>
                 </div>
               </div>
               <div class="col-md-3">
                 <div class="form-group">
                   <label for="workflow" class="col-sm-12 pl-0">Permission Job Type </label>
-                  <p-dropdown [options]="workflows" [(ngModel)]="artLogModel.workflow.value" 
+                  <p-dropdown [options]="jobTypes" [(ngModel)]="frmdt.jobTypes" 
                       id="workflow" name="workflow" [style]="{minWidth: '100%'}"
-                      placeholder="Choose Workflow" name="workflow">
+                      placeholder="Choose jobTypes" name="workflow">
                   </p-dropdown>
                 </div>
               </div>
@@ -88,43 +90,39 @@
               <div class="col-md-3">
                 <div class="form-group">
                   <label for="curriculum" class="col-sm-12 pl-0">Grade</label>
-                  <p-dropdown [options]="wip" [(ngModel)]="artLogModel.curricula.value" 
-                      name="curriculum" id="curriculum" [style]="{minWidth: '100%'}"
-                      placeholder="Choose Curriculum">
-                  </p-dropdown>
+                  <p-multiSelect [options]="Gdata" [(ngModel)]="frmdt.grade"  optionLabel="value"
+                      selectedItemsLabel="{0} selected" [style]="{minWidth: '100%'}"
+                      defaultLabel="Choose Grade" name="module">
+                  </p-multiSelect>
                 </div>
               </div>
               <div class="col-md-3">
                 <div class="form-group">
                   <label for="formGroupExampleInput2" class="col-sm-12 pl-0">Module</label>
-                  <p-multiSelect [options]="jobStatus" [(ngModel)]="frmdt.status" optionLabel="header"
+                  <p-multiSelect [options]="Mdata" [(ngModel)]="frmdt.module" optionLabel="value"
                       selectedItemsLabel="{0} selected" [style]="{minWidth: '100%'}"
-                      defaultLabel="Choose Status" name="status">
-                  </p-multiSelect >
+                      defaultLabel="Choose Module" name="module">
+                  </p-multiSelect>
                 </div>
               </div>
-              <div class="col-md-3">
+             <!-- <div class="col-md-3">
                   <div class="form-group">
                       <label for="formGroupExampleInput2" class="col-sm-12 pl-0">Job Date Started </label>
-                      <p-dropdown [options]="jobsTypes" [(ngModel)]="artLogModel.added.value" 
-                          [style]="{minWidth: '100%'}"
-                          defaultLabel="Choose Type" name="job_type">
-                      </p-dropdown >
+                      
+                      <input type="text" name="batch" pInputText  placeholder="Batch"
+                    class="form-control form-control-sm"  />
                     </div>
                 </div>
                 <div class="col-md-3">
                   <div class="form-group">
                       <label for="formGroupExampleInput2" class="col-sm-12 pl-0">Job Date Completed </label>
-                      <p-dropdown [options]="jobsTypes" [(ngModel)]="artLogModel.added.value" 
-                          [style]="{minWidth: '100%'}"
-                          defaultLabel="Choose Type" name="job_type">
-                      </p-dropdown >
+                      <input type="text" name="batch" pInputText  placeholder="Batch"
+                    class="form-control form-control-sm"  />
                     </div>
-                </div>
+                </div> -->
                 <div class="col-md-12 text-right">
                   <button type="button" (click)="clearData()" class="btn btn-danger btn-sm mr-1">Reset</button>
                   <button type="submit" class="btn btn-primary btn-sm mr-1" [disabled]="dataloading">Search <span class="btnload" *ngIf="dataloading"></span></button>
-                  <button type="button" *ngIf="isSaveSearch" (click)="saveSearchDialog()" class="btn btn-primary btn-sm">Save Search</button>
                 </div>
             </div>            
           </div>
@@ -134,7 +132,110 @@
   </form>
     <div class="row">
       <div class="col-lg-12">     
-          
-</div>
-</div>
+        <div class="card rounded-0">
+          <div class="card-body">
+            <div class="row">
+                <div class="col-4">
+                  <table class="table table-striped table-bordered">
+                    <tbody>
+                      <tr>
+                          <td>NUMBER OF JOBS</td>
+                          <td>{{ScoreCard.totalJobs}}</td>
+                        </tr>
+                        <tr>
+                          <td>EXPECTED TURN AROUND TIME</td>
+                          <td>{{ScoreCard.Exptat}} Days</td>
+                        </tr>
+                        <tr>
+                          <td>MEDIAN DURATION</td>
+                          <td>{{ScoreCard.MedianDur}} Days</td>
+                        </tr>
+                        <tr>
+                          <td>NUMBER OF OVERDUE</td>
+                          <td><!-- <a href="#" @click.prevent="openModalDuration(overDueIds)">{{ScoreCard.NumOver}}</a> --> </td>
+                        </tr>
+                        <tr>
+                          <td>NUMBER ON HOLD</td>
+                          <td>{{ScoreCard.NumHold}} </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                    </div>
+                <div class="col-md-8 mb-2">
+                      <div  class="w-100 border p-2">
+                        <div class="loading-box" >
+                        </div>
+                          <apx-chart #chart1 *ngIf="!WeeklyJobsLoading"
+                            [series]="chartOptions.series"
+                            [chart]="chartOptions.chart"
+                            [xaxis]="chartOptions.xaxis"
+                            [stroke]="chartOptions.stroke"
+                            [colors]="chartOptions.colors"
+                            [dataLabels]="chartOptions.dataLabels"
+                            [legend]="chartOptions.legend"
+                            [markers]="chartOptions.markers"
+                            [grid]="chartOptions.grid"
+                            [yaxis]="chartOptions.yaxis"
+                            [title]="chartOptions.title"
+                          ></apx-chart>
+                      </div>
+                </div>
+                <div class="col-md-12 mb-2">
+            	    <div  class="w-100 border p-2">
+                    <div class="loading-box">
+                    </div>
+                      <apx-chart #chart2
+                        [series]="ChartOptions2.series"
+                        [chart]="ChartOptions2.chart"
+                        [dataLabels]="ChartOptions2.dataLabels"
+                        [plotOptions]="ChartOptions2.plotOptions"
+                        [yaxis]="ChartOptions2.yaxis"
+                        [legend]="ChartOptions2.legend"
+                        [fill]="ChartOptions2.fill"
+                        [stroke]="ChartOptions2.stroke"
+                        [tooltip]="ChartOptions2.tooltip"
+                        [xaxis]="ChartOptions2.xaxis"
+                        [title]="ChartOptions2.title"
+                      ></apx-chart>
+                  </div>
+            </div>
+            <div class="col-md-12 mb-2">
+              <div  class="w-100 border p-2">
+                <div class="loading-box">
+                </div>
+                  <apx-chart #chart3
+                    [series]="ChartOptions3.series"
+                    [chart]="ChartOptions3.chart"
+                    [dataLabels]="ChartOptions3.dataLabels"
+                    [plotOptions]="ChartOptions3.plotOptions"
+                    [yaxis]="ChartOptions3.yaxis"
+                    [legend]="ChartOptions3.legend"
+                    [fill]="ChartOptions3.fill"
+                    [stroke]="ChartOptions3.stroke"
+                    [tooltip]="ChartOptions3.tooltip"
+                    [xaxis]="ChartOptions3.xaxis"
+                    [title]="ChartOptions3.title"
+                  ></apx-chart>
+              </div>
+          </div>
+          <div class="col-md-12 mb-2">
+            <div  class="w-100 border p-2">
+              <div class="loading-box">
+              </div>
+              <apx-chart #chart4
+                [series]="ChartOptions4.series"
+                [chart]="ChartOptions4.chart"
+                [dataLabels]="ChartOptions4.dataLabels"
+                [plotOptions]="ChartOptions4.plotOptions"
+                [xaxis]="ChartOptions4.xaxis"
+              ></apx-chart>
+            </div>
+          </div>
+
+        
+                </div>
+                </div>
+            </div>
+      </div>
+    </div>
 </div>

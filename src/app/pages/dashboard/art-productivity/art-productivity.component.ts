@@ -21,6 +21,8 @@ import { unitOfTime } from 'moment';
 import { ConfirmationService } from 'primeng/api';
 import { BehaviorSubject } from 'rxjs';
 
+import {NgbDateStruct} from '@ng-bootstrap/ng-bootstrap';
+
 @Component({
   selector: 'app-art-productivity',
   templateUrl: './art-productivity.component.html',
@@ -28,6 +30,7 @@ import { BehaviorSubject } from 'rxjs';
   providers: [ConfirmationService]
 })
 export class ArtProductivityComponent extends BaseComponent implements OnInit {
+  model: NgbDateStruct;
   // -- columans for filter Grid dropdown
   dcaSummary: any = [];
   overDuedt: any = [];

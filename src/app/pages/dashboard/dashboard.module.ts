@@ -46,11 +46,13 @@ import { EditjobComponent } from './editjob/editjob.component';
 import { PerformanceComponent } from './performance/performance.component';
 import { GoogleChartsModule, ScriptLoaderService } from 'angular-google-charts';
 //import { AgGridModule } from "@ag-grid-community/angular";
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 
 //import { DashboardComponent } from './dashboard.component';
 @NgModule({
       imports: [
+            //NgxDaterangepickerMd.forRoot(),
             NgApexchartsModule,
             GoogleChartsModule,
             BlockUIModule,

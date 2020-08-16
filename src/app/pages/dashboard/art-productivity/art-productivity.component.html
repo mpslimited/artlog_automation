@@ -46,8 +46,10 @@
                 <div  class="col-md-4">
                   <div  class="form-group mb-0">
                     <label  for="formGroupExampleInput2">Date: (ie. YYYY-MM-DD)</label>
+                    
                     <div  class="input-group ">
-                      <input  class="form-control form-control-sm ng-untouched ng-pristine ng-invalid" name="dp" ngbdatepicker="" placeholder="yyyy-mm-dd" style="height: 34px;">
+                      <input class="form-control" placeholder="yyyy-mm-dd"
+                      name="dp" [(ngModel)]="model" ngbDatepicker>
                         <div  class="input-group-append">
                           <button  class="btn btn-primary btn-sm calendar mr-1" type="button">
                             <i  aria-hidden="true" class="fa fa-calendar"></i>
