@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 
 import { RootSharedModule } from '../core/sharedModules';
-import { AgGridModule } from 'ag-grid-angular/main';
+import { AgGridModule } from 'ag-grid-angular';
 import { AgGridComponent } from './ag-grid/ag-grid.component';
 
 import { TopMenuBarComponent } from './top-menu-bar/top-menu-bar.component';
@@ -23,7 +23,6 @@ import { CheckBoxComponent } from './check-box/check-box.component';
 import { DirectiveModule } from '../core/directive';
 import { ModalComponent } from './modal/modal.component';
 import { SelectComponent } from './select/select.component';
-import { MultiselectDropdownModule } from './dropdown/dropdown.module';
 import { CommonSearchCsComponent } from './common-search-cs/common-search-cs.component';
 import { SetupTopMenuBarComponent } from './setup-top-menu-bar/setup-top-menu-bar.component';
 
@@ -32,8 +31,7 @@ import { SetupTopMenuBarComponent } from './setup-top-menu-bar/setup-top-menu-ba
       imports: [
             RootSharedModule,
             AgGridModule,
-            DirectiveModule,
-            MultiselectDropdownModule
+            DirectiveModule
       ],
       declarations: [
             CustomModalPopUpComponent,

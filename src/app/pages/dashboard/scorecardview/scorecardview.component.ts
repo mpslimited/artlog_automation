@@ -1,4 +1,5 @@
 import { Component, OnInit, OnChanges, ViewChild } from '@angular/core';
+
 import { FormBuilder, FormGroup, FormArray, FormControl, Validators, AbstractControl } from '@angular/forms';
 import { HttpService } from '../../../core/services/http.service';
 import { BaseComponent } from '../../../core/base/base.component';
@@ -20,8 +21,6 @@ import * as moment from 'moment';
 import { unitOfTime } from 'moment';
 import { ConfirmationService } from 'primeng/api';
 import { BehaviorSubject } from 'rxjs';
-import { GoogleChartsModule, ScriptLoaderService } from 'angular-google-charts';
-import {NgbDate, NgbCalendar, NgbDateParserFormatter} from '@ng-bootstrap/ng-bootstrap';
 import {
   ChartComponent,
   ApexAxisChartSeries,
@@ -51,7 +50,7 @@ export type ChartOptions = {
   grid: ApexGrid;
   legend: ApexLegend;
   title: ApexTitleSubtitle;
-};
+}; /*
 export type ChartOptions2 = {
   series: ApexAxisChartSeries;
   chart: ApexChart;
@@ -84,7 +83,7 @@ export type ChartOptions4 = {
   dataLabels: ApexDataLabels;
   plotOptions: ApexPlotOptions;
   xaxis: ApexXAxis;
-};
+}; */
 @Component({
   selector: 'app-scorecardview',
   templateUrl: './scorecardview.component.html',
@@ -93,33 +92,25 @@ export type ChartOptions4 = {
 })
 
 export class ScorecardviewComponent extends BaseComponent implements OnInit {
-  @ViewChild('chart1') chart1: ChartComponent;
+  @ViewChild('chart', { static: false }) chart: ChartComponent;
   public chartOptions: Partial<ChartOptions>;
 
-  @ViewChild('chart2') chart2: ChartComponent;
-  public ChartOptions2: Partial<ChartOptions2>;
-  @ViewChild('chart3') chart3: ChartComponent;
-  public ChartOptions3: Partial<ChartOptions3>;
-  @ViewChild('chart4') chart4: ChartComponent;
-  public ChartOptions4: Partial<ChartOptions4>;
-  hoveredDate: NgbDate | null = null;
+  // @ViewChild('chart2') chart2: ChartComponent;
+  // public ChartOptions2: Partial<ChartOptions2>;
+  // @ViewChild('chart3') chart3: ChartComponent;
+  // public ChartOptions3: Partial<ChartOptions3>;
+  // @ViewChild('chart4') chart4: ChartComponent;
+  // public ChartOptions4: Partial<ChartOptions4>;
 
-  fromDate: NgbDate | null;
-  toDate: NgbDate | null;
   // -- columans for filter Grid dropdown
-  dcaSummary: any = [];
-  overDuedt: any = [];
-  highDt: any = [];
-  mediumDt: any = [];
-  lowDt: any = [];
-  OptData: any = [];
+
   auth: any = [];
-  dataloading: boolean = false;
   criteria: boolean;
+
+  dataloading: boolean ;
+  medianLoading: boolean ;
+
   public dataSource = new BehaviorSubject<AbstractControl[]>([]);
-  public form: FormGroup;
-  public contactList: FormArray;
-  public duplicateJobsList: FormArray;
   WeeklyJobsCData: any = [];
   WeeklyJobsCOptions: any = {};
   data = [];
@@ -138,7 +129,6 @@ export class ScorecardviewComponent extends BaseComponent implements OnInit {
     { value: 'Overdue', label: 'Overdue' },
     { value: 'Approved', label: 'Approved' },
     { value: 'Closed', label: 'Closed' },
-    
   ];
   frmdt: any;
   Gdata: any = [];
@@ -151,8 +141,6 @@ export class ScorecardviewComponent extends BaseComponent implements OnInit {
   WeeklyData : any  = [];
   WeeklyJobsLoading: boolean ;
   constructor(
-    private calendar: NgbCalendar, public formatter: NgbDateParserFormatter,
-    private loaderService: ScriptLoaderService,
     private confirmationService: ConfirmationService,
     protected baseServices: BaseService,
     protected router: Router,
@@ -163,49 +151,23 @@ export class ScorecardviewComponent extends BaseComponent implements OnInit {
     super(baseServices, router);
     const user = SessionObject.getUserDetails();
     this.auth = user;
-      console.log('User Details : ', user);
-      //this.frmdt.preset='';
-      this.fromDate = calendar.getToday();
-      this.toDate = calendar.getNext(calendar.getToday(), 'd', 10);
+    console.log('User Details : ', user);
+      // this.frmdt.preset='';
+      // this.fromDate = calendar.getToday();
+      // this.toDate = calendar.getNext(calendar.getToday(), 'd', 10);
       /// --------test------------------
-      
+
     }
-    onDateSelection(date: NgbDate) {
-      if (!this.fromDate && !this.toDate) {
-        this.fromDate = date;
-      } else if (this.fromDate && !this.toDate && date && date.after(this.fromDate)) {
-        this.toDate = date;
-      } else {
-        this.toDate = null;
-        this.fromDate = date;
-      }
-    }
-  
-    isHovered(date: NgbDate) {
-      return this.fromDate && !this.toDate && this.hoveredDate && date.after(this.fromDate) && date.before(this.hoveredDate);
-    }
-  
-    isInside(date: NgbDate) {
-      return this.toDate && date.after(this.fromDate) && date.before(this.toDate);
-    }
-  
-    isRange(date: NgbDate) {
-      return date.equals(this.fromDate) || (this.toDate && date.equals(this.toDate)) || this.isInside(date) || this.isHovered(date);
-    }
-  
-    validateInput(currentValue: NgbDate | null, input: string): NgbDate | null {
-      const parsed = this.formatter.parse(input);
-      return parsed && this.calendar.isValid(NgbDate.from(parsed)) ? NgbDate.from(parsed) : currentValue;
-    }
+
   pageinit() {
-    let that = this;
+    const that = this;
     this.httpService.extractPostData(CustomerServicesUrls.ARTLOG_SCORECARDINIT, null, null).subscribe((data) => {
       console.log('getting data=>', data);
       that.Mdata = data.module;
       that.Gdata = data.grade;
       data.campaigns.splice(0, 0, { ID: '', name: 'Please Select'});
       that.Campaigns = data.campaigns.map(d => ({ value: d.ID, label: d.name}));
-      if ( data.jobType.length > 0 && !!data.jobType[0].options){
+      if ( data.jobType.length > 0 && !!data.jobType[0].options) {
         let jobTypes =  data.jobType[0].options.map(d => ({value: d.ID.split('-').join(''), label: d.label}));
         jobTypes.splice(0, 0, { value: '', label: 'Please Select'});
         that.jobTypes  = jobTypes;
@@ -214,93 +176,113 @@ export class ScorecardviewComponent extends BaseComponent implements OnInit {
   }
   medianDataLoadAPI() {
     let that = this;
-    let obji = this.filterDataInit();
+    let frmData = {
+      'currentStatus': this.frmdt.currentStatus.toString(),
+      'workflowPreset': this.frmdt.workflowPreset,
+      'compaignId': this.frmdt.compaignId,
+      'jobTypes': this.frmdt.jobTypes,
+      'grade': this.frmdt.grade,
+      'module': this.frmdt.module
+    };
+    const myheader = new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded');
     this.WeeklyJobsLoading = true;
-    this.httpService.extractPostData(CustomerServicesUrls.ARTLOG_MEDIANOVERDUEPERTEAM, obji.body, { headers: obji.myheader }).subscribe((MedianData) => {
+    // tslint:disable-next-line: max-line-length
+    this.httpService.extractPostData(CustomerServicesUrls.ARTLOG_MEDIANOVERDUEPERTEAM, JSON.stringify(frmData), { headers: myheader }).subscribe((MedianData) => {
       debugger
       console.log(MedianData);
-      var mediamOverDue=MedianData.OverDueData;
-        for(let kin in mediamOverDue){
-         if(mediamOverDue[kin].jobDuration && mediamOverDue[kin].jobDuration.length> 0){
-            var dataJobDuration= mediamOverDue[kin].jobDuration;
-              for(let k2in in  dataJobDuration){
-                if(typeof dataJobDuration[k2in] =="String" &&dataJobDuration[k2in].indexOf(" days")>-1){
-                  mediamOverDue[kin].jobDuration[k2in] = parseInt( dataJobDuration[k2in].split(" days")[0]);
-                }else{
+      var mediamOverDue = MedianData.OverDueData;
+      for (let kin in mediamOverDue ) {
+         if (mediamOverDue[kin].jobDuration && mediamOverDue[kin].jobDuration.length > 0) {
+            var dataJobDuration = mediamOverDue[kin].jobDuration;
+            for (let k2in in  dataJobDuration) {
+                if (!! dataJobDuration[k2in]  && dataJobDuration[k2in].indexOf(' days') > -1 ) {
+                  mediamOverDue[kin].jobDuration[k2in] = parseInt( dataJobDuration[k2in].split(' days')[0]);
+                } else {
                   mediamOverDue[kin].jobDuration[k2in] = parseInt( dataJobDuration[k2in]);
                 }
               }
          }
         }
-        
+
      });
   }
-  filterDataInit(): any {
-    const myheader = new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded');
-    let body = new HttpParams();
-    body = body.set('currentStatus', this.frmdt.currentStatus);
-    body = body.set('workflowPreset', this.frmdt.workflowPreset);
-    body = body.set('compaignId', this.frmdt.compaignId);
-    body = body.set('jobTypes', this.frmdt.jobTypes);
-    body = body.set('grade', this.frmdt.grade);
-    body = body.set('module', this.frmdt.module);
-    //body = body.set('jobTypes', this.frmdt.jobTypes);
-    //body = body.set('jobTypes', this.frmdt.jobTypes);
-    return {body, myheader};
-  }
+  
   filterData() {
     let that = this;
-    let obji = this.filterDataInit();
+    const myheader = new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded');
     this.WeeklyJobsLoading = true;
-    this.httpService.extractPostData(CustomerServicesUrls.ARTLOG_CREATEDCOMPLETEDJOBS, obji.body, { headers: obji.myheader }).subscribe((data) => {
-      var startDate = new Date(data.StartTime);
-      var endDate = new Date(data.EndTime);
-      var dataFormate = [];
-      let CreatedData =[], ComplatedData=[], WeeklyData=[];
-      while ( endDate.getTime() >= startDate.getTime() ) {
+    debugger //obji.body
+    let frmData = {
+      'currentStatus': this.frmdt.currentStatus.toString(),
+      'workflowPreset': this.frmdt.workflowPreset,
+      'compaignId': this.frmdt.compaignId,
+      'jobTypes': this.frmdt.jobTypes,
+      'grade': this.frmdt.grade,
+      'module': this.frmdt.module
+    };
+    this.httpService.extractPostData(CustomerServicesUrls.ARTLOG_CREATEDCOMPLETEDJOBS, JSON.stringify(frmData), null).subscribe((data) => {
+    var startDate = new Date(data.StartTime);
+    var endDate = new Date(data.EndTime);
+    var dataFormate = [];
+      let CreatedData = [], ComplatedData = [], WeeklyData = [];
+    while ( endDate.getTime() >= startDate.getTime() ) {
         var startWeek = new Date(this.MpsDateFormat(startDate));
         startDate.setDate(startDate.getDate() + 6);
         var dateFormate = this.MpsDateFormat(startDate);
         var CreatedJobs = 0, ComplatedJobs = 0;
         var dateRange =  startWeek.getDate() + '-' + this.Month(startWeek) + ' To ' + startDate.getDate() + '-' + this.Month(startDate) ;
         var result1 = data.CreatedData, result2 = data.FinishedData;
-        for (let temp in result1){
+        for (let temp in result1) {
           var dbDate = new Date( this.MpsDateFormat(result1[temp]._id)).getTime();
-          if (result1[temp].hasOwnProperty('_id') &&  dbDate >= startWeek.getTime() &&  dbDate <= startDate.getTime() ){
+          if (result1[temp].hasOwnProperty('_id') &&  dbDate >= startWeek.getTime() &&  dbDate <= startDate.getTime() ) {
             CreatedJobs = CreatedJobs + result1[temp].count;
           }
         }
-        for (let temp in result2){
+        for (let temp in result2) {
           var dbDate = new Date(result2[temp]._id).getTime();
-          if (result2[temp].hasOwnProperty('_id')  &&  dbDate > startWeek.getTime() &&  dbDate  <= startDate.getTime()  ){
+          if (result2[temp].hasOwnProperty('_id')  &&  dbDate > startWeek.getTime() &&  dbDate  <= startDate.getTime()  ) {
             ComplatedJobs = ComplatedJobs + result2[temp].count;
           }
         }
         CreatedData.push(CreatedJobs);
         ComplatedData.push(ComplatedJobs);
         WeeklyData.push(dateRange);
-        //dataFormate.push({dateRange: dateRange, Created: CreatedJobs, FinshedJobs : ComplatedJobs} );
+        // dataFormate.push({dateRange: dateRange, Created: CreatedJobs, FinshedJobs : ComplatedJobs} );
         startDate.setDate(startDate.getDate() + 1);
       }
-      that.CreatedJobs = CreatedData;
-      that.ComplatedJobs = ComplatedData;
-      that.WeeklyData = WeeklyData;
-      that.WeeklyJobsLoading = false;
-      that.createdVSComplated();
-      //console.log(dataFormate);
+    that.CreatedJobs = CreatedData;
+    that.ComplatedJobs = ComplatedData;
+    that.WeeklyData = WeeklyData;
+     // that.createdVSComplated();
+     // optional VAlue
+     debugger
+    that.chartOptions.series = [
+      {
+        name: 'Created Jobs',
+        data: CreatedData
+      },
+      {
+        name: 'Complated Jobs',
+        data:  ComplatedData
+      }
+    ];
+    // that.chartOptions.series[1].data = ComplatedData;
+     // that.chartOptions.xaxis.categories = WeeklyData;
+
+       //   console.log(dataFormate);
     });
     console.log('Data filter');
   }
-   Month(dd: any){
+   Month(dd: any) {
     var months    = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     return months[dd.getMonth()];
   }
    MpsDateFormat(d: any) {
-    if (typeof d == 'string'){
+    if (typeof d == 'string') {
       d = new Date(d);
     }
     let month, day, year;
-        month = '' + (d.getMonth() + 1),
+    month = '' + (d.getMonth() + 1),
         day = '' + d.getDate(),
         year = d.getFullYear();
     if (month.length < 2) month = '0' + month;
@@ -314,24 +296,26 @@ export class ScorecardviewComponent extends BaseComponent implements OnInit {
   ngOnInit() {
     this.frmdt = { currentStatus: [], workflowPreset: '', compaignId : '', jobTypes: '', grade: '', module: '' };
     this.pageinit();
-    
-    this.medianTimePerTeam();
+
+    // this.medianTimePerTeam();
     this.percentileView();
-    this.AllJobsView();
+    // this.AllJobsView();
     this.WeeklyJobsLoading = true;
+    this.createdVSComplated();
     this.filterData();
-    this.medianDataLoadAPI();
+    // this.medianDataLoadAPI();
   }
   createdVSComplated() {
+    this.WeeklyJobsLoading = false;
     this.chartOptions = {
       series: [
         {
           name: 'Created Jobs',
-          data: this.CreatedJobs //[0, 2, 3, 3, 3, 3, 3, 0, 0, 0, 0, 0, 0, 0, 0]
+          data: [0, 2, 3, 3, 3, 3, 3, 0, 0, 0, 0, 0, 0, 0, 0]
         },
         {
           name: 'Complated Jobs',
-          data:  this.ComplatedJobs //[2, 1, 1, 3, 1, 1, 3, 1, 1, 1, 1, 1, 3, 1, 0]
+          data:  [2, 1, 1, 3, 1, 1, 3, 1, 1, 1, 1, 1, 3, 1, 0]
         }
       ],
       chart: {
@@ -369,23 +353,22 @@ export class ScorecardviewComponent extends BaseComponent implements OnInit {
         size: 1
       },
       xaxis: {
-        categories: this.WeeklyData
-        /*['10-May To 16-May',
-        '17-May To 23-May',
-        '24-May To 30-May',
-        '31-May To 6-Jun',
-        '7-Jun To 13-Jun',
-        '14-Jun To 20-Jun',
-        '21-Jun To 27-Jun',
-        '28-Jun To 4-Jul',
-        '5-Jul To 11-Jul',
-        '12-Jul To 18-Jul',
-        '19-Jul To 25-Jul',
-        '26-Jul To 1-Aug',
-        '2-Aug To 8-Aug',
-        '9-Aug To 15-Aug',
-        '16-Aug To 22-Aug'
-        ]*/,
+        categories: [ '10-May To 16-May',
+                      '17-May To 23-May',
+                      '24-May To 30-May',
+                      '31-May To 6-Jun',
+                      '7-Jun To 13-Jun',
+                      '14-Jun To 20-Jun',
+                      '21-Jun To 27-Jun',
+                      '28-Jun To 4-Jul',
+                      '5-Jul To 11-Jul',
+                      '12-Jul To 18-Jul',
+                      '19-Jul To 25-Jul',
+                      '26-Jul To 1-Aug',
+                      '2-Aug To 8-Aug',
+                      '9-Aug To 15-Aug',
+                      '16-Aug To 22-Aug'
+        ],
         title: {
           text: 'Weekly Report'
         }
@@ -408,6 +391,7 @@ export class ScorecardviewComponent extends BaseComponent implements OnInit {
     // -------------end ----------------------
   }
   medianTimePerTeam() {
+    /*
     this.ChartOptions2 = {
       series: [
         {
@@ -466,8 +450,10 @@ export class ScorecardviewComponent extends BaseComponent implements OnInit {
         }
       }
     };
+    */
   }
   percentileView() {
+    /*
     this.ChartOptions3 = {
       series: [
         {
@@ -526,8 +512,10 @@ export class ScorecardviewComponent extends BaseComponent implements OnInit {
         }
       }
     };
+    */
   }
   AllJobsView() {
+    /*
     this.ChartOptions4 = {
       series: [
         {
@@ -568,5 +556,6 @@ export class ScorecardviewComponent extends BaseComponent implements OnInit {
         ]
       }
     };
+    */
   }
 }

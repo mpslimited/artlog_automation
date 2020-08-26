@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { Http, Headers, Response } from '@angular/http';
+//import { Http, Headers, Response } from '@angular/http';
 import { UserDetailsI } from '../../core/shared';
 //import { ProcessUrls } from '../../core/shared';
 import { SessionObject } from '../../core/shared/session-object';

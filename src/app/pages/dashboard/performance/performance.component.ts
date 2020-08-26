@@ -39,18 +39,23 @@ export class PerformanceComponent extends BaseComponent implements OnInit {
     private fb: FormBuilder ) {
     super(baseServices, router);
     const user = SessionObject.getUserDetails();
-    this.auth = user; 
+    this.auth = user;
   }
-  getAPIStatusData () {
+  getAPIStatusData() {
     let that = this;
     this.httpService.extractPostData(CustomerServicesUrls.ARTLOG_APIPERFORMANCE, null, null).subscribe((data) => {
-      debugger
-      console.log(data);
+        debugger
+        console.log(data.length);
       that.ApiData = data;
     });
   }
   ngOnInit() {
     this.getAPIStatusData();
   }
-
+  takenTime(a: any , b: any) {
+   //lel b = moment(b);
+    let time1 = moment(a);
+    let time2 = moment(b);
+    return time2.diff(time1, 'seconds');
+  }
 }

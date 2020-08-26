@@ -68,10 +68,18 @@ export class HttpService /*extends HttpClient*/ {
       }
       extractPostData(url: string, body: any, tokenId: any, responseType: string = 'json'): Observable<any> {
             this.showLoader();
-
             const options = this.getHTTPOption(tokenId);
             console.log(this.http);
             options['responseType'] = responseType;
+            /*debugger
+            const httpOptions = {
+                  headers: new HttpHeaders({
+                  'Content-Type': 'application/x-www-form-urlencoded',
+                  'Authorization':  tokenId,
+                  'responseType' : 'json'
+                  })
+            };
+            */
             return this.http.post(url, body, options).pipe(
                   catchError(this.onCatch),
                   tap((res: Response) => {
@@ -119,10 +127,10 @@ export class HttpService /*extends HttpClient*/ {
                   )
             };
             if (tokenId) {
-                  httpOptions.headers = httpOptions.headers.set('Authorization', tokenId);
+                //  httpOptions.headers = httpOptions.headers.append('Authorization', tokenId);
             }
-            if (id){
-                  httpOptions.headers = httpOptions.headers.set('AuthUser', id);      
+            if (id) {
+                 // httpOptions.headers = httpOptions.headers.append('AuthUser', id);
             }
             return httpOptions;
       }
@@ -135,7 +143,7 @@ export class HttpService /*extends HttpClient*/ {
                   )
             };
             if (tokenId) {
-                  httpOptions.headers = httpOptions.headers.set('Authorization', tokenId);
+                //  httpOptions.headers = httpOptions.headers.append('Authorization', tokenId);
             }
             return httpOptions;
       }
@@ -169,7 +177,7 @@ export class HttpService /*extends HttpClient*/ {
                         }else{
                               formData.append(key, obj[key]);
                         }
-                        
+
                   });
       }
 

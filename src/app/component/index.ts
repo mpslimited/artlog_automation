@@ -4,7 +4,6 @@ export * from './component-service.module';
 export * from './loader';
 export * from './ng-tabs';
 export * from './ag-dropdown';
-export * from './ag-component';
 export * from './dropdown-with-description';
 
 export * from './custom-modal-pop-up';

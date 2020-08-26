@@ -1,18 +1,17 @@
 import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
-import { routing } from './app.routing';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { AgGridModule } from 'ag-grid-angular/main';
+import { RoutingModule  } from './app-routing.module';
+import { AgGridModule } from 'ag-grid-angular';
 
 import { AppComponent } from './app.component';
 import { FrontPanelModule } from './pages/front-panel/front-panel.module';
-import { ComponentModule, AGModule, ComponentServiceModule } from './component';
+import { ComponentModule,  ComponentServiceModule } from './component';
 import { ServiceModule } from './core/services';
 import { GuardModule } from './core/guard';
 import { DirectiveModule } from './core/directive';
-//import { EditjobComponent } from './pages/dashboard/editjob/editjob.component';
 
 import { AccordionModule } from 'primeng/accordion';
 import { MenuItem } from 'primeng/api';                 //api
@@ -22,21 +21,11 @@ import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import { SyncJobsComponent } from './pages/sync-jobs/sync-jobs.component';
-import { ScorecardComponent } from './pages/scorecard/scorecard.component';
-//import { DashboardComponent } from './pages/dashboard/dashboard.component';
-
-
-
-
 
 @NgModule({
   declarations: [
     AppComponent,
-    SyncJobsComponent,
-    ScorecardComponent,
-    //DashboardComponent,
-    // EditjobComponent,
-
+    SyncJobsComponent
   ],
   imports: [
     HttpClientModule,
@@ -45,11 +34,11 @@ import { ScorecardComponent } from './pages/scorecard/scorecard.component';
     AccordionModule,
     BrowserAnimationsModule,
     FormsModule,
-    routing,
+    RoutingModule ,
     FrontPanelModule,
     ServiceModule,
     GuardModule,
-    AGModule,
+   // AGModule,
     ComponentModule,
     ComponentServiceModule,
     DirectiveModule,

@@ -36,7 +36,7 @@
         <div class="card">
           <div class="card-header">
               <div class="d-flex align-items-start">
-                  
+
                   <div class="p-0 mr-auto" >
                       <h6 style="cursor: pointer;" (click)="criteria=(criteria!=true)" data-toggle="collapse" href="#collapseSearch"> <i aria-hidden="true" class="fa fa-filter"></i> Search Filter
                           <i [ngClass]="{' fa-angle-right': !criteria, ' fa-angle-down': criteria  }" class="fa " ></i>
@@ -52,7 +52,7 @@
               <div class="col-md-3">
                 <div class="form-group">
                   <label for="formGroupExampleInput2" class="col-sm-12 pl-0">Workflow Preset</label>
-                  
+
                   <p-dropdown [options]="Presets"  [(ngModel)]="frmdt.workflowPreset" name="preset"
                       selectedItemsLabel="{0} selected" [style]="{minWidth: '100%'}"
                       defaultLabel="Choose Preset" name="grade">
@@ -70,7 +70,7 @@
               <div class="col-md-3">
                 <div class="form-group">
                   <label for="formGroupExampleInput2">Current Status</label>
-                  <p-multiSelect [options]="StatusDt" [(ngModel)]="frmdt.currentStatus" 
+                  <p-multiSelect [options]="StatusDt" [(ngModel)]="frmdt.currentStatus"
                       id="StatusDt" name="Status" [style]="{minWidth: '100%'}"
                       placeholder="Choose Status" >
                   </p-multiSelect>
@@ -79,7 +79,7 @@
               <div class="col-md-3">
                 <div class="form-group">
                   <label for="workflow" class="col-sm-12 pl-0">Permission Job Type </label>
-                  <p-dropdown [options]="jobTypes" [(ngModel)]="frmdt.jobTypes" 
+                  <p-dropdown [options]="jobTypes" [(ngModel)]="frmdt.jobTypes"
                       id="workflow" name="workflow" [style]="{minWidth: '100%'}"
                       placeholder="Choose jobTypes" name="workflow">
                   </p-dropdown>
@@ -108,7 +108,7 @@
              <!-- <div class="col-md-3">
                   <div class="form-group">
                       <label for="formGroupExampleInput2" class="col-sm-12 pl-0">Job Date Started </label>
-                      
+
                       <input type="text" name="batch" pInputText  placeholder="Batch"
                     class="form-control form-control-sm"  />
                     </div>
@@ -124,14 +124,14 @@
                   <button type="button" (click)="clearData()" class="btn btn-danger btn-sm mr-1">Reset</button>
                   <button type="submit" class="btn btn-primary btn-sm mr-1" [disabled]="dataloading">Search <span class="btnload" *ngIf="dataloading"></span></button>
                 </div>
-            </div>            
+            </div>
           </div>
         </div>
       </div>
     </div>
   </form>
     <div class="row">
-      <div class="col-lg-12">     
+      <div class="col-lg-12">
         <div class="card rounded-0">
           <div class="card-body">
             <div class="row">
@@ -163,9 +163,11 @@
                     </div>
                 <div class="col-md-8 mb-2">
                       <div  class="w-100 border p-2">
-                        <div class="loading-box" >
-                        </div>
-                          <apx-chart #chart1 *ngIf="!WeeklyJobsLoading"
+                        <!-- div class="loading-box" *ngIf="WeeklyJobsLoading" >
+                        Loading..
+                        </div>-->
+                        <div id="chart1" >
+                          <apx-chart #chart
                             [series]="chartOptions.series"
                             [chart]="chartOptions.chart"
                             [xaxis]="chartOptions.xaxis"
@@ -178,13 +180,14 @@
                             [yaxis]="chartOptions.yaxis"
                             [title]="chartOptions.title"
                           ></apx-chart>
+                        </div>
                       </div>
                 </div>
                 <div class="col-md-12 mb-2">
             	    <div  class="w-100 border p-2">
                     <div class="loading-box">
                     </div>
-                      <apx-chart #chart2
+                     <!-- <apx-chart #chart2
                         [series]="ChartOptions2.series"
                         [chart]="ChartOptions2.chart"
                         [dataLabels]="ChartOptions2.dataLabels"
@@ -196,14 +199,14 @@
                         [tooltip]="ChartOptions2.tooltip"
                         [xaxis]="ChartOptions2.xaxis"
                         [title]="ChartOptions2.title"
-                      ></apx-chart>
+                      ></apx-chart>-->
                   </div>
             </div>
             <div class="col-md-12 mb-2">
               <div  class="w-100 border p-2">
                 <div class="loading-box">
                 </div>
-                  <apx-chart #chart3
+                   <!--<apx-chart #chart3
                     [series]="ChartOptions3.series"
                     [chart]="ChartOptions3.chart"
                     [dataLabels]="ChartOptions3.dataLabels"
@@ -215,24 +218,24 @@
                     [tooltip]="ChartOptions3.tooltip"
                     [xaxis]="ChartOptions3.xaxis"
                     [title]="ChartOptions3.title"
-                  ></apx-chart>
+                  ></apx-chart>-->
               </div>
           </div>
           <div class="col-md-12 mb-2">
             <div  class="w-100 border p-2">
               <div class="loading-box">
               </div>
-              <apx-chart #chart4
+              <!--<apx-chart #chart4
                 [series]="ChartOptions4.series"
                 [chart]="ChartOptions4.chart"
                 [dataLabels]="ChartOptions4.dataLabels"
                 [plotOptions]="ChartOptions4.plotOptions"
                 [xaxis]="ChartOptions4.xaxis"
-              ></apx-chart>
+              ></apx-chart>-->
             </div>
           </div>
 
-        
+
                 </div>
                 </div>
             </div>

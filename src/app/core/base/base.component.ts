@@ -102,7 +102,8 @@ export abstract class BaseComponent implements OnInit, OnDestroy, AfterViewInit 
 
       initSearchModels() {
       }
-      getSearchModel(name: string) {
+      getSearchModel(name: string): any {
+      return {};
       }
       setSearchModel(name: string) {
       }

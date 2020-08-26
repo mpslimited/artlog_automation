@@ -3,6 +3,17 @@
 app-cust-desktop{ width: 100%}
 app-sync-jobs { width: 100%; }
 app-artload-dashboard, app-performance, app-art-dashboard, app-approvedjobs, app-art-productivity,app-scorecardview{ width: 100%}
+/* for multiselect datatable dropdown overflow*/
+
+  .p-datatable-scrollable-wrapper {
+
+    overflow: hidden;
+}
+.p-datatable-scrollable-view.p-datatable-frozen-view.ng-star-inserted {
+  position: relative;
+  z-index: 1;
+}
+.custom-clear-btn{ margin-top: -4px;}
 .font12{ font-size: 12px!important;}
 .mt2{ margin-top:2px !important }
 /* body .ui-table .ui-table-tbody > tr:nth-child(even).ui-state-highlight{color:#000!important} */
@@ -10,12 +21,17 @@ app-artload-dashboard, app-performance, app-art-dashboard, app-approvedjobs, app
   padding:3px 0 10px 0;
   text-align: left!important;
 }
+ .p-datatable-scrollable-header-table .p-multiselect {
+  /* margin-top:-14px;
+  position: absolute!important;
+  */
+}
 .form-group label{margin-bottom: 0.35rem!important;}
-.ui-dropdown label.ui-dropdown-label{
+.p-dropdown label.p-dropdown-label{
   position: relative;
   top:2px;
 }
-td .ui-dropdown label.ui-dropdown-label{
+td .p-dropdown label.p-dropdown-label{
   position: relative;
   top:0!important;
 }
@@ -59,6 +75,7 @@ td .ui-dropdown label.ui-dropdown-label{
   font-size: 12px;
   text-align:right;
   padding:5px 8px 0 0;
+  font-weight: 700;
 }
 /* .ui-overlaypanel-content img{
   width:40%!important;
@@ -68,7 +85,7 @@ td .ui-dropdown label.ui-dropdown-label{
 .nonEdited{height:42.28px}
 
 .ml-9{left:9px}
-.ui-menubar-custom .dropdown-item{
+ .dropdown-item{
   font-size:11px;
 }
 .ui-selectbutton{position: relative;top:3px;}
@@ -132,3 +149,23 @@ dashboard{ width:100%; }
   color: #000;
   font-size: 16px;
 }
+.p-menubar .p-menubar-custom, .p-menubar .p-menubar-end {
+  margin-left: auto;
+  -ms-flex-item-align: center;
+  -ms-grid-row-align: center;
+  align-self: center;
+  width: 100%;
+}
+label {
+  padding: 0.19rem 0.19rem;
+  transition: background-color 0.2s, color 0.2s, border-color 0.2s, box-shadow 0.2s;
+}
+.p-table .p-table-thead > tr > th,
+.p-table .p-table-tbody > tr > td,
+.p-table .p-table-tfoot > tr > td {
+    padding: .25em .5em;
+}
+
+
+@import 'ag-grid-community/dist/styles/ag-grid.css';
+@import 'ag-grid-community/dist/styles/ag-theme-balham.css';

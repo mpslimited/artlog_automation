@@ -1,8 +1,10 @@
+//import { Http } from '@angular/http';
+import { HttpClient } from '@angular/common/http';
 
 import { timer as observableTimer, Subscription, Subject, Observable, Observer } from 'rxjs';
 
 import { take } from 'rxjs/operators';
-import { Headers } from '@angular/http';
+//import { Headers } from '@angular/common/http';
 import { DatePipe } from '@angular/common';
 import { SessionObject } from '../session-object';
 import { DecimalPipe } from '@angular/common';

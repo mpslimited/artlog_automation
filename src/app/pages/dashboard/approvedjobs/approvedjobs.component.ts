@@ -52,6 +52,7 @@ export class ApprovedjobsComponent extends BaseComponent implements OnInit, OnCh
   totalage: any = [];
   clonedCars: { [s: string]: any; } = {};
   jobkeys: any = [];
+  flaggedComment: string;
   // -- columans for filter Grid dropdown
   lessons: any = [];
   lessonLets: any = [];
@@ -154,6 +155,7 @@ export class ApprovedjobsComponent extends BaseComponent implements OnInit, OnCh
   selectedModesDisabled: boolean;
   jobsTypes: any[];
   criteria: boolean;
+  jobdurationLoading: boolean = false;
   isScrollable = true;
   auth: any ;
   g: any = {};
@@ -179,12 +181,12 @@ constructor(
     this.selectedModesDisabled = false;
     const user = SessionObject.getUserDetails();
     this.auth = user;
-      console.log('User Details : ', user);
-      let auth = [
+    console.log('User Details : ', user);
+    let auth = [
         { value: 'SaveGridState', title: 'Save Grid State', icon: 'fa fa-floppy-o', ord: 2 },
         { value: 'RowFlagged', title: 'Row Flagged', icon: 'fa fa-flag-o', ord: 7 },
       ];
-      if (!!user.userGroupName && (user.userGroupName === 'Admin' || user.userGroupName === 'DAM Team' )  ) {
+    if (!!user.userGroupName && (user.userGroupName === 'Admin' || user.userGroupName === 'DAM Team' )  ) {
         auth.push( { value: 'AddRow', title: 'Add Row', icon: 'fa fa-plus', ord: 1 });
         auth.push({ value: 'AddBatchCDate', title: 'Batch Complation Date', icon: 'fa fa-clock-o', ord: 1 });
         auth.push( { value: 'AddExceptionCat', title: 'Add Exception Cat', icon: 'fa fa-address-book-o', ord: 1 });
@@ -205,8 +207,8 @@ constructor(
       } else if ( !!user.userGroupName && user.userGroupName === 'MPS Art') {
         auth.push({ value: 'VerifyData', title: 'Manuscript Verification & Paging Approval', icon: 'fa fa-check', ord: 6 });
       }
-      auth.push( { value: 'AssignAuditors', title: 'Assign Auditors', icon: 'fa fa-user', ord: 9 });
-      auth = auth.sort(function (a, b) {
+    auth.push( { value: 'AssignAuditors', title: 'Assign Auditors', icon: 'fa fa-user', ord: 9 });
+    auth = auth.sort(function (a, b) {
         if (a.ord > b.ord) {
             return 1;
         }
@@ -303,7 +305,7 @@ constructor(
       accept: () => {
         const myheader = new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded');
         let body = new HttpParams();
-        body = body.set('UnkilledID', d._id);
+        body = body.append('UnkilledID', d._id);
         // tslint:disable-next-line: max-line-length
         this.httpService.extractPostData(CustomerServicesUrls.ARTLOG_UnKILLEDSELECTEDJOBS, body, { headers: myheader }).subscribe((data) => {
           d.killed = false;
@@ -315,11 +317,11 @@ constructor(
   clearFlag(d: any) {
     const myheader = new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded');
     let body = new HttpParams();
-    body = body.set('UnflagedID', d._id);
+    body = body.append('UnflagedID', d._id);
     this.httpService.extractPostData(CustomerServicesUrls.ARTLOG_UnFLAGEDSELECTEDJOBS, body, { headers: myheader }).subscribe((data) => {
       d.flaged = false;
       delete  d.flaged;
-     delete d.flagedTeam;
+      delete d.flagedTeam;
       this.alert.showAlertScucess([data.msg], 5000);
     });
   }
@@ -374,7 +376,7 @@ constructor(
             }
             const myheader = new HttpHeaders().set('Content-Type', 'application/json');
             let body = new HttpParams();
-            body = body.set('killedID', JSON.stringify(this.selectedRows.map(d => d._id)));
+            body = body.append('killedID', JSON.stringify(this.selectedRows.map(d => d._id)));
             const self = this;
             // tslint:disable-next-line: max-line-length
             this.httpService.extractPostData(CustomerServicesUrls.ARTLOG_KILLEDSELECTEDJOBS, body, { headers: myheader }).subscribe((data) => {
@@ -416,8 +418,8 @@ constructor(
       }
       const myheader = new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded');
       let body = new HttpParams();
-      body = body.set('selectedData', JSON.stringify(this.selectedRows.map(d => d._id)));
-      body = body.set('mathAuditor', JSON.stringify(this.assignAuthor));
+      body = body.append('selectedData', JSON.stringify(this.selectedRows.map(d => d._id)));
+      body = body.append('mathAuditor', JSON.stringify(this.assignAuthor));
       const self = this;
       this.httpService.extractPostData(CustomerServicesUrls.ARTLOG_ASSIGNAUDITORS, body, { headers: myheader }).subscribe((data) => {
         self.alert.showAlertScucess([data.msg], 5000);
@@ -435,9 +437,11 @@ constructor(
         this.selectedRows[t].flagedTeam = this.flaggedTeam ;
       }
       const myheader = new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded');
-      let body = new HttpParams();
-      body = body.set('flagedID', JSON.stringify(this.selectedRows.map(d => d._id)));
-      body = body.set('flagedTeam', this.flaggedTeam.toString());
+      let body = new HttpParams()
+      .append('flagedID', JSON.stringify(this.selectedRows.map(d => d._id)))
+      .append('flagedTeam', this.flaggedTeam.toString())
+      .append('flaggedComment', this.flaggedComment)
+      .append('auth', JSON.stringify(this.auth));
       const self = this;
       this.httpService.extractPostData(CustomerServicesUrls.ARTLOG_FLAGEDSELECTEDJOBS, body, { headers: myheader }).subscribe((data) => {
         self.alert.showAlertScucess([data.msg], 5000);
@@ -600,8 +604,7 @@ constructor(
     if (this.selectedVerifyData.length == 0) {
       alert('Please select at least one row');
     } else {
-      let body = new HttpParams();
-      body = body.set('newData', JSON.stringify(this.selectedVerifyData));
+      let body = new HttpParams().append('newData', JSON.stringify(this.selectedVerifyData));
       const self = this;
       this.httpService.extractData(CustomerServicesUrls.ARTLOG_UPDATEJOBS_Verified, body, null).subscribe((data) => {
         console.log(data);
@@ -741,13 +744,12 @@ constructor(
       this.confirmationService.confirm({
         message: 'Are you sure you want to proceed?',
         accept: () => {
-          let body = new HttpParams();
           for (const dt of this.selectedTagsData) {
             const ind = this.cartdata.indexOf(dt);
            /* if( this.cartdata[ind].duplicate === true)
             this.cartdata[ind].duplicate = false; */
           }
-          body = body.set('data', JSON.stringify(this.selectedTagsData));
+          let body = new HttpParams().append('data', JSON.stringify(this.selectedTagsData));
           this.httpService.extractData(CustomerServicesUrls.UPDATEASSETTAGS, body, null).subscribe((data) => {
             console.log('res=>', data);
             // tslint:disable-next-line: max-line-length
@@ -764,8 +766,8 @@ constructor(
   }
   saveTagData() {
     let body = new HttpParams();
-    body = body.set('tags', this.bulkTags);
-    body = body.set('selectedids', JSON.stringify(this.selectedRows.map(d => d._id)));
+    body = body.append('tags', this.bulkTags);
+    body = body.append('selectedids', JSON.stringify(this.selectedRows.map(d => d._id)));
     const self = this;
     this.httpService.extractData(CustomerServicesUrls.ARTLOG_BULKTAGS, body, null).subscribe((data) => {
       for (const dt of data) {
@@ -784,12 +786,12 @@ constructor(
   }
   savebulkBatchCDate(){
     let body = new HttpParams();
-    body = body.set('batchCDate', this.bulkBatchCDate);
-    body = body.set('selectedids', JSON.stringify(this.selectedRows.map(d => d._id)));
+    body = body.append('batchCDate', this.bulkBatchCDate);
+    body = body.append('selectedids', JSON.stringify(this.selectedRows.map(d => d._id)));
     const self = this;
     this.httpService.extractData(CustomerServicesUrls.ARTLOG_BULK_BULKBATCHCDATE, body, null).subscribe((data) => {
      debugger
-      for (const dt of data) {
+     for (const dt of data) {
         const index = self.cartdata.indexOf(self.cartdata.filter((d, i) => d._id === dt._id)[0]);
         self.cartdata[index].batchCDate = dt.batchCDate || self.bulkBatchCDate;
         const unit = 'day';
@@ -802,16 +804,16 @@ constructor(
           self.cartdata[index].artTeamPriority ='High';
         }
       }
-      self.bulkBatchCDate =  moment().format('MM-DD-YYYY');;
-      this.bulkBatchCDateModal = false;
-      self.selectedRows = [];
-      this.alert.showAlertScucess(['Bulk  Batch Complation Date has been updated successfully!'], 5000);
+     self.bulkBatchCDate =  moment().format('MM-DD-YYYY');;
+     this.bulkBatchCDateModal = false;
+     self.selectedRows = [];
+     this.alert.showAlertScucess(['Bulk  Batch Complation Date has been updated successfully!'], 5000);
     });
   }
   savebulkExceptionCat(){
     let body = new HttpParams();
-    body = body.set('exceptionCategory', this.bulkExceptionCat);
-    body = body.set('selectedids', JSON.stringify(this.selectedRows.map(d => d._id)));
+    body = body.append('exceptionCategory', this.bulkExceptionCat);
+    body = body.append('selectedids', JSON.stringify(this.selectedRows.map(d => d._id)));
     const self = this;
     this.httpService.extractData(CustomerServicesUrls.ARTLOG_BULK_EXCEPTIONCAT, body, null).subscribe((data) => {
       self.bulkExceptionCat = '';
@@ -827,8 +829,8 @@ constructor(
   savebulkException(){
     debugger
     let body = new HttpParams();
-    body = body.set('exception', this.bulkException);
-    body = body.set('selectedids', JSON.stringify(this.selectedRows.map(d => d._id)));
+    body = body.append('exception', this.bulkException);
+    body = body.append('selectedids', JSON.stringify(this.selectedRows.map(d => d._id)));
     const self = this;
     this.httpService.extractData(CustomerServicesUrls.ARTLOG_BULK_EXCEPTION, body, null).subscribe((data) => {
       debugger
@@ -844,8 +846,8 @@ constructor(
   }
   saveBatchData() {
     let body = new HttpParams();
-    body = body.set('batch', this.bulkBatch);
-    body = body.set('selectedids', JSON.stringify(this.selectedRows.map(d => d._id)));
+    body = body.append('batch', this.bulkBatch);
+    body = body.append('selectedids', JSON.stringify(this.selectedRows.map(d => d._id)));
     const self = this;
     this.httpService.extractData(CustomerServicesUrls.ARTLOG_BULKBATCH, body, null).subscribe((data) => {
       self.bulkBatch = '';
@@ -879,7 +881,7 @@ constructor(
    } else {
      // tslint:disable-next-line: radix
      d = parseInt(d);
-    return (d < 10) ? '0' + d.toString() : d.toString();
+     return (d < 10) ? '0' + d.toString() : d.toString();
    }
   }
   place(d) {
@@ -943,7 +945,7 @@ constructor(
   }
   setDefaltSearch(evt: any) {
     let body = new HttpParams();
-    body = body.set('default', this.defaultSearch);
+    body = body.append('default', this.defaultSearch);
     this.httpService.extractData(CustomerServicesUrls.ARTLOG_SETDEFAULT_SEARCH, body, null).subscribe((data) => {
       this.alert.showAlertScucess(['Your default search list has been updated!'], 3000);
     });
@@ -958,7 +960,7 @@ constructor(
   saveGridState() {
     let body = new HttpParams();
     const dt = { 'selectedColumn': this.scrollableCols, 'search': this.grid };
-    body = body.set('selectedColumn', JSON.stringify(dt));
+    body = body.append('selectedColumn', JSON.stringify(dt));
     this.httpService.extractData(CustomerServicesUrls.ARTLOG_GRIDSTATESAVE, body, null).subscribe((data) => {
       if (!!data.searchTitle) {
         this.gridState = data;
@@ -973,8 +975,8 @@ constructor(
       workflow: this.artLogModel.workflow.value, curricula: this.artLogModel.curricula.value, resTeam: this.artLogModel.resTeam.value,
       added: this.artLogModel.added.value
     };
-    body = body.set('frmdt', JSON.stringify(frmDt));
-    body = body.set('searchText', JSON.stringify(this.searchText));
+    body = body.append('frmdt', JSON.stringify(frmDt));
+    body = body.append('searchText', JSON.stringify(this.searchText));
     this.httpService.extractData(CustomerServicesUrls.ARTLOG_SEARCHSAVE, body, null).subscribe((data) => {
       this.savedsearchLists.splice(0, 0, data);
       this.saveSearchModal = false;
@@ -983,7 +985,7 @@ constructor(
   }
   deleteSearchList(obj) {
     let body = new HttpParams();
-    body = body.set('_id', obj._id);
+    body = body.append('_id', obj._id);
     this.httpService.extractData(CustomerServicesUrls.ARTLOG_DELETE_SEARCHSAVE, body, null).subscribe((data) => {
       const d = this.savedsearchLists.find(d => d._id === data.did);
       const index = this.savedsearchLists.indexOf(d);
@@ -1124,7 +1126,7 @@ constructor(
     debugger
     // background Process
     this.loadDataFromApi(this.NAME_ARTLOG).subscribe((data) => {
-      debugger 
+      debugger
       console.log(data);
     });
     console.log(action);
@@ -1145,7 +1147,7 @@ constructor(
   onRowEditSave(artdt: any) {
     const myheader = new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded');
     let body = new HttpParams();
-    body = body.set('newData', JSON.stringify(artdt));
+    body = body.append('newData', JSON.stringify(artdt));
     this.httpService.extractPostData(CustomerServicesUrls.ARTLOG_UPDATEJOBS, body, { headers: myheader }).subscribe((data) => {
       if (data.length > 0 && data[0].msg === 'SUCCESS') {
         this.alert.showAlertScucess(['Job(s) updated successfully!'], 3000);
@@ -1222,7 +1224,7 @@ constructor(
     if (valid) {
       const myheader = new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded');
       let body = new HttpParams();
-      body = body.set('jobAdd', JSON.stringify(this.form.value.jobAdd));
+      body = body.append('jobAdd', JSON.stringify(this.form.value.jobAdd));
       const self = this;
       this.httpService.extractPostData(CustomerServicesUrls.ARTLOG_JOBADD, body, { headers: myheader }).subscribe((data) => {
         const jobsInfo = data.jobsInfo;
@@ -1279,20 +1281,7 @@ constructor(
       return CustomerServicesUrls.ARTLOG_DATA;
     }
   }
-  getNonSearchModelParams(name: string) {
-    if (name === this.NAME_ARTLOG) {
-      const obj = { searchBy: 'test' };
-      return obj;
-    }
-  }
-  getGridApi(name: string): GridAPII {
-    if (name === this.NAME_ARTLOG) {
-      return {
-        gridApi: this.gridApi,
-        columnApi: this.columnApi
-      };
-    }
-  }
+
   clearAllFilter(dt: any) {
     // tslint:disable-next-line: max-line-length
     const Input: any = ['job_key', 'name', 'lessonlet', 'description', 'cstage', 'status', 'creditLine', 'comment', 'tags', 'mverification', 'isPaging'];
@@ -1346,14 +1335,43 @@ constructor(
         let OtherCol = [{ field: 'job_key', header: 'Job Key' },
         { field: '_id', header: 'ACHJob ID' }
         ];
-        dt.exportCSV({ selectionOnly: true }, OtherCol );
+      dt.exportCSV({ selectionOnly: true }, OtherCol );
      // }, 1000);
     }
   }
   exportCombineDataAsCSV(dt: any){
     debugger
     console.log("Combine Data request");
+    this.httpService.extractData(CustomerServicesUrls.COMBINEDATA, null,  null).subscribe((data) => {
+      debugger
+      console.log('Combine data part');
+    });
+   // throw new Error('http request error!, Request could not be served')
   }
+  downloadFile(data: any) {
+    let filename = 'data'; let csvData;
+    //let csvData = this.ConvertToCSV(data, [
+    //  'name', 'age', 'average', 'approved', 'description']);
+    console.log(csvData)
+    let blob = new Blob(['\ufeff' + csvData], {
+        type: 'text/csv;charset=utf-8;'
+    });
+    let dwldLink = document.createElement("a");
+    let url = URL.createObjectURL(blob);
+   /* let isSafariBrowser = navigator.userAgent.indexOf( 'Safari') != -1 & amp; & amp;  navigator.userAgent.indexOf('Chrome') == -1;
+
+    //if Safari open in new window to save file with random filename.
+    if (isSafariBrowser) {
+        dwldLink.setAttribute("target", "_blank");
+    }
+    */
+    dwldLink.setAttribute("href", url);
+    dwldLink.setAttribute("download", filename + ".csv");
+    dwldLink.style.visibility = "hidden";
+    document.body.appendChild(dwldLink);
+    dwldLink.click();
+    document.body.removeChild(dwldLink);
+}
   exportDataAsCSV(dt: any) {
     //this.scrollableCols = this.cols;
     // const that = this;
@@ -1365,7 +1383,7 @@ constructor(
         ];
       dt.exportCSV({}, OtherCol);
   }
-  
+
   addGraph(rowData: any) {
     console.log("garph data display::", rowData);
     this.stageDurationGraph = true;
@@ -1420,9 +1438,9 @@ constructor(
       newDrawPattern4.push({position: newDrawPattern[dd].position, StageNames: newDrawPattern[dd].StageNames, duration:0});
     }
    }
-   newDrawPattern4=newDrawPattern4.sort((a,b)=> a.position-b.position);
-   newDrawPattern3=newDrawPattern3.sort((a,b)=> a.position-b.position);
-   newDrawPattern2=newDrawPattern2.sort((a,b)=> a.position-b.position);
+    newDrawPattern4=newDrawPattern4.sort((a,b)=> a.position-b.position);
+    newDrawPattern3=newDrawPattern3.sort((a,b)=> a.position-b.position);
+    newDrawPattern2=newDrawPattern2.sort((a,b)=> a.position-b.position);
     debugger
     console.log(newDrawPattern3);
     this.apex = {
@@ -1485,7 +1503,7 @@ constructor(
       horizontalAlign: 'center'
     }
     };
-    
+
     //throw new Error("apex chart library not rendering. NPM dependency not found");
   }
   dateDiffinDurationStage ( date1: string , date2: string) {

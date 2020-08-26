@@ -10,7 +10,6 @@ import { CustomModalPopUpModel } from '../../component/custom-modal-pop-up/custo
 import { CustomerServicesUrls } from '../../core/shared/constant/url-constants/customer-services.constants';
 import { DropdownDataModel, AlertMessageService } from '../../component';
 import { Router } from '@angular/router';
-import { GridAPII } from '../../core/base/base.component';
 import { SessionObject } from '../../core/shared';
 import { MenuItem, SelectItem, LazyLoadEvent } from 'primeng/api';
 import { HttpHeaders, HttpParams } from '@angular/common/http';
@@ -53,6 +52,7 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
   totalage: any = [];
   clonedCars: { [s: string]: any; } = {};
   jobkeys: any = [];
+  flaggedComment: string;
   // -- columans for filter Grid dropdown
   lessons: any = [];
   lessonLets: any = [];
@@ -155,6 +155,7 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
   selectedModesDisabled: boolean;
   jobsTypes: any[];
   criteria: boolean;
+  jobdurationLoading: boolean = false;
   isScrollable = true;
   auth: any ;
   g: any = {};
@@ -304,7 +305,7 @@ constructor(
       accept: () => {
         const myheader = new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded');
         let body = new HttpParams();
-        body = body.set('UnkilledID', d._id);
+        body = body.append('UnkilledID', d._id);
         // tslint:disable-next-line: max-line-length
         this.httpService.extractPostData(CustomerServicesUrls.ARTLOG_UnKILLEDSELECTEDJOBS, body, { headers: myheader }).subscribe((data) => {
           d.killed = false;
@@ -316,7 +317,7 @@ constructor(
   clearFlag(d: any) {
     const myheader = new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded');
     let body = new HttpParams();
-    body = body.set('UnflagedID', d._id);
+    body = body.append('UnflagedID', d._id);
     this.httpService.extractPostData(CustomerServicesUrls.ARTLOG_UnFLAGEDSELECTEDJOBS, body, { headers: myheader }).subscribe((data) => {
       d.flaged = false;
       delete  d.flaged;
@@ -375,7 +376,7 @@ constructor(
             }
             const myheader = new HttpHeaders().set('Content-Type', 'application/json');
             let body = new HttpParams();
-            body = body.set('killedID', JSON.stringify(this.selectedRows.map(d => d._id)));
+            body = body.append('killedID', JSON.stringify(this.selectedRows.map(d => d._id)));
             const self = this;
             // tslint:disable-next-line: max-line-length
             this.httpService.extractPostData(CustomerServicesUrls.ARTLOG_KILLEDSELECTEDJOBS, body, { headers: myheader }).subscribe((data) => {
@@ -417,8 +418,8 @@ constructor(
       }
       const myheader = new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded');
       let body = new HttpParams();
-      body = body.set('selectedData', JSON.stringify(this.selectedRows.map(d => d._id)));
-      body = body.set('mathAuditor', JSON.stringify(this.assignAuthor));
+      body = body.append('selectedData', JSON.stringify(this.selectedRows.map(d => d._id)));
+      body = body.append('mathAuditor', JSON.stringify(this.assignAuthor));
       const self = this;
       this.httpService.extractPostData(CustomerServicesUrls.ARTLOG_ASSIGNAUDITORS, body, { headers: myheader }).subscribe((data) => {
         self.alert.showAlertScucess([data.msg], 5000);
@@ -435,10 +436,13 @@ constructor(
         this.selectedRows[t].flaged = true;
         this.selectedRows[t].flagedTeam = this.flaggedTeam ;
       }
+      debugger
       const myheader = new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded');
-      let body = new HttpParams();
-      body = body.set('flagedID', JSON.stringify(this.selectedRows.map(d => d._id)));
-      body = body.set('flagedTeam', this.flaggedTeam.toString());
+      let body = new HttpParams()
+      .append('flagedID', JSON.stringify(this.selectedRows.map(d => d._id)))
+      .append('flagedTeam', this.flaggedTeam.toString())
+      .append('flaggedComment', this.flaggedComment)
+      .append('auth', JSON.stringify(this.auth));
       const self = this;
       this.httpService.extractPostData(CustomerServicesUrls.ARTLOG_FLAGEDSELECTEDJOBS, body, { headers: myheader }).subscribe((data) => {
         self.alert.showAlertScucess([data.msg], 5000);
@@ -602,7 +606,7 @@ constructor(
       alert('Please select at least one row');
     } else {
       let body = new HttpParams();
-      body = body.set('newData', JSON.stringify(this.selectedVerifyData));
+      body = body.append('newData', JSON.stringify(this.selectedVerifyData));
       const self = this;
       this.httpService.extractData(CustomerServicesUrls.ARTLOG_UPDATEJOBS_Verified, body, null).subscribe((data) => {
         console.log(data);
@@ -748,7 +752,7 @@ constructor(
            /* if( this.cartdata[ind].duplicate === true)
             this.cartdata[ind].duplicate = false; */
           }
-          body = body.set('data', JSON.stringify(this.selectedTagsData));
+          body = body.append('data', JSON.stringify(this.selectedTagsData));
           this.httpService.extractData(CustomerServicesUrls.UPDATEASSETTAGS, body, null).subscribe((data) => {
             console.log('res=>', data);
             // tslint:disable-next-line: max-line-length
@@ -765,8 +769,8 @@ constructor(
   }
   saveTagData() {
     let body = new HttpParams();
-    body = body.set('tags', this.bulkTags);
-    body = body.set('selectedids', JSON.stringify(this.selectedRows.map(d => d._id)));
+    body = body.append('tags', this.bulkTags);
+    body = body.append('selectedids', JSON.stringify(this.selectedRows.map(d => d._id)));
     const self = this;
     this.httpService.extractData(CustomerServicesUrls.ARTLOG_BULKTAGS, body, null).subscribe((data) => {
       for (const dt of data) {
@@ -785,8 +789,8 @@ constructor(
   }
   savebulkBatchCDate(){
     let body = new HttpParams();
-    body = body.set('batchCDate', this.bulkBatchCDate);
-    body = body.set('selectedids', JSON.stringify(this.selectedRows.map(d => d._id)));
+    body = body.append('batchCDate', this.bulkBatchCDate);
+    body = body.append('selectedids', JSON.stringify(this.selectedRows.map(d => d._id)));
     const self = this;
     this.httpService.extractData(CustomerServicesUrls.ARTLOG_BULK_BULKBATCHCDATE, body, null).subscribe((data) => {
      debugger
@@ -811,8 +815,8 @@ constructor(
   }
   savebulkExceptionCat(){
     let body = new HttpParams();
-    body = body.set('exceptionCategory', this.bulkExceptionCat);
-    body = body.set('selectedids', JSON.stringify(this.selectedRows.map(d => d._id)));
+    body = body.append('exceptionCategory', this.bulkExceptionCat);
+    body = body.append('selectedids', JSON.stringify(this.selectedRows.map(d => d._id)));
     const self = this;
     this.httpService.extractData(CustomerServicesUrls.ARTLOG_BULK_EXCEPTIONCAT, body, null).subscribe((data) => {
       self.bulkExceptionCat = '';
@@ -828,8 +832,8 @@ constructor(
   savebulkException(){
     debugger
     let body = new HttpParams();
-    body = body.set('exception', this.bulkException);
-    body = body.set('selectedids', JSON.stringify(this.selectedRows.map(d => d._id)));
+    body = body.append('exception', this.bulkException);
+    body = body.append('selectedids', JSON.stringify(this.selectedRows.map(d => d._id)));
     const self = this;
     this.httpService.extractData(CustomerServicesUrls.ARTLOG_BULK_EXCEPTION, body, null).subscribe((data) => {
       debugger
@@ -845,8 +849,8 @@ constructor(
   }
   saveBatchData() {
     let body = new HttpParams();
-    body = body.set('batch', this.bulkBatch);
-    body = body.set('selectedids', JSON.stringify(this.selectedRows.map(d => d._id)));
+    body = body.append('batch', this.bulkBatch);
+    body = body.append('selectedids', JSON.stringify(this.selectedRows.map(d => d._id)));
     const self = this;
     this.httpService.extractData(CustomerServicesUrls.ARTLOG_BULKBATCH, body, null).subscribe((data) => {
       self.bulkBatch = '';
@@ -944,7 +948,7 @@ constructor(
   }
   setDefaltSearch(evt: any) {
     let body = new HttpParams();
-    body = body.set('default', this.defaultSearch);
+    body = body.append('default', this.defaultSearch);
     this.httpService.extractData(CustomerServicesUrls.ARTLOG_SETDEFAULT_SEARCH, body, null).subscribe((data) => {
       this.alert.showAlertScucess(['Your default search list has been updated!'], 3000);
     });
@@ -959,7 +963,7 @@ constructor(
   saveGridState() {
     let body = new HttpParams();
     const dt = { 'selectedColumn': this.scrollableCols, 'search': this.grid };
-    body = body.set('selectedColumn', JSON.stringify(dt));
+    body = body.append('selectedColumn', JSON.stringify(dt));
     this.httpService.extractData(CustomerServicesUrls.ARTLOG_GRIDSTATESAVE, body, null).subscribe((data) => {
       if (!!data.searchTitle) {
         this.gridState = data;
@@ -974,8 +978,8 @@ constructor(
       workflow: this.artLogModel.workflow.value, curricula: this.artLogModel.curricula.value, resTeam: this.artLogModel.resTeam.value,
       added: this.artLogModel.added.value
     };
-    body = body.set('frmdt', JSON.stringify(frmDt));
-    body = body.set('searchText', JSON.stringify(this.searchText));
+    body = body.append('frmdt', JSON.stringify(frmDt));
+    body = body.append('searchText', JSON.stringify(this.searchText));
     this.httpService.extractData(CustomerServicesUrls.ARTLOG_SEARCHSAVE, body, null).subscribe((data) => {
       this.savedsearchLists.splice(0, 0, data);
       this.saveSearchModal = false;
@@ -984,7 +988,7 @@ constructor(
   }
   deleteSearchList(obj) {
     let body = new HttpParams();
-    body = body.set('_id', obj._id);
+    body = body.append('_id', obj._id);
     this.httpService.extractData(CustomerServicesUrls.ARTLOG_DELETE_SEARCHSAVE, body, null).subscribe((data) => {
       const d = this.savedsearchLists.find(d => d._id === data.did);
       const index = this.savedsearchLists.indexOf(d);
@@ -1125,7 +1129,7 @@ constructor(
     debugger
     // background Process
     this.loadDataFromApi(this.NAME_ARTLOG).subscribe((data) => {
-      debugger 
+      debugger
       console.log(data);
     });
     console.log(action);
@@ -1146,7 +1150,7 @@ constructor(
   onRowEditSave(artdt: any) {
     const myheader = new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded');
     let body = new HttpParams();
-    body = body.set('newData', JSON.stringify(artdt));
+    body = body.append('newData', JSON.stringify(artdt));
     this.httpService.extractPostData(CustomerServicesUrls.ARTLOG_UPDATEJOBS, body, { headers: myheader }).subscribe((data) => {
       if (data.length > 0 && data[0].msg === 'SUCCESS') {
         this.alert.showAlertScucess(['Job(s) updated successfully!'], 3000);
@@ -1223,7 +1227,7 @@ constructor(
     if (valid) {
       const myheader = new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded');
       let body = new HttpParams();
-      body = body.set('jobAdd', JSON.stringify(this.form.value.jobAdd));
+      body = body.append('jobAdd', JSON.stringify(this.form.value.jobAdd));
       const self = this;
       this.httpService.extractPostData(CustomerServicesUrls.ARTLOG_JOBADD, body, { headers: myheader }).subscribe((data) => {
         const jobsInfo = data.jobsInfo;
@@ -1280,20 +1284,7 @@ constructor(
       return CustomerServicesUrls.ARTLOG_DATA;
     }
   }
-  getNonSearchModelParams(name: string) {
-    if (name === this.NAME_ARTLOG) {
-      const obj = { searchBy: 'test' };
-      return obj;
-    }
-  }
-  getGridApi(name: string): GridAPII {
-    if (name === this.NAME_ARTLOG) {
-      return {
-        gridApi: this.gridApi,
-        columnApi: this.columnApi
-      };
-    }
-  }
+
   clearAllFilter(dt: any) {
     // tslint:disable-next-line: max-line-length
     const Input: any = ['job_key', 'name', 'lessonlet', 'description', 'cstage', 'status', 'creditLine', 'comment', 'tags', 'mverification', 'isPaging'];
@@ -1362,7 +1353,7 @@ constructor(
         ];
       dt.exportCSV({}, OtherCol);
   }
-  
+
   addGraph(rowData: any) {
     console.log("garph data display::", rowData);
     this.stageDurationGraph = true;
@@ -1482,7 +1473,7 @@ constructor(
       horizontalAlign: 'center'
     }
     };
-    
+
     //throw new Error("apex chart library not rendering. NPM dependency not found");
   }
   dateDiffinDurationStage ( date1: string , date2: string) {

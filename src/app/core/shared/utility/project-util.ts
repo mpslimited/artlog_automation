@@ -1,19 +1,18 @@
 import { Utils } from './utils';
 import { ColDef } from 'ag-grid';
-import { AgChecboxHeaderComponent } from '../../../component/ag-component/ag-checbox-header/ag-checbox-header.component';
 
 declare var $;
 export class ProjectUtils extends Utils {
       public static GRIDWIDTH = window.screen.availWidth;
       public static idCount = 0;
-      
+
       public static getJobKey(value){
             return function ( value: any ) {
                   if(!!value.data.job_key ){
                         return  `<a href="https://greatminds.getbynder.com/workflow/job/view/`+ value.data.job_key +`/" target="_blank">`+ value.data.job_key +`</a>`;
                   }else{
-                        return "";   
-                  } 
+                        return "";
+                  }
             }
       }
       public static getLession(value){
@@ -21,7 +20,7 @@ export class ProjectUtils extends Utils {
             if(!!value.data.jobMetaproperties && value.data.jobMetaproperties.hasOwnProperty("b447dc7d70b0420a8ac9ec9aeff78296")){
                   return  value.data.jobMetaproperties.b447dc7d70b0420a8ac9ec9aeff78296;
             }else{
-                  return "";   
+                  return "";
             }
         }
       }public static getComponents(value){
@@ -35,7 +34,7 @@ export class ProjectUtils extends Utils {
       }public static getGrades(value){
             return function (value: any ) {
                   for (let [key, val] of Object.entries( value.data.jobMetaproperties )) {
-                        if(key=="c0ac0a86e65f4f7ebd88dbd7e77965ef"){ 
+                        if(key=="c0ac0a86e65f4f7ebd88dbd7e77965ef"){
                              let dd= value.data.grade.options.filter((dt)=> dt.ID.split("-").join("") == val);
                               return dd[0].label; break; }
                   }
@@ -45,7 +44,7 @@ export class ProjectUtils extends Utils {
             return function (value: any ) {
                   ///debugger
                   for (let [key, val] of Object.entries( value.data.jobMetaproperties )) {
-                        if(key=="7388493928bc4a9aa57ca65306ed1579"){ 
+                        if(key=="7388493928bc4a9aa57ca65306ed1579"){
                              let dd= value.data.modules.options.filter((dt)=> dt.ID.split("-").join("") == val);
                              if(dd.length >0){
                               return dd[0].label; break;
@@ -58,7 +57,7 @@ export class ProjectUtils extends Utils {
             return function (value: any ) {  //debugger //modules.options
                 for (let [key, val] of Object.entries( value.data.jobMetaproperties )) {
                       if(key=="c7fbc907710045778ee29863e33d2bd2"){
-                             return val; break; 
+                             return val; break;
                         }
                 }
                  return "";
@@ -67,7 +66,7 @@ export class ProjectUtils extends Utils {
             return function (value: any ) {  //debugger //modules.options
                 for (let [key, val] of Object.entries( value.data.jobMetaproperties )) {
                       if(key=="cd8809565088496da4955eb3327fea04"){
-                             return val; break; 
+                             return val; break;
                         }
                 }
                  return "";
@@ -77,7 +76,7 @@ export class ProjectUtils extends Utils {
       public static getMetainfo(value, key){
             return function (value: any ) {
                   debugger
-            
+
                   if( typeof value.getValue()=="object" ){
                         for (let [key, val] of Object.entries( value.getValue())) {
                           if(key=="b447dc7d70b0420a8ac9ec9aeff78296"){
@@ -89,7 +88,7 @@ export class ProjectUtils extends Utils {
                   }else{
                         return "";
                   }// value['data'][key];
-            }   
+            }
       } public static getStageName(key: string){
             return function (value: any) {
                   if(value.getValue().length > 0){
@@ -553,17 +552,7 @@ export class ProjectUtils extends Utils {
             colDef = edtSel.concat(colDef);
             return colDef;
       }
-      public static AddSelectCheckbox(colDef: Array<ColDef>, header: string): Array<ColDef> {
 
-            const chkSel: Array<ColDef> | any = [{
-                  headerName: header,
-                  field: 'checkbox',
-                  cellRenderer: 'AgCheckBoxComponent',
-                  headerComponentFramework: AgChecboxHeaderComponent
-            }];
-            colDef = chkSel.concat(colDef);
-            return colDef;
-      }
       public static setSelect(value) {
             let anchor;
             if (value.node.data.is_reversed === 1) {

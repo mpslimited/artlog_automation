@@ -1,5 +1,4 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { IdGenerator } from '../ag-component/ag-radio/id-generator';
 import { CommonSearchCS } from './common-search-cs.model';
 import { ProjectUtils } from '../../core/shared';
 import { popInLimit, showHideAnimate } from './animation';
@@ -18,14 +17,14 @@ export class CommonSearchCsComponent implements OnInit {
   limit: number | string | any = 1000;
 
   commonModel: CommonSearchCS = new CommonSearchCS();
-  private idGen: IdGenerator = new IdGenerator('common-search');
+  //private idGen: IdGenerator = new IdGenerator('common-search');
   id: string;
   show = false;
   showInput = false;
 
   constructor(
   ) {
-    this.id = this.idGen.genrateID();
+    //this.id = this.idGen.genrateID();
   }
 
 

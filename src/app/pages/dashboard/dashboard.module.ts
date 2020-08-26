@@ -1,7 +1,9 @@
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-import { AgGridModule } from 'ag-grid-angular/main';
+import { ReactiveFormsModule , FormsModule} from '@angular/forms';
+
+
 import { routing } from './dashboard.routing';
 import { ComponentModule } from './../../component/component.module';
 import { DashboardComponent } from './dashboard.component';
@@ -19,8 +21,6 @@ import { ScrollingModule } from '@angular/cdk/scrolling';
 import { DropdownModule } from 'primeng/dropdown';
 // import { ChartModule } from 'primeng/chart';
 import { MultiSelectModule } from 'primeng/multiselect';
-// import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { ReactiveFormsModule } from '@angular/forms';
 import { SliderModule } from 'primeng/slider';
 import {MenubarModule} from 'primeng/menubar';
 import {ScrollPanelModule} from 'primeng/scrollpanel';
@@ -45,14 +45,14 @@ import { JobcardviewComponent } from './jobcardview/jobcardview.component';
 import { EditjobComponent } from './editjob/editjob.component';
 import { PerformanceComponent } from './performance/performance.component';
 import { GoogleChartsModule, ScriptLoaderService } from 'angular-google-charts';
-//import { AgGridModule } from "@ag-grid-community/angular";
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-
-
+import { AgGridModule } from 'ag-grid-angular';
+import { NgbDate, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 //import { DashboardComponent } from './dashboard.component';
 @NgModule({
       imports: [
             //NgxDaterangepickerMd.forRoot(),
+           // BrowserModule,
+            NgbModule,
             NgApexchartsModule,
             GoogleChartsModule,
             BlockUIModule,
@@ -76,12 +76,12 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
             ProgressSpinnerModule,
             RadioButtonModule,
             ScrollPanelModule,
-            // BrowserAnimationsModule,
-            // ChartModule,
             RootSharedModule,
             MultiSelectModule,
             DropdownModule,
             ReactiveFormsModule,
+            FormsModule,
+
             HttpClientModule,
             AgGridModule.withComponents([]),
       ], exports: [DashboardComponent],

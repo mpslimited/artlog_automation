@@ -19,7 +19,7 @@
             <a class="nav-link" [routerLinkActive]="['active', '']" [routerLink]="['/pages/admin/scorecardview']">Scorecard View</a>
           </li>
           <li class="nav-item" *ngIf="auth.roleName == 'Art Designer'">
-            <a class="nav-link" [routerLinkActive]="['active', '']" [routerLink]="['/pages/admin/scorecardview']">Api Performance</a>
+            <a class="nav-link" [routerLinkActive]="['active', '']" [routerLink]="['/pages/admin/performance']">Api Performance</a>
           </li>
           <li class="nav-item" *ngIf="auth.roleName == 'Art Designer'">
             <a class="nav-link" [routerLinkActive]="['active', '']" [routerLink]="['/pages/admin/scorecardview']">Recent Log</a>
@@ -76,7 +76,7 @@
               <div class="col-md-3">
                 <div class="form-group">
                   <label for="workflow" class="col-sm-12 pl-0">Workflow </label>
-                  <p-dropdown [options]="workflows" [(ngModel)]="artLogModel.workflow.value" 
+                  <p-dropdown [options]="workflows" [(ngModel)]="artLogModel.workflow.value"
                       id="workflow" name="workflow" [style]="{minWidth: '100%'}"
                       placeholder="Choose Workflow" name="workflow">
                   </p-dropdown>
@@ -87,7 +87,7 @@
               <div class="col-md-3">
                 <div class="form-group">
                   <label for="curriculum" class="col-sm-12 pl-0">Curriculum</label>
-                  <p-dropdown [options]="wip" [(ngModel)]="artLogModel.curricula.value" 
+                  <p-dropdown [options]="wip" [(ngModel)]="artLogModel.curricula.value"
                       name="curriculum" id="curriculum" [style]="{minWidth: '100%'}"
                       placeholder="Choose Curriculum">
                   </p-dropdown>
@@ -105,7 +105,7 @@
               <div class="col-md-3">
                   <div class="form-group">
                       <label for="formGroupExampleInput2" class="col-sm-12 pl-0">Job Type </label>
-                      <p-dropdown [options]="jobsTypes" [(ngModel)]="artLogModel.added.value" 
+                      <p-dropdown [options]="jobsTypes" [(ngModel)]="artLogModel.added.value"
                           [style]="{minWidth: '100%'}"
                           defaultLabel="Choose Type" name="job_type">
                       </p-dropdown >
@@ -113,32 +113,32 @@
                 </div>
                 <div class="col-md-12 text-right">
                   <button type="button" (click)="clearData()" class="btn btn-danger btn-sm mr-1">Reset</button>
-                  <button type="submit" class="btn btn-primary btn-sm mr-1" [disabled]="dataloading">Search <span class="btnload" *ngIf="dataloading"></span></button>
+                  <button type="submit" class="btn btn-primary btn-sm mr-1">Search</button>
                   <button type="button" *ngIf="isSaveSearch" (click)="saveSearchDialog()" class="btn btn-primary btn-sm">Save Search</button>
                 </div>
-            </div>            
+            </div>
           </div>
         </div>
       </div>
     </div>
   </form>
     <div class="row">
-      <div class="col-lg-12">     
-          <p-table #dt editMode="row" dataKey="_id" [value]="cartdata" [totalRecords]='totalRecords' 
-          [rowsPerPageOptions]='[5,10,50,100,150]' 
+      <div class="col-lg-12">
+          <p-table #dt editMode="row" dataKey="_id" [value]="cartdata" [totalRecords]='totalRecords'
+          [rowsPerPageOptions]='[5,10,50,100,150]'
           [lazy]="true" (onLazyLoad)="lazyLoadEnv($event)"
-          selectionMode="multiple" [(selection)]="selectedRows" scrollable="isScrollable" [loading]="dataloading" 
+          selectionMode="multiple" [(selection)]="selectedRows" scrollable="isScrollable" [loading]="dataloading"
           [frozenColumns]="freezeCols" [columns]="scrollableCols" frozenWidth="170px"
           scrollHeight="600px" (onFilter)="onFilter($event, dt)" [paginator]="true" [rows]="100">
           <ng-template pTemplate="colgroup" let-columns>
             <colgroup>
-                <col *ngFor="let col of columns" style="width:175px">
+                <col *ngFor="let col of columns" style="width:180px">
             </colgroup>
           </ng-template>
-          
+
           <ng-template pTemplate="caption">
             <p-menubar>
-                <div class="d-flex">                    
+                <div class="d-flex">
                     <div class="pl-1 mr-auto">
                       <!--Filter Bar-->
                       <div class="searchFilterBar">
@@ -236,7 +236,7 @@
                         <p class="rowCountSummary">Showing {{filteredValuesLength}} of {{cartdata?.length}} entries ( selected {{selectedRows.length}})</p>
                     </div>
                 </div>
-              <div class="d-flex">                    
+              <div class="d-flex">
                   <div class="pl-2 mr-auto">
                       <form class="form-inline my-lg-0">
                           <div class="input-group">
@@ -248,13 +248,13 @@
                           </div>
                         </form>
                   </div>
-              <div class="pl-2 d-none">                                        
-                
+              <div class="pl-2 d-none">
+
               </div>
-              <div class="pr-2" style="margin-top:-8px;">
-                  <button pButton type="button" class="custom-clear-btn" icon="fa fa-close" label="{{gridState.searchTitle}}" (click)="clearGridState()" *ngIf="!!gridState && gridState.hasOwnProperty('searchTitle')"></button>
+              <div class="pr-2 d-flex align-items-center" style="margin-top:-8px;">
+                  <button pButton type="button" class="custom-clear-btn ml-2" icon="fa fa-close" label="{{gridState.searchTitle}}" (click)="clearGridState()" *ngIf="!!gridState && gridState.hasOwnProperty('searchTitle')"></button>
                   <!-- <a (click)="clearGridState()" class="btn btn-sm btn-primary" *ngIf="!!gridState && gridState.hasOwnProperty('searchTitle')"><i class="fa fa-close"></i> {{gridState.searchTitle}}</a> -->
-                  <p-multiSelect [options]="fixCol" [(ngModel)]="scrollableCols" (onChange)="updateSelection()" optionLabel="header" 
+                  <p-multiSelect [options]="fixCol" [(ngModel)]="scrollableCols" (onChange)="updateSelection()" optionLabel="header"
                     selectedItemsLabel="{0} columns selected" defaultLabel="Choose Columns">
                   </p-multiSelect>
               <div class="btn-group">
@@ -270,9 +270,9 @@
               </div>
               <p-selectButton class="ml-1" [options]="modes" [(ngModel)]="selectedModes" (onChange)="optionChangeData()"></p-selectButton>
             </div>
-              </div>               
+              </div>
             </p-menubar>
-  
+
           </ng-template>
           <ng-template pTemplate="header" let-columns>
             <tr>
@@ -303,7 +303,7 @@
                 <input *ngIf="col.field=='description'" [(ngModel)]="g.description" placeholder="Description" pInputText type="text" (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)" class="w-100">
                 <p-multiSelect maxSelectedLabels="1" *ngIf="col.field=='cstage'" [(ngModel)]="g.cstage" [options]="cstages" defaultLabel="All Stages" (onChange)="dt.filter($event.value, col.field, 'in')" [style]="{minWidth: '155px'}"></p-multiSelect>
                 <p-multiSelect maxSelectedLabels="1" *ngIf="col.field=='job_active_stage.status'" [(ngModel)]="g.status" [options]="cstatus" defaultLabel="All Status" (onChange)="dt.filter($event.value, col.field, 'in')" [style]="{minWidth: '155px'}"></p-multiSelect>
-                
+
                 <input *ngIf="col.field=='creditLine'" [(ngModel)]="g.creditLine" placeholder="" pInputText type="text" (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)" class="w-100">
                 <!--<input *ngIf="col.field=='mverification'" [(ngModel)]="g.mverification" placeholder="" pInputText type="text" (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)" class="w-100">
                 <input *ngIf="col.field=='isPaging'" [(ngModel)]="g.isPaging" placeholder="" pInputText type="text" (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)" class="w-100">
@@ -311,61 +311,61 @@
                 <p-multiSelect maxSelectedLabels="1" *ngIf="col.field=='mverification'" [(ngModel)]="g.mverification" [options]="verificationsDt" defaultLabel="All Verification" (onChange)="dt.filter($event.value, col.field, 'in')" [style]="{minWidth: '155px'}"></p-multiSelect>
                 <p-multiSelect maxSelectedLabels="1" *ngIf="col.field=='isPaging'" [(ngModel)]="g.isPaging" [options]="pagingCol" defaultLabel="All " (onChange)="changeMfilter($event.value,dt, col.field)" [style]="{minWidth: '155px'}"></p-multiSelect>
                 <p-multiSelect maxSelectedLabels="1" *ngIf="col.field=='pageNo'" [(ngModel)]="g.pageNo" [options]="pageNos" defaultLabel="All PageNo " (onChange)="changeMfilter($event.value,dt, col.field)" [style]="{minWidth: '155px'}"></p-multiSelect>
-                
+
                 <p-multiSelect maxSelectedLabels="1" *ngIf="col.field=='lesson'" [(ngModel)]="g.lesson" [options]="lessons" defaultLabel="All Lessons" (onChange)="dt.filter($event.value, col.field, 'in')" [style]="{minWidth: '155px'}"></p-multiSelect>
                 <p-multiSelect maxSelectedLabels="1" *ngIf="col.field=='component'" [(ngModel)]="g.component"  [options]="components" defaultLabel="All Components"
                   (onChange)="dt.filter($event.value, col.field, 'in')" [style]="{minWidth: '155px'}"></p-multiSelect>
-                <p-multiSelect maxSelectedLabels="1" *ngIf="col.field=='module'" [(ngModel)]="g.module" [options]="modules" defaultLabel="All Modules" 
+                <p-multiSelect maxSelectedLabels="1" *ngIf="col.field=='module'" [(ngModel)]="g.module" [options]="modules" defaultLabel="All Modules"
                   (onChange)="dt.filter($event.value, col.field, 'in')" [style]="{minWidth: '155px'}"></p-multiSelect>
-                <p-multiSelect maxSelectedLabels="1" *ngIf="col.field=='grade'" [(ngModel)]="g.grade" [options]="grades" defaultLabel="All Grades" 
+                <p-multiSelect maxSelectedLabels="1" *ngIf="col.field=='grade'" [(ngModel)]="g.grade" [options]="grades" defaultLabel="All Grades"
                   (onChange)="changeMfilter($event.value,dt, col.field)" [style]="{minWidth: '155px'}"></p-multiSelect>
-                <p-multiSelect maxSelectedLabels="1" *ngIf="col.field=='batch'" [(ngModel)]="g.batch" [options]="batchs" defaultLabel="All Batches" 
+                <p-multiSelect maxSelectedLabels="1" *ngIf="col.field=='batch'" [(ngModel)]="g.batch" [options]="batchs" defaultLabel="All Batches"
                   (onChange)="dt.filter($event.value, col.field, 'in')" [style]="{minWidth: '155px'}"></p-multiSelect>
-                <p-multiSelect maxSelectedLabels="1" *ngIf="col.field=='topic'" [(ngModel)]="g.topic" [options]="topics" defaultLabel="All Topics" 
+                <p-multiSelect maxSelectedLabels="1" *ngIf="col.field=='topic'" [(ngModel)]="g.topic" [options]="topics" defaultLabel="All Topics"
                   (onChange)="dt.filter($event.value, col.field, 'in')" [style]="{minWidth: '155px'}"></p-multiSelect>
-                <p-multiSelect  maxSelectedLabels="1" *ngIf="col.field=='currentRTeam'" [(ngModel)]="g.currentRTeam" [options]="GcurrentRTeam" defaultLabel="All Team" 
+                <p-multiSelect  maxSelectedLabels="1" *ngIf="col.field=='currentRTeam'" [(ngModel)]="g.currentRTeam" [options]="GcurrentRTeam" defaultLabel="All Team"
                   (onChange)="dt.filter($event.value, col.field, 'in')" [style]="{minWidth: '155px'}"></p-multiSelect>
-                <p-multiSelect maxSelectedLabels="1" *ngIf="col.field=='curriculum'"  [(ngModel)]="g.curriculum" [options]="Gcurriculum" defaultLabel="All Curriculum" 
+                <p-multiSelect maxSelectedLabels="1" *ngIf="col.field=='curriculum'"  [(ngModel)]="g.curriculum" [options]="Gcurriculum" defaultLabel="All Curriculum"
                   (onChange)="dt.filter($event.value, col.field, 'in')" [style]="{minWidth: '155px'}"></p-multiSelect>
-                <p-multiSelect maxSelectedLabels="1" *ngIf="col.field=='revisionC'" [(ngModel)]="g.revisionC" [options]="revisions" defaultLabel="All R.Count" 
+                <p-multiSelect maxSelectedLabels="1" *ngIf="col.field=='revisionC'" [(ngModel)]="g.revisionC" [options]="revisions" defaultLabel="All R.Count"
                   (onChange)="dt.filter($event.value, col.field, 'in')" [style]="{minWidth: '155px'}"></p-multiSelect>
-                <p-multiSelect maxSelectedLabels="1" *ngIf="col.field=='printAsset'" [(ngModel)]="g.printAsset" [options]="printAssets" defaultLabel="All P.Asset" 
+                <p-multiSelect maxSelectedLabels="1" *ngIf="col.field=='printAsset'" [(ngModel)]="g.printAsset" [options]="printAssets" defaultLabel="All P.Asset"
                 (onChange)="dt.filter($event.value, col.field, 'in')" [style]="{minWidth: '155px'}"></p-multiSelect>
-                <p-multiSelect maxSelectedLabels="1" *ngIf="col.field=='printReady'" [(ngModel)]="g.printReady" [options]="printReadys" defaultLabel="All P.Ready" 
+                <p-multiSelect maxSelectedLabels="1" *ngIf="col.field=='printReady'" [(ngModel)]="g.printReady" [options]="printReadys" defaultLabel="All P.Ready"
                 (onChange)="dt.filter($event.value, col.field, 'in')" [style]="{minWidth: '155px'}"></p-multiSelect>
-               
-                <p-multiSelect maxSelectedLabels="1" *ngIf="col.field=='artcomplex'" [(ngModel)]="g.artcomplex"  [options]="Gartcomplexs" defaultLabel="Art Complexity" 
+
+                <p-multiSelect maxSelectedLabels="1" *ngIf="col.field=='artcomplex'" [(ngModel)]="g.artcomplex"  [options]="Gartcomplexs" defaultLabel="Art Complexity"
                   (onChange)="dt.filter($event.value, col.field, 'in')" [style]="{minWidth: '155px'}"></p-multiSelect>
-                <p-multiSelect maxSelectedLabels="1" *ngIf="col.field=='artassion'" [(ngModel)]="g.artassion"  [options]="Gartassions" defaultLabel="Art Assignment" 
+                <p-multiSelect maxSelectedLabels="1" *ngIf="col.field=='artassion'" [(ngModel)]="g.artassion"  [options]="Gartassions" defaultLabel="Art Assignment"
                   (onChange)="dt.filter($event.value, col.field, 'in')" [style]="{minWidth: '155px'}"></p-multiSelect>
-                <p-multiSelect maxSelectedLabels="1" *ngIf="col.field=='risk'" [(ngModel)]="g.risk"  [options]="Grisks" defaultLabel="All Risk" 
+                <p-multiSelect maxSelectedLabels="1" *ngIf="col.field=='risk'" [(ngModel)]="g.risk"  [options]="Grisks" defaultLabel="All Risk"
                   (onChange)="dt.filter($event.value, col.field, 'in')" [style]="{minWidth: '155px'}"></p-multiSelect>
-                <p-multiSelect maxSelectedLabels="1" *ngIf="col.field=='impact'" [(ngModel)]="g.impact" [options]="Gimpact" defaultLabel="All Impact" 
+                <p-multiSelect maxSelectedLabels="1" *ngIf="col.field=='impact'" [(ngModel)]="g.impact" [options]="Gimpact" defaultLabel="All Impact"
                 (onChange)="dt.filter($event.value, col.field, 'in')" [style]="{minWidth: '155px'}"></p-multiSelect>
-                <p-multiSelect maxSelectedLabels="1" *ngIf="col.field=='facing'" [(ngModel)]="g.facing" [(ngModel)]="grid.facing" [options]="facings" defaultLabel="All P.Categorys" 
+                <p-multiSelect maxSelectedLabels="1" *ngIf="col.field=='facing'" [(ngModel)]="g.facing" [(ngModel)]="grid.facing" [options]="facings" defaultLabel="All P.Categorys"
                   (onChange)="dt.filter($event.value, col.field, 'in')" [style]="{minWidth: '155px'}"></p-multiSelect>
-                <p-multiSelect maxSelectedLabels="1" *ngIf="col.field=='series'" [(ngModel)]="g.series" [options]="seriess" defaultLabel="All Series" 
+                <p-multiSelect maxSelectedLabels="1" *ngIf="col.field=='series'" [(ngModel)]="g.series" [options]="seriess" defaultLabel="All Series"
                   (onChange)="dt.filter($event.value, col.field, 'in')" [style]="{minWidth: '155px'}"></p-multiSelect>
                 <p-multiSelect maxSelectedLabels="1" *ngIf="col.field=='workflow'" [(ngModel)]="g.workflow"  [options]="Gworkflow" defaultLabel="All Workflow"
                 (onChange)="dt.filter($event.value, col.field, 'in')" [style]="{minWidth: '155px'}"></p-multiSelect>
                 <p-multiSelect maxSelectedLabels="1" *ngIf="col.field=='permissionType'" [(ngModel)]="g.permissionType"  [options]="permissionTypes" defaultLabel="All Permission"
                 (onChange)="dt.filter($event.value, col.field, 'in')" [style]="{minWidth: '155px'}"></p-multiSelect>
-               
+
               </th>
             </tr>
           </ng-template>
           <ng-template pTemplate="body" let-columns="columns" let-rowData let-editing="editing" let-ri="rowIndex">
             <tr [pEditableRow]="rowData" [pSelectableRow]="rowData" class=" {{isDuplicate(rowData, editing)}} {{setEditableHeight(editing)}}">
               <!-- killed
-              DATA FOR EDITING 
+              DATA FOR EDITING
               -->
-              <td *ngFor="let col of columns" class="{{ellipsisData(col)}}"> 
-                  
+              <td *ngFor="let col of columns" class="{{ellipsisData(col)}}">
+
                   <ng-container *ngIf="col.field =='job_key' " > <!-- *ngSwitchCase="'job_key'"-->
                     <ng-container  *ngIf="checkEdit(col.field, rowData)">
                         <button *ngIf="!editing && !rowData.killed" pButton type="button" label="{{rowData[col.field]}}" pInitEditableRow icon="pi pi-pencil"
                         class=" btn btn-sm btn-primary " (click)="onRowEditInit(rowData, editing)"></button>
-                        
+
                         <button *ngIf="rowData.killed"  type="button" class="ml-1 btn btn-sm btn-secondary" (click)="reactiveJob(rowData)">
                             <i class="font12 fa fa-undo"></i> {{rowData[col.field]}}
                           </button>
@@ -394,7 +394,7 @@
                   </ng-container>
                   <span *ngIf="col.field =='name' " pTooltip="{{rowData.name}}" tooltipPosition="top">
                       {{rowData[col.field]}}
-                      
+
                   </span>
                 <ng-container *ngIf="col.field =='flagedTeam' ">
                     {{rowData[col.field]}}
@@ -510,7 +510,7 @@
                       {{rowData[col.field]}}
                     </ng-template>
                   </p-cellEditor>
-                  
+
                   <p-cellEditor *ngIf="col.field =='tags' " pTooltip="{{rowData.tags}}" tooltipPosition="top">
                     <ng-template pTemplate="input">
                       <textarea pInputTextarea type="text" [(ngModel)]="rowData.tags" required></textarea>
@@ -555,7 +555,7 @@
                   <ng-container *ngIf="col.field =='printReady' ">
                     {{rowData[col.field]}}
                   </ng-container>
-                  
+
                   <ng-container *ngIf="col.field =='artcomplex' ">
                     {{rowData[col.field]}}
                   </ng-container>
@@ -616,19 +616,19 @@
 </div>
 </div>
 <p-overlayPanel #op [showTransitionOptions]="'0ms'" [hideTransitionOptions]="'0ms'" [dismissable]="true" [showCloseIcon]="true">
-    <img src="{{selectedData.thumb}}" *ngIf="selectedData" style="width: 250px; height: 25%;"/> 
-</p-overlayPanel>  
+    <img src="{{selectedData.thumb}}" *ngIf="selectedData" style="width: 250px; height: 25%;"/>
+</p-overlayPanel>
   <!--Modal dialog for add new records-->
- 
+
 <p-dialog header="Add new record(s)" (onHide)="hideNewRecord('$event')" [(visible)]="displayDialog" [modal]="true" showEffect="fade" [responsive]="true"  [contentStyle]="{'min-height':'300px'}" [maximizable]="true" [baseZIndex]="10000" minY="70">
 
     <form [formGroup]="form" (ngSubmit)="submit()" #documentEditForm="ngForm">
         <!-- <p-blockUI [target]="pnl" [blocked]="blockedPanel">
             <i class="fa fa-lock fa-5x" style="position:absolute;top:25%;left:50%"></i>
         </p-blockUI> -->
-      <div class="ui-g ui-fluid" >         
-              <div class="col-12 p-0">                 
-                   <div class="card-body p-2" style="border:1px solid #ccc">                      
+      <div class="ui-g ui-fluid" >
+              <div class="col-12 p-0">
+                   <div class="card-body p-2" style="border:1px solid #ccc">
                     <div class="row">
                       <div class="col-12">
                           <div class="row">
@@ -652,22 +652,22 @@
                                     Job Key is required! </span>
                                 </div>
                             <div class="form-group col-md-1 pr-0">
-                                <p-dropdown formControlName="grade" [options]="addGdata" name="grade" 
-                                    selectedItemsLabel="{0} selected" 
+                                <p-dropdown formControlName="grade" [options]="addGdata" name="grade"
+                                    selectedItemsLabel="{0} selected"
                                     defaultLabel="Choose Grade" >
                                 </p-dropdown>
                             </div>
                             <div class="form-group col-md-1 pr-0">
-                                <p-dropdown formControlName="module" [options]="addMdata" 
-                                    selectedItemsLabel="{0} selected" 
+                                <p-dropdown formControlName="module" [options]="addMdata"
+                                    selectedItemsLabel="{0} selected"
                                     defaultLabel="Choose Grade" name="module">
                                 </p-dropdown>
-                            </div> 
+                            </div>
                             <div class="form-group col-md-2 pr-0">
                                 <input type="text" pInputText formControlName="component" name="component"/>
                                 <!-- <span class="text-danger" *ngIf="getContactsFormGroup(i).controls['component'].touched && getContactsFormGroup(i).controls['component'].hasError('required')">
                                     Component is required! </span> -->
-                            </div>                             
+                            </div>
                             <div class="form-group col-md-2 pr-0">
                                 <input type="text" pInputText formControlName="lesson" name="lesson"/>
                                 <!-- <span class="text-danger" *ngIf="getContactsFormGroup(i).controls['lesson'].touched && getContactsFormGroup(i).controls['lesson'].hasError('required')">
@@ -676,7 +676,7 @@
                             <div class="form-group col-md-1 pr-0">
                               <p-multiSelect formControlName="facing" [options]="facingData"
                               selectedItemsLabel="{0} selected"  defaultLabel="Select" name="facing"></p-multiSelect>
-                              
+
                             </div>
                             <div class="form-group col-md-2 pr-0">
                                 <input type="text" pInputText formControlName="topic" name="topic"/>
@@ -692,12 +692,12 @@
                           </div>
                         </div>
                       </div>
-                      
+
                     </div>
-              </div>       
-    </div>      
+              </div>
+    </div>
   </form>
-  
+
   <p-footer>
     <div class="ui-dialog-buttonpane ui-helper-clearfix mt-2 text-right">
         <button type="button" class="btn btn-sm" pButton icon="fa fa-plus" (click)="addContact()" label="Insert Blank Row"></button>
@@ -708,11 +708,11 @@
 </p-dialog>
 <!--Modal dialog for Saved Search-->
 <p-dialog header="Save Search" [(visible)]="saveSearchModal"  [responsive]="true" showEffect="fade" [modal]="true"  [style]="{width: '30%'}">
-<div class="ui-g ui-fluid">           
+<div class="ui-g ui-fluid">
     <div class="ui-g-12 ui-md-12">
-        <div class="ui-inputgroup">                                        
-            <input type="text"  pInputText  [(ngModel)]="searchText" name="searchText" />    
-            <button pButton type="button" (click)="saveUserSerach()" icon="pi pi-check" class="ui-button-success"></button> 
+        <div class="ui-inputgroup">
+            <input type="text"  pInputText  [(ngModel)]="searchText" name="searchText" />
+            <button pButton type="button" (click)="saveUserSerach()" icon="pi pi-check" class="ui-button-success"></button>
         </div>
     </div>
 </div>
@@ -724,7 +724,7 @@
 </ng-template> -->
 <!--Modal dialog for Saved Search List-->
 <p-dialog header="Saved Search List" [(visible)]="savedSearchListModal" [responsive]="true" showEffect="fade" [modal]="true"  [style]="{width: '30%'}">
-      <div class="ui-g ui-fluid">           
+      <div class="ui-g ui-fluid">
           <p-table [value]="savedsearchLists">
               <ng-template pTemplate="header">
                   <tr>
@@ -741,11 +741,11 @@
                   </tr>
               </ng-template>
           </p-table>
-        </div> 
+        </div>
 </p-dialog>
 <!-- tag generation and verification-->
 <p-dialog header="Automated Tag Generation & Verification" [(visible)]="tagverificationModal" [responsive]="true" showEffect="fade" [modal]="true"  [style]="{width: '90%'}" [maximizable]="true">
-    <div class="ui-g ui-fluid">           
+    <div class="ui-g ui-fluid">
         <p-table [value]="rowsmoveTags" [(selection)]="selectedTagsData">
             <ng-template pTemplate="header">
                 <tr>
@@ -782,17 +782,17 @@
             </ng-template>
         </p-table>
         <!-- <p>{{selectedTagsData| json}}</p> -->
-      </div> 
+      </div>
       <p-footer>
           <button type="button" pButton icon="fa fa-trash" class="ui-button-danger btn btn-sm" (click)="deleteMoveTagList(selectedTagsData)" label="Remove Selected Rows"></button>
           <button type="button" pButton icon="pi pi-check" class="ui-button-success btn btn-sm" (click)="confirm()" label="Push to Asset Bank"></button>
       </p-footer>
-</p-dialog> 
+</p-dialog>
 <p-confirmDialog header="Confirmation" icon="pi pi-exclamation-triangle" [style]="{width: '25vw', height:'20vh'}"></p-confirmDialog>
 
 <!--Modal dialog for bulk batch generation-->
 <p-dialog header="Bulk Insert Batch" [(visible)]="bulkBatchModal" [responsive]="true" showEffect="fade" [modal]="true"  [style]="{width: '30%'}">
-  <div class="ui-g ui-fluid">           
+  <div class="ui-g ui-fluid">
       <input type="text" pInputText [(ngModel)]="bulkBatch"/>
     </div>
     <p-footer>
@@ -801,7 +801,7 @@
 </p-dialog>
 <!--Modal dialog for bulk bulkExceptionCatModal generation-->
 <p-dialog header="Bulk Insert Exception Cat" [(visible)]="bulkExceptionCatModal" [responsive]="true" showEffect="fade" [modal]="true"  [contentStyle]="{'min-height':'100px','overflow':'visible' }" [style]="{width: '70%'}" [maximizable]="true">
-  <div class="ui-g ui-fluid">           
+  <div class="ui-g ui-fluid">
      <!-- <input type="text" pInputText [(ngModel)]="bulkExceptionCat"/>-->
      <p-dropdown  class="ml-1" [options]="excCat" [(ngModel)]="bulkExceptionCat" ></p-dropdown >
     </div>
@@ -811,7 +811,7 @@
 </p-dialog>
 <!--Modal dialog for bulk bulkExceptionModal generation-->
 <p-dialog header="Bulk Insert Exception " [(visible)]="bulkExceptionModal" [responsive]="true" showEffect="fade" [modal]="true"  [style]="{width: '30%'}">
-  <div class="ui-g ui-fluid">           
+  <div class="ui-g ui-fluid">
       <input type="text" pInputText [(ngModel)]="bulkException"/>
     </div>
     <p-footer>
@@ -820,8 +820,8 @@
 </p-dialog>
 <!--Modal dialog for bulk bulkBatchCDateModal generation-->
 <p-dialog header="Bulk Batch Complation Date " [(visible)]="bulkBatchCDateModal" [responsive]="true" showEffect="fade" [modal]="true"  [style]="{width: '30%'}">
-  <div class="ui-g ui-fluid"> 
-    <span class="">Formate : MM-DD-YYYY</span>          
+  <div class="ui-g ui-fluid">
+    <span class="">Formate : MM-DD-YYYY</span>
       <input type="text" pInputText [(ngModel)]="bulkBatchCDate" placeholder="MM-DD-YYYY"/>
     </div>
     <p-footer>
@@ -833,8 +833,12 @@
 <p-dialog header="Row Flagging" [(visible)]="rowFlaggedModal" [responsive]="true" showEffect="fade" [modal]="true"  [contentStyle]="{'min-height':'100px','overflow':'visible' }" [style]="{width: '30%'}">
   <div class="ui-g ui-fluid">
       <div class="form-group w-100">
-          <label for="email">Flagged for Team:</label>              
+          <label for="email">Flagged for Team:</label>
       <p-dropdown [options]="teamsGrpup" [(ngModel)]="flaggedTeam"></p-dropdown>
+      </div>
+      <div class="form-group w-100">
+          <label for="Comment">Comment:</label>
+      <textarea pInputTextarea id="Comment" [(ngModel)]="flaggedComment"></textarea>
       </div>
     </div>
     <p-footer>
@@ -846,7 +850,7 @@
 <p-dialog header="Assign Math Auditor" [(visible)]="assignMathAuditModal" [responsive]="true" showEffect="fade" [modal]="true"  [contentStyle]="{'min-height':'100px','overflow':'visible' }" [style]="{width: '30%'}">
   <div class="ui-g ui-fluid">
       <div class="form-group w-100">
-          <label for="email">Math Auditor:</label>              
+          <label for="email">Math Auditor:</label>
       <p-dropdown [options]="MathAuditors" optionLabel="name" [(ngModel)]="assignAuthor"></p-dropdown>
       </div>
     </div>
@@ -857,7 +861,7 @@
 
 <!--Modal dialog for bulk tag generation-->
 <p-dialog header="Bulk Insert Tags" [(visible)]="bulkTagModal" [responsive]="true" showEffect="fade" [modal]="true"  [style]="{width: '30%'}">
-  <div class="ui-g ui-fluid">           
+  <div class="ui-g ui-fluid">
       <input type="text" pInputText [(ngModel)]="bulkTags"/>
     </div>
     <p-footer>
@@ -866,7 +870,7 @@
 </p-dialog>
 <!--Modal dialog for bulk data verification-->
 <p-dialog header="Manuscript Verification & Paging Approval" [(visible)]="bulkDataVerifyModal" [responsive]="true" showEffect="fade" [modal]="true"  [contentStyle]="{'min-height':'100px','overflow':'visible' }" [style]="{width: '70%'}" [maximizable]="true">
-<div class="ui-g ui-fluid">           
+<div class="ui-g ui-fluid">
   <p-table [value]="bulkVerificationData" [(selection)]="selectedVerifyData">
       <ng-template pTemplate="header">
           <tr>
@@ -897,21 +901,21 @@
       </ng-template>
   </p-table>
   <!-- <p>{{selectedTagsData| json}}</p> -->
-</div> 
+</div>
 <p-footer>
     <button type="button" pButton icon="pi pi-check" class="ui-button-success btn btn-sm" (click)="saveVerifiedData()" label="Submit"></button>
 </p-footer>
 </p-dialog>
 <!--Modal dialog for time duration graph-->
 <p-dialog header="Stage Duration Graph" [(visible)]="stageDurationGraph" [responsive]="true" showEffect="fade" [modal]="true"  [contentStyle]="{'min-height':'100px','overflow':'visible' }" [style]="{width: '70%'}" [maximizable]="true">
-<div class="ui-g ui-fluid">  
+<div class="ui-g ui-fluid">
   <div class="col-12">
   <apx-chart  #chart [series]="apex.series" [xaxis]="apex.xaxis"
-  [plotOptions]="apex.plotOptions" [chart]="apex.chart" 
+  [plotOptions]="apex.plotOptions" [chart]="apex.chart"
   [dataLabels]="apex.dataLabels" [autoUpdateSeries]="false"></apx-chart>
 </div>
-  <p> <!--Here is graph code  : type="BarChart" <google-chart [data]="myData"></google-chart> -->{{selectedTagsData| json}}</p> 
-</div> 
+  <p> <!--Here is graph code  : type="BarChart" <google-chart [data]="myData"></google-chart> -->{{selectedTagsData| json}}</p>
+</div>
 <p-footer>
    <!-- <button type="button" pButton icon="pi pi-check" class="ui-button-success btn btn-sm" (click)="saveVerifiedData()" label="Submit"></button>
 --></p-footer>

@@ -20,7 +20,7 @@ import * as moment from 'moment';
 import { unitOfTime } from 'moment';
 import { ConfirmationService } from 'primeng/api';
 import { BehaviorSubject } from 'rxjs';
-
+import * as _ from 'lodash';
 
 @Component({
   selector: 'app-art-dashboard',
@@ -35,7 +35,25 @@ export class ArtDashboardComponent extends BaseComponent implements OnInit {
   mediumDt: any = [];
   lowDt: any = [];
   OptData: any = [];
+  arrangData: any = [];
+  arrangeKkeys: any = [];
   auth: any = [];
+  cartdata: any = [];
+  cols: any = [];
+
+ columnDefs = [
+        {headerName: 'Make', field: 'make'},
+        {headerName: 'Model', field: 'model'},
+        {headerName: 'Price', field: 'price'}
+    ];
+
+    rowData = [
+        {make: 'Toyota', model: 'Celica', price: 35000},
+        {make: 'Ford', model: 'Mondeo', price: 32000},
+        {make: 'Porsche', model: 'Boxter', price: 72000}
+    ];
+
+  summaryOfDCATaskModel: boolean;
   public dataSource = new BehaviorSubject<AbstractControl[]>([]);
   public form: FormGroup;
   public contactList: FormArray;
@@ -53,9 +71,43 @@ export class ArtDashboardComponent extends BaseComponent implements OnInit {
     this.auth = user;
       console.log('User Details : ', user);
     }
+    onGridReady( d: any) {
 
+    }
+    exportAsCSV() {
+      console.log('console.log');
+    }
   ngOnInit() {
     this.finddsmsummary();
+
+
+    this.cols = [{ field: 'job_key', headerName: 'Job Key' },
+    { field: 'name', headerName: 'Job Name' },
+    { field: 'grade', headerName: 'Grade' },
+    { field: 'module', headerName: 'Module' },
+    { field: 'batch', headerName: 'Batch' },
+    { field: 'topic', headerName: 'Topic' },
+    { field: 'description', headerName: 'Description' },
+    { field: 'cstage', headerName: 'Current Stage' },
+    { field: 'currentRTeam', headerName: 'CR Team' },
+    { field: 'curriculum', headerName: 'Curriculum' },
+    { field: 'artcomplex', headerName: 'Art-Complexity' },
+    { field: 'artassion', headerName: 'Art-Assignment' },
+    { field: 'risk', headerName: 'Inflow/Woutflow' },
+    { field: 'impact', headerName: 'Complation Status' },
+    { field: 'batchCDate', headerName: 'Batch Complation Date' },
+    { field: 'receiveddate', headerName: ' ArtTeam Recived Date ' },
+    { field: 'mpsDueDate', headerName: 'MPS Due Date' },
+    { field: 'mpsDueDate', headerName: 'ArtTeam Due Date' },
+    { field: 'artTeamStatus', headerName: 'ArtTeam Complation Date' },
+    { field: 'artTeamStatus', headerName: 'ArtTeam Task Recived Status' },
+    { field: 'batchCDate', headerName: 'ArtTeam Status' },
+    { field: 'artTeamPriority', headerName: 'ArtTeam Priority' },
+    { field: 'exceptionCategory', headerName: ' Exception Category' },
+    { field: 'exception', headerName: ' Explanation ' }];
+  }
+  viewSummary() {
+    this.summaryOfDCATaskModel = true;
   }
   finddsmsummary() {
     let that = this;
@@ -66,26 +118,50 @@ export class ArtDashboardComponent extends BaseComponent implements OnInit {
       that.mediumDt = data.filter( d => d.artTeamPriority == 'Medium' );
       that.lowDt = data.filter( d => d.artTeamPriority == 'Low' );
       /// here in OptData have group wise By date data;
-      that.OptData = data;
+      that.OptData = data.sort( (a, b) => {
+          let dateA: Date = new Date(a.receiveddate);
+          let  dateB: Date = new Date(b.receiveddate);
+          return dateA > dateB;
+      });
+      //that.OptData =_.groupBy(that.OptData, 'receiveddate','grade','module');
+      that.arrangData =   _.groupBy(that.OptData, function (person) {
+                              let props = ['receiveddate', 'grade','module','batch'];
+                              let prop = [];
+                              for (let i = 0, length = props.length; i < length; i++) {
+                                  prop.push(person[props[i]]);
+                              }
+                              return prop.join('|');
+                          });
+      that.arrangeKkeys = Object.keys(that.arrangData);
+      that.arrangeKkeys = that.arrangeKkeys.map(d=> ({key:d, date: d.split('|')[0], grade: d.split('|')[1], module: d.split('|')[2], batch: d.split('|')[3] }));
+      debugger
+      console.log(that.arrangeKkeys);
+
     });
   }
- /* allDataOfDCATastsummary() {
-    console.log("function");
+  allDataOfDCATastsummary() {
+    this.cartdata = this.OptData;
+    this.viewSummary();
   }
   overdueDataOfDCATastsummary() {
-    console.log("function");
-  }
-  allDataOfDCATastsummary() {
-    console.log("function");
+    console.log('function');
+    this.viewSummary();
   }
   highDataOfDCATastsummary() {
-    console.log("function");
+    console.log('function');
+    this.viewSummary();
   }
   mediumDataOfDCATastsummary() {
-    console.log("function");
+    console.log('function');
+    this.viewSummary();
   }
   lowDataOfDCATastsummary() {
-    console.log("function");
+    console.log('function');
+    this.viewSummary();
   }
-  */
+  getDateWideSummary() {
+    console.log('function');
+    this.viewSummary();
+  }
+
 }

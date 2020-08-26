@@ -37,6 +37,7 @@ export class CustomerServicesUrls extends UrlBase {
 
       public static JOBSMETA_DATA = CustomerServicesUrls.ARTLOGAUTOMATION_URL + "api/jobsMetadata/";
       public static UPDATEASSETTAGS = CustomerServicesUrls.ARTLOGAUTOMATION_URL + "api/updateAsset/";
+       public static COMBINEDATA = CustomerServicesUrls.ARTLOGAUTOMATION_URL + "api/exporttocsv/";
       
       public static USERINFO_DATA = "https://mpstrakdemo.mpstechnologies.com/mpstrak/production/taskTrakingReport";
       public static JOBSMETA_DATA1 = CustomerServicesUrls.ARTLOGAUTOMATION_URL + "api/artlogdata/";

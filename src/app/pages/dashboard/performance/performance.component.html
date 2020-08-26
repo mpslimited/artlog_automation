@@ -32,8 +32,8 @@
     </div>
     <form #baseForm="ngForm" class="form-horizontal border" >
     <div class="row">
-      <div class="col-lg-12 grid-margin stretch-card">
-        
+      <div class="col-lg-12 grid-margin stretch-card1 mb-0">
+
           <div class="card-body ">
             <div class="card border-0">
               <div class="card-header bg-white border-bottom px-0 mb-3">
@@ -45,76 +45,78 @@
                       </div>
                   </div>
               </div>
-            <div class="row">
-              <div class="col-lg-12 mt-3">
-                {{ApiData | json}}
-                <div class="table-responsive">
-                <table class="table table-bordered border-top">
-                  <thead>
-                    <tr class="font-weight-bold table-secondary">
-                      <th>Current Stage</th>
-                      <th class="text-center">Assignment</th>
-                      <th colspan="3" class="text-center">Priority</th>
-                  </tr>
-                  </thead>
-                  <tbody>
-                    <tr >
-                      <td>Art-2 Designer Create Asset </td>
-                      <td></td>
-                      <td class="text-center">High</td>
-                      <td class="text-center">Medium</td>
-                      <td class="text-center">Low</td>
-                  </tr>
-                    <tr>
-                      <td>Work In-Progress</td>
-                      <td class="text-center">s</td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                    </tr>
-                    <!-- <tr>
-                      <td>Overdue</td>
-                      <td class="text-center"><a class="atag" (click)="overdueDataOfDCATastsummary()">{{overDuedt.length}}</a></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                    </tr>
-                    <tr>
-                      <td>Current Work Load</td>
-                      <td class="text-center"><a class="atag" (click)="allDataOfDCATastsummary()">{{dcaSummary.length}}</a></td>
-                      <td class="text-center"><a class="atag" (click)="highDataOfDCATastsummary()">{{highDt.length}}</a></td>
-                      <td class="text-center"><a class="atag" (click)="mediumDataOfDCATastsummary()">{{mediumDt.length}}</a></td>
-                      <td class="text-center"><a class="atag" (click)="lowDataOfDCATastsummary()">{{lowDt.length}}</a></td>
-                    </tr> -->
-                  </tbody>
-                </table>
-              </div>
-              
-            </div> 
-            </div>
+
           </div>
         </div>
       </div>
     </div>
-	
 
+	<div class="">
+      <div class="col-lg-12 grid-margin stretch-card">
+        <div class="card border-0">
+
+          <div class="card-body ">
+            <div class="row">
+              <div class="table-responsive">
+                <table class="table table-bordered border-top">
+                  <thead>
+                    <tr class="font-weight-bold table-secondary">
+                      <th>API Name</th>
+                      <!--- <th>Data Processed</th> -->
+                      <th>API URL</th>
+                      <th>API Response</th>
+                      <th>API Execution Time</th>
+                      <th>API Process Excution Time</th>
+                      <th>Taken time</th>
+
+                  </tr>
+                  </thead>
+                  <tbody>
+                    <tr  *ngFor="let dt of ApiData" [ngClass]="{' alert-danger': dt.isError  }">
+                      <td>{{ dt.apiTaskName }} {{ dt.dataProcessed.key}}</td>
+                     <!-- <td> {{dt.APISendInfo.data | json}}</td>-->
+                      <td> {{dt.APISendInfo.url }}</td>
+                     <td class="text-center">{{ dt.responce | json }}</td>
+                    <td class="text-center">{{ dt.process.startTime  }}, {{ dt.process.endTime  }}</td>
+                    <td class="text-center">{{ dt.APIprocess.startTime  }}, {{ dt.APIprocess.endTime  }}</td>
+                      <td class="text-center">{{ takenTime( dt.process.startTime,  dt.process.endTime) }} S</td>
+                  </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="table-responsive">
+                <table class="table table-bordered border-top">
+                  <thead>
+                    <tr class="font-weight-bold table-secondary" >
+                      <th>Rule</th>
+                      <th>Details/Response</th>
+                      <th>Status</th>
+                      <th>Triggers</th>
+                      <th>Next Run Time</th>
+                      <th>Last Run Time</th>
+                      <th>Last Run Result</th>
+                      <th>Api Summary</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let dt of ApiData" [ngClass]="{' alert-danger': dt.isError  }">
+                      <td>{{ dt.apiTaskName }}</td>
+                      <td>{{ dt.dataProcessed.key}} {{ dt.responce | json }} </td>
+                      <td>Ready</td>
+                      <td> </td>
+                      <td> ..</td>
+                      <td> {{ dt.process.startTime }}</td>
+                      <td>{{ (!dt.isError)? 'Successfull' : 'Failed'}}</td>
+                      <td> Details History </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
   </form>
 </div>
-<!--Modal dialog for bulk data verification-->
- <!--<p-dialog header="Summary of Designer Create Asset Task" [(visible)]="summaryOfDCATaskModel" [responsive]="true" showEffect="fade" [modal]="true"  [contentStyle]="{'min-height':'100px','overflow':'visible' }" [style]="{width: '70%'}" [maximizable]="true">
-  <div class="card">
-    <div class="row mb-2">
-        <div class="col-8  mt-2"> Total No. Of Jobs:<span class="font-weight-bold"> {{cartdata.length}}</span></div>
-        <div class="col-4 text-right "><a (click)="exportAsCSV()" class="text-white btn-primary btn btn-sm" >Export as CSV</a></div>
-    
-    </div>
-    </div>
- <ag-grid-angular style="width: 100%; height: 450px;"
-    class="ag-theme-balham"
-    [rowData]="cartdata"
-    [columnDefs]="cols"
-    (gridReady)="onGridReady($event)"
-    pagination="true">
-  </ag-grid-angular>
-  
-  </p-dialog>-->

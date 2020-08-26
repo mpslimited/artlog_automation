@@ -45,7 +45,7 @@ export class BaseService {
 
 
       getDataFromAPI(strURL: string, body: any, responseType?: string): Observable<any> {
-
+        debugger
             let tokenId = null;
             this.lastUrlhit = strURL;
             const sessionObj = SessionObject.getUserDetails();
@@ -93,7 +93,7 @@ export class BaseService {
                   this.globalPupUp.showGlobalPopup(`<span style="color:red; font-weight: bold"> Session has been expired!</span>`);
             }
             // } if (error['status'] === 0) {
-            //       this.globalPupUp.showGlobalPopup(`<span style="color:red; font-weight: bold"> Your internet 
+            //       this.globalPupUp.showGlobalPopup(`<span style="color:red; font-weight: bold"> Your internet
             //       is not working properly!</span> <br> Please check`);
             // }
             else {
