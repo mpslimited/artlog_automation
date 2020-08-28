@@ -4,14 +4,34 @@ app-cust-desktop{ width: 100%}
 app-sync-jobs { width: 100%; }
 app-artload-dashboard, app-performance, app-art-dashboard, app-approvedjobs, app-art-productivity,app-scorecardview{ width: 100%}
 /* for multiselect datatable dropdown overflow*/
-
+.i-low {
+  z-index:1;
+}
+.btn-sm1 {
+  padding: 0.29rem 0.81rem!important;
+}
   .p-datatable-scrollable-wrapper {
 
     overflow: hidden;
 }
-.p-datatable-scrollable-view.p-datatable-frozen-view.ng-star-inserted {
-  position: relative;
-  z-index: 1;
+.p-datatable-frozen-view thead.p-datatable-thead> tr > th {
+   padding-bottom: 7px!important
+}
+.p-highlight a {
+  color: #ffffff !important;
+  background: #007ad9 !important;
+}
+button.btn-primary {
+    font-size: 10px;
+}
+.p-button.p-component.p-button-icon-only.p-ripple {
+    border: 1px solid #666;
+    border-left: 0;
+}
+.p-selectbutton.p-buttonset:first-child {
+    border-left: 1px solid #666;
+    border-top-left-radius: 3px;
+    border-bottom-left-radius: 3px;
 }
 .custom-clear-btn{ margin-top: -4px;}
 .font12{ font-size: 12px!important;}
@@ -59,6 +79,7 @@ td .p-dropdown label.p-dropdown-label{
 .flagedrecord{ background:#efd4a7!important }
 .newrecord.ui-state-highlight{ background:#007ad9!important }
 .flagedrecord.ui-state-highlight{ background:#007ad9!important }
+.navbar { z-index: 8}
 .navbar .navbar-menu-wrapper .navbar-nav .nav-item.dropdown .dropdown-menu.navbar-dropdown .dropdown-item{
   padding:10px!important;
   font-size:12px;
@@ -68,7 +89,10 @@ td .p-dropdown label.p-dropdown-label{
   text-decoration: line-through;
   background:#8a8a8a !important;
 }
-.killed .btn.btn-sm{font-size:11px!important}
+.killed .btn.btn-sm{font-size:11px!important; padding: 4px;}
+.p-highlight button.btn.btn-sm {
+    border: 1px solid #fff;
+}
 .ui-menubar .ui-menubar-root-list{display: none!important;}
 .form-check-label{font-size:12px!important;padding-top:2px;}
 .rowCountSummary {

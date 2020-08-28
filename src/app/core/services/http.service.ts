@@ -68,7 +68,10 @@ export class HttpService /*extends HttpClient*/ {
       }
       extractPostData(url: string, body: any, tokenId: any, responseType: string = 'json'): Observable<any> {
             this.showLoader();
-            const options = this.getHTTPOption(tokenId);
+            const sessionObj = SessionObject.getUserDetails();
+            let AUser = sessionObj && SessionObject.getUserDetails() ;
+            let token = (!!AUser &&!!AUser.Token)? AUser.Token: '' ;
+            const options = this.getHTTPOption(token);
             console.log(this.http);
             options['responseType'] = responseType;
             /*debugger
@@ -127,10 +130,10 @@ export class HttpService /*extends HttpClient*/ {
                   )
             };
             if (tokenId) {
-                //  httpOptions.headers = httpOptions.headers.append('Authorization', tokenId);
+                  httpOptions.headers = httpOptions.headers.append('Authorization', tokenId);
             }
             if (id) {
-                 // httpOptions.headers = httpOptions.headers.append('AuthUser', id);
+                  httpOptions.headers = httpOptions.headers.append('AuthUser', id);
             }
             return httpOptions;
       }
@@ -143,7 +146,7 @@ export class HttpService /*extends HttpClient*/ {
                   )
             };
             if (tokenId) {
-                //  httpOptions.headers = httpOptions.headers.append('Authorization', tokenId);
+                  httpOptions.headers = httpOptions.headers.append('Authorization', tokenId);
             }
             return httpOptions;
       }

@@ -1265,7 +1265,7 @@ constructor(
         } else { this.artLogModel.module.value = []; }
         if (this.frmdt.status.length > 0) {
           this.artLogModel.status.value = this.frmdt.status.map(a => a.field);
-        } else { this.artLogModel.status.value = []; }
+        } else { this.artLogModel.status.value = ['Approved']; }
       } catch (err) {
         // console.log(err)
       }

@@ -40,20 +40,10 @@ export class ArtDashboardComponent extends BaseComponent implements OnInit {
   auth: any = [];
   cartdata: any = [];
   cols: any = [];
-
- columnDefs = [
-        {headerName: 'Make', field: 'make'},
-        {headerName: 'Model', field: 'model'},
-        {headerName: 'Price', field: 'price'}
-    ];
-
-    rowData = [
-        {make: 'Toyota', model: 'Celica', price: 35000},
-        {make: 'Ford', model: 'Mondeo', price: 32000},
-        {make: 'Porsche', model: 'Boxter', price: 72000}
-    ];
-
   summaryOfDCATaskModel: boolean;
+  gridApi;
+  gridColumnApi;
+
   public dataSource = new BehaviorSubject<AbstractControl[]>([]);
   public form: FormGroup;
   public contactList: FormArray;
@@ -71,12 +61,13 @@ export class ArtDashboardComponent extends BaseComponent implements OnInit {
     this.auth = user;
       console.log('User Details : ', user);
     }
-    onGridReady( d: any) {
-
-    }
-    exportAsCSV() {
-      console.log('console.log');
-    }
+  onGridReady (params : any) {
+    this.gridApi = params.api;
+    this.gridColumnApi = params.columnApi;
+  }
+  exportAsCSV() {
+    this.gridApi.exportDataAsCsv({});
+  }
   ngOnInit() {
     this.finddsmsummary();
 

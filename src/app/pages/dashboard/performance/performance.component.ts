@@ -30,6 +30,15 @@ import { BehaviorSubject } from 'rxjs';
 export class PerformanceComponent extends BaseComponent implements OnInit {
   auth: any = [];
   ApiData : any = [];
+  ApiHistory : any = [];
+  historyOfApiPerformance: boolean;
+  apiDetails: boolean;
+  detailsData : any = [];
+  cartdata: any = [];
+  cols: any = [];
+   gridApi;
+   gridColumnApi;
+
   constructor(
     protected baseServices: BaseService,
     protected router: Router,
@@ -46,11 +55,37 @@ export class PerformanceComponent extends BaseComponent implements OnInit {
     this.httpService.extractPostData(CustomerServicesUrls.ARTLOG_APIPERFORMANCE, null, null).subscribe((data) => {
         debugger
         console.log(data.length);
-      that.ApiData = data;
+      that.ApiData = data.data;
+      that.ApiHistory = data.result;
     });
+  }
+  showapiDetails (dt: any){
+    debugger
+    this.apiDetails = true;
+    this.detailsData = this.ApiHistory.find(d => d.apiTaskName == dt.apiTaskName && d._id == dt.id );
+  }
+  showhistoryOfApiPerformance(dt: any) {
+    debugger
+    this.historyOfApiPerformance = true;
+    this.cartdata = this.ApiHistory.filter(d => d.apiTaskName == dt.apiTaskName )
+  }
+  onGridReady (params : any) {
+    this.gridApi = params.api;
+    this.gridColumnApi = params.columnApi;
+  }
+  exportAsCSV() {
+    this.gridApi.exportDataAsCsv({});
   }
   ngOnInit() {
     this.getAPIStatusData();
+    this.cols = [{ field: 'apiTaskName', headerName: 'Rule' },
+    { field: 'responce', headerName: 'Details/Responce' },
+    { field: 'process.trigger', headerName: 'Status' },
+    { field: 'process.nextRunTime', headerName: 'Next Run Time' },
+    { field: 'process.startTime', headerName: 'Last Run Time' },
+    { field: 'isError', headerName: 'Api Result' },
+    { field: 'isError', headerName: 'API Summary' },
+    ];
   }
   takenTime(a: any , b: any) {
    //lel b = moment(b);

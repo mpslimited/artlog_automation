@@ -124,9 +124,10 @@
   </form>
     <div class="row">
       <div class="col-lg-12">
+        <!--  [lazy]="true" (onLazyLoad)="lazyLoadEnv($event)" -->
           <p-table #dt editMode="row" dataKey="_id" [value]="cartdata" [totalRecords]='totalRecords'
           [rowsPerPageOptions]='[5,10,50,100,150]'
-          [lazy]="true" (onLazyLoad)="lazyLoadEnv($event)"
+
           selectionMode="multiple" [(selection)]="selectedRows" scrollable="isScrollable" [loading]="dataloading"
           [frozenColumns]="freezeCols" [columns]="scrollableCols" frozenWidth="170px"
           scrollHeight="600px" (onFilter)="onFilter($event, dt)" [paginator]="true" [rows]="100">

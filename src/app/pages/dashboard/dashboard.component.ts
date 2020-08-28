@@ -436,7 +436,7 @@ constructor(
         this.selectedRows[t].flaged = true;
         this.selectedRows[t].flagedTeam = this.flaggedTeam ;
       }
-      debugger
+      
       const myheader = new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded');
       let body = new HttpParams()
       .append('flagedID', JSON.stringify(this.selectedRows.map(d => d._id)))
@@ -521,10 +521,11 @@ constructor(
     this.workflows = Wdata;
     const Tdata = ['Permissions Team', 'Art Team', 'Clip Art & Storage Team', 'Shutterstock Team', 'Content Team', 'On Hold Team'];
     this.Tdata = Tdata.map(d => ({ value: d, label: d }));
-    const jobStatus = ['Active', 'Approved', 'Asset Bank', 'On Hold'];
+    const jobStatus = ['Active', 'Asset Bank', 'On Hold'];
     this.jobStatus = jobStatus.map(d => ({ field: d, header: d }));
+  
     this.getinit();
-    this.editSetting = new CustomModalPopUpModel('Edit Job');
+    ///this.editSetting = new CustomModalPopUpModel('Edit Job');
   }
   collapseChange(event) {
     console.log(event);
@@ -645,7 +646,7 @@ constructor(
   ngOnChanges() {
     this.artLogModel.jobkey.value = this.baseService.getMessage();
     const obj = {};
-    this.getMetaData(obj);
+    //this.getMetaData(obj);
   }
   searchByjobKey(evt: any) {
     this.filterData();
@@ -793,7 +794,7 @@ constructor(
     body = body.append('selectedids', JSON.stringify(this.selectedRows.map(d => d._id)));
     const self = this;
     this.httpService.extractData(CustomerServicesUrls.ARTLOG_BULK_BULKBATCHCDATE, body, null).subscribe((data) => {
-     debugger
+     
       for (const dt of data) {
         const index = self.cartdata.indexOf(self.cartdata.filter((d, i) => d._id === dt._id)[0]);
         self.cartdata[index].batchCDate = dt.batchCDate || self.bulkBatchCDate;
@@ -830,13 +831,12 @@ constructor(
     });
   }
   savebulkException(){
-    debugger
     let body = new HttpParams();
     body = body.append('exception', this.bulkException);
     body = body.append('selectedids', JSON.stringify(this.selectedRows.map(d => d._id)));
     const self = this;
     this.httpService.extractData(CustomerServicesUrls.ARTLOG_BULK_EXCEPTION, body, null).subscribe((data) => {
-      debugger
+     
       self.bulkException = '';
       for (const dt of data) {
         const index = self.cartdata.indexOf(self.cartdata.filter((d, i) => d._id === dt._id)[0]);
@@ -998,7 +998,7 @@ constructor(
   }
   getinit() {
     this.httpService.extractData(CustomerServicesUrls.ARTLOG_INIT, null, null).subscribe((data) => {
-      //debugger
+      
       if (data.hasOwnProperty('grade')) {
         this.Gdata = data.grade;
         const GradeData = JSON.parse(JSON.stringify(data.grade));
@@ -1058,6 +1058,8 @@ constructor(
             this.artLogModel.curricula.value = frmData.curricula;
           } if (frmData.status !== '') {
             this.frmdt.status = frmData.status;
+          } else {
+            this.frmdt.status = ['Active'];
           } if (frmData.added !== '') {
             this.artLogModel.added.value = frmData.added;
           }
@@ -1126,10 +1128,8 @@ constructor(
     });
   }
   getOtherData(action: string) {
-    debugger
     // background Process
     this.loadDataFromApi(this.NAME_ARTLOG).subscribe((data) => {
-      debugger
       console.log(data);
     });
     console.log(action);
@@ -1254,6 +1254,7 @@ constructor(
       this.alert.showAlertDanger(['Job key required !'], 5000);
     }
   }
+
   initSearchModels() {
     this.artLogModel = new ArtLogModel();
   }
@@ -1268,7 +1269,7 @@ constructor(
         } else { this.artLogModel.module.value = []; }
         if (this.frmdt.status.length > 0) {
           this.artLogModel.status.value = this.frmdt.status.map(a => a.field);
-        } else { this.artLogModel.status.value = []; }
+        } else { this.artLogModel.status.value = ['Active']; }
       } catch (err) {
         // console.log(err)
       }
@@ -1334,7 +1335,6 @@ constructor(
      // this.scrollableCols = this.cols;
       const that = this;
      // setTimeout(function () {
-     //   debugger;
         let OtherCol = [{ field: 'job_key', header: 'Job Key' },
         { field: '_id', header: 'ACHJob ID' }
         ];

@@ -41,6 +41,7 @@ export class ArtProductivityComponent extends BaseComponent implements OnInit {
   dataloading: boolean;
   totalRecords: Number = 0;
   selectedRows: any =[];
+  isScrollable: boolean = true;
   // -- columans for filter Grid dropdown
 
   dcaSummary: any = [];

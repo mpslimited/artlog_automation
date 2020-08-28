@@ -37,12 +37,12 @@
           <div class="card-header">
               <div class="d-flex align-items-start">
                   <div class="p-0 mr-auto" >
-                      <h6 style="cursor: pointer;" (click)="criteria=(criteria!=true)" data-toggle="collapse" href="#collapseSearch">Search Filter
+                      <h6 style="cursor: pointer;" (click)="criteria=(criteria!=true)" data-toggle="collapse" href="#collapseSearch"> <i aria-hidden="true" class="fa fa-filter"></i>Search Filter
                           <i [ngClass]="{' fa-angle-right': !criteria, ' fa-angle-down': criteria  }" class="fa " ></i>
                         </h6>
                   </div>
                   <div>
-                      <a (click)="viewSavedSearchList()"><small>Saved Search List</small></a>
+                      <a  (click)="viewSavedSearchList()"><small role="button">Saved Search List</small></a>
                   </div>
               </div>
           </div>
@@ -93,7 +93,7 @@
                   </p-dropdown>
                 </div>
               </div>
-              <div class="col-md-3">
+             <!-- <div class="col-md-3">
                 <div class="form-group">
                   <label for="formGroupExampleInput2" class="col-sm-12 pl-0">Completion Status </label>
                   <p-multiSelect [options]="jobStatus" [(ngModel)]="frmdt.status" optionLabel="header"
@@ -101,7 +101,7 @@
                       defaultLabel="Choose Status" name="status">
                   </p-multiSelect >
                 </div>
-              </div>
+              </div>-->
               <div class="col-md-3">
                   <div class="form-group">
                       <label for="formGroupExampleInput2" class="col-sm-12 pl-0">Job Type </label>
@@ -124,9 +124,10 @@
   </form>
     <div class="row">
       <div class="col-lg-12">
+        <!--   [lazy]="true" (onLazyLoad)="lazyLoadEnv($event)"-->
           <p-table #dt editMode="row" dataKey="_id" [value]="cartdata" [totalRecords]='totalRecords'
           [rowsPerPageOptions]='[5,10,50,100,150]'
-          [lazy]="true" (onLazyLoad)="lazyLoadEnv($event)"
+
           selectionMode="multiple" [(selection)]="selectedRows" scrollable="isScrollable" [loading]="dataloading"
           [frozenColumns]="freezeCols" [columns]="scrollableCols" frozenWidth="170px"
           scrollHeight="600px" (onFilter)="onFilter($event, dt)" [paginator]="true" [rows]="100">
@@ -237,13 +238,13 @@
                     </div>
                 </div>
               <div class="d-flex">
-                  <div class="pl-2 mr-auto">
+                  <div class="pr-2 d-flex align-items-center mr-auto">
                       <form class="form-inline my-lg-0">
                           <div class="input-group">
                             <input type="text" [(ngModel)]="artLogModel.jobkey.value" name="jobkey" placeholder="Job Key (eg. SCI-1164)"
                               class="form-control form-control-sm">
                             <div class="input-group-append"><button (click)="searchByjobKey($event)" type="button"
-                                class="btn btn-secondary btn-sm">Search</button>
+                                class=" i-low btn btn-secondary btn-sm">Search</button>
                             </div>
                           </div>
                         </form>
@@ -251,11 +252,11 @@
               <div class="pl-2 d-none">
 
               </div>
-              <div class="pr-2 d-flex align-items-center" style="margin-top:-8px;">
+              <div class="pr-2 d-flex align-items-center">
                   <button pButton type="button" class="custom-clear-btn ml-2" icon="fa fa-close" label="{{gridState.searchTitle}}" (click)="clearGridState()" *ngIf="!!gridState && gridState.hasOwnProperty('searchTitle')"></button>
                   <!-- <a (click)="clearGridState()" class="btn btn-sm btn-primary" *ngIf="!!gridState && gridState.hasOwnProperty('searchTitle')"><i class="fa fa-close"></i> {{gridState.searchTitle}}</a> -->
                   <p-multiSelect [options]="fixCol" [(ngModel)]="scrollableCols" (onChange)="updateSelection()" optionLabel="header"
-                    selectedItemsLabel="{0} columns selected" defaultLabel="Choose Columns">
+                    selectedItemsLabel="{0} columns selected" defaultLabel="Choose Columns" styleClass="mr-1">
                   </p-multiSelect>
               <div class="btn-group">
                   <button type="button" class="btn btn-sm btn-primary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -387,7 +388,7 @@
                       class=" btn btn-sm ui-button-danger" (click)="onRowEditCancel(rowData, ri)"></button>
                       <!-- <i class="fa fa-asterisk" aria-hidden="true"></i> -->
                       <sup *ngIf="!rowData.hasOwnProperty('duplicate') && rowData.job_key!=''">*</sup>
-                      <button *ngIf="rowData.flaged && !rowData.killed"  type="button" class="ml-1 btn btn-sm btn-primary" (click)="clearFlag(rowData)">
+                      <button *ngIf="rowData.flaged && !rowData.killed"  type="button" class="ml-1 btn btn-sm1 btn-primary" (click)="clearFlag(rowData)">
                           <i class="font12 fa fa-flag"></i>
                         </button>
                   </ng-container>

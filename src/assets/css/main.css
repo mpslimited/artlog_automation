@@ -4635,7 +4635,7 @@ input[type="button"].btn-block {
   .input-group-prepend .btn,
   .input-group-append .btn {
     position: relative;
-    z-index: 2; }
+    z-index: 1; }
     .input-group-prepend .btn:focus,
     .input-group-append .btn:focus {
       z-index: 3; }
@@ -10155,7 +10155,7 @@ body {
 
 h1, h2, h3, h4, h5, h6,
 .h1, .h2, .h3, .h4, .h5, .h6 {
-  font-family: "ubuntu-medium", sans-serif; }
+  font-family: "Open Sans", "Helvetica Neue", sans-serif }
 
 p {
   font-size: 0.875rem; }

@@ -58,11 +58,11 @@
           <div class="card-body ">
             <div class="row">
               <div class="table-responsive">
-                <table class="table table-bordered border-top">
+              <!--  <table class="table table-bordered border-top">
                   <thead>
                     <tr class="font-weight-bold table-secondary">
                       <th>API Name</th>
-                      <!--- <th>Data Processed</th> -->
+                      <!--- <th>Data Processed</th> --
                       <th>API URL</th>
                       <th>API Response</th>
                       <th>API Execution Time</th>
@@ -73,16 +73,16 @@
                   </thead>
                   <tbody>
                     <tr  *ngFor="let dt of ApiData" [ngClass]="{' alert-danger': dt.isError  }">
-                      <td>{{ dt.apiTaskName }} {{ dt.dataProcessed.key}}</td>
-                     <!-- <td> {{dt.APISendInfo.data | json}}</td>-->
-                      <td> {{dt.APISendInfo.url }}</td>
+                      <td>{{ dt.apiTaskName }} <span *ngIf="!!dt.dataProcessed.key">{{ dt.dataProcessed.key}}</span></td>
+                     <!-- <td> {{dt.APISendInfo.data | json}}</td>--
+                      <td><span *ngIf="!!dt.APISendInfo "> {{dt.APISendInfo.url }}</span></td>
                      <td class="text-center">{{ dt.responce | json }}</td>
-                    <td class="text-center">{{ dt.process.startTime  }}, {{ dt.process.endTime  }}</td>
-                    <td class="text-center">{{ dt.APIprocess.startTime  }}, {{ dt.APIprocess.endTime  }}</td>
+                    <td class="text-center"><span *ngIf="!!dt.APISendInfo ">{{ dt.process.startTime  }}, {{ dt.process.endTime  }}</span></td>
+                    <td class="text-center"><span *ngIf="!!dt.APISendInfo ">{{ dt.APIprocess.startTime  }}, {{ dt.APIprocess.endTime  }}</span></td>
                       <td class="text-center">{{ takenTime( dt.process.startTime,  dt.process.endTime) }} S</td>
                   </tr>
                   </tbody>
-                </table>
+                </table> -->
               </div>
               <div class="table-responsive">
                 <table class="table table-bordered border-top">
@@ -101,13 +101,14 @@
                   <tbody>
                     <tr *ngFor="let dt of ApiData" [ngClass]="{' alert-danger': dt.isError  }">
                       <td>{{ dt.apiTaskName }}</td>
-                      <td>{{ dt.dataProcessed.key}} {{ dt.responce | json }} </td>
+                      <td><span *ngIf="!!dt.dataProcessed.key">{{ dt.dataProcessed.key}}</span> {{ dt.responce | json }} </td>
                       <td>Ready</td>
-                      <td> </td>
-                      <td> ..</td>
-                      <td> {{ dt.process.startTime }}</td>
+                      <td>{{ dt.process.trigger}} </td>
+                      <td> {{ dt.process.nextRunTime}} </td>
+                      <td> <span *ngIf="!!dt.process && !!dt.process.startTime">{{ dt.process.startTime }}</span></td>
                       <td>{{ (!dt.isError)? 'Successfull' : 'Failed'}}</td>
-                      <td> Details History </td>
+                      <td> <a (click)="showapiDetails(dt)">Details </a>
+                      <a (click)="showhistoryOfApiPerformance(dt)">History</a></td>
                     </tr>
                   </tbody>
                 </table>
@@ -120,3 +121,72 @@
     </div>
   </form>
 </div>
+
+<!--Modal dialog for bulk data verification-->
+ <p-dialog header="History of Api Performance" [(visible)]="historyOfApiPerformance" [responsive]="true" showEffect="fade" [modal]="true"   [contentStyle]="{'min-height':'100px','overflow':'visible' }" [style]="{width: '70%'}" [maximizable]="true">
+  <div class="card">
+    <div class="row mb-2">
+        <div class="col-8  mt-2"> Total data:<span class="font-weight-bold"> {{cartdata.length}}</span></div>
+        <div class="col-4 text-right "><a (click)="exportAsCSV()" class="text-white btn-primary btn btn-sm" >Export as CSV</a></div>
+
+    </div>
+    </div>
+ <ag-grid-angular style="width: 100%; height: 400px;"
+ class="ag-theme-balham"
+    [rowData]="cartdata"
+    [columnDefs]="cols"
+    (gridReady)="onGridReady($event)"
+    pagination="true" resizable=
+    'true'
+      >
+  </ag-grid-angular>
+
+  </p-dialog>
+
+  <!--Modal dialog for bulk data verification-->
+ <p-dialog header="Api Details" [(visible)]="apiDetails" [responsive]="true" showEffect="fade" [modal]="true"   [contentStyle]="{'min-height':'100px','overflow':'visible' }" [style]="{width: '70%'}" [maximizable]="true">
+  <div class="card">
+    <div class="row mb-2">
+        
+    </div>
+    </div>
+    
+    <div class="table-responsive"> <!--
+    {{ detailsData | json}}-->
+                <table class="table table-bordered border-top" *ngIf="detailsData">
+                  <thead>
+                    <tr class="font-weight-bold table-secondary">
+                      <th>Title</th>
+                      <th>Details</th>
+                  </tr>
+                  </thead>
+                  <tbody >
+                    <tr>
+                     <td>Api Name </td>
+                     <td>{{ detailsData.apiTaskName }} for <span *ngIf=" !!detailsData.dataProcessed && !!detailsData.dataProcessed.key">{{ detailsData.dataProcessed.key}}</span></td>
+                    </tr>
+                    <tr>
+                     <td>Api URL </td>
+                     <td><span *ngIf="!!detailsData.APISendInfo "> {{detailsData.APISendInfo.url }}</span></td>
+                    </tr>
+                    <tr *ngIf="!!detailsData.APISendInfo">
+                     <td>Api data sended </td>
+                     <td><span *ngIf="!!detailsData.APISendInfo.data "> {{detailsData.APISendInfo.data | json }}</span></td>
+                    </tr>
+                    <tr [ngClass]="{' alert-danger': detailsData.isError  }">
+                     <td>API Response </td>
+                     <td *ngIf="!!detailsData.responce" >{{detailsData.responce}}</td>
+                    </tr>
+                    <tr *ngIf="!!detailsData.process">
+                     <td>Api Trigger </td>
+                     <td> <span *ngI}f="!!detailsData.process.trigger">{{detailsData.process.trigger}}</span></td>
+                    </tr>
+                    <tr *ngIf="!!detailsData.process">
+                     <td>Api Timing </td>
+                     <td>Started: <span *ngIf="!!detailsData.process.startTime">{{detailsData.process.startTime}}</span> And ended: <span *ngIf="!!detailsData.process.endTime">{{detailsData.process.endTime}}</span> and Next Run Time:<span *ngIf="!!detailsData.process.nextRunTime">{{detailsData.process.nextRunTime}}</span></td>
+                    </tr>
+                  </tbody>
+                </table> 
+              </div>
+  </p-dialog>
+

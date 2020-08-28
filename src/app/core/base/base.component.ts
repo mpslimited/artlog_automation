@@ -44,6 +44,7 @@ export abstract class BaseComponent implements OnInit, OnDestroy, AfterViewInit 
             protected baseService: BaseService,
             protected router: Router
       ) {
+       // debugger
             this.initSearchModels();
       }
 
@@ -136,7 +137,7 @@ export abstract class BaseComponent implements OnInit, OnDestroy, AfterViewInit 
 
 
       OnSubmit(name: string, bindDataToGrid = true, ...otherGridNames: Array<string>) {
-
+        debugger
             if (this.isFormValid(name)) {
 
                   otherGridNames.forEach((otherName) => {
