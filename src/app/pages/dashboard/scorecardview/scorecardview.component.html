@@ -21,9 +21,9 @@
           <li class="nav-item" *ngIf="auth.roleName == 'Art Designer'">
             <a class="nav-link" [routerLinkActive]="['active', '']" [routerLink]="['/pages/admin/performance']">Api Performance</a>
           </li>
-          <li class="nav-item" *ngIf="auth.roleName == 'Art Designer'">
+          <!-- <li class="nav-item" *ngIf="auth.roleName == 'Art Designer'">
             <a class="nav-link" [routerLinkActive]="['active', '']" [routerLink]="['/pages/admin/scorecardview']">Recent Log</a>
-          </li>
+          </li>-->
           <li class="nav-item" *ngIf="auth.roleName == 'Digital Asset Lead'">
             <a class="nav-link " [routerLinkActive]="['active', '']" [routerLink]="['/pages/admin/jobrefres']">Job Refresh</a>
           </li>
@@ -187,7 +187,7 @@
             	    <div  class="w-100 border p-2">
                     <div class="loading-box">
                     </div>
-                     <!-- <apx-chart #chart2
+                     <apx-chart #chart2
                         [series]="ChartOptions2.series"
                         [chart]="ChartOptions2.chart"
                         [dataLabels]="ChartOptions2.dataLabels"
@@ -199,7 +199,7 @@
                         [tooltip]="ChartOptions2.tooltip"
                         [xaxis]="ChartOptions2.xaxis"
                         [title]="ChartOptions2.title"
-                      ></apx-chart>-->
+                      ></apx-chart>
                   </div>
             </div>
             <div class="col-md-12 mb-2">

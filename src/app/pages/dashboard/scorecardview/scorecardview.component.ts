@@ -50,7 +50,7 @@ export type ChartOptions = {
   grid: ApexGrid;
   legend: ApexLegend;
   title: ApexTitleSubtitle;
-}; /*
+}; 
 export type ChartOptions2 = {
   series: ApexAxisChartSeries;
   chart: ApexChart;
@@ -63,7 +63,7 @@ export type ChartOptions2 = {
   stroke: ApexStroke;
   legend: ApexLegend;
   title: ApexTitleSubtitle;
-};
+};/*
 export type ChartOptions3 = {
   series: ApexAxisChartSeries;
   chart: ApexChart;
@@ -95,8 +95,8 @@ export class ScorecardviewComponent extends BaseComponent implements OnInit {
   @ViewChild('chart', { static: false }) chart: ChartComponent;
   public chartOptions: Partial<ChartOptions>;
 
-  // @ViewChild('chart2') chart2: ChartComponent;
-  // public ChartOptions2: Partial<ChartOptions2>;
+  @ViewChild('chart2') chart2: ChartComponent;
+  public ChartOptions2: Partial<ChartOptions2>;
   // @ViewChild('chart3') chart3: ChartComponent;
   // public ChartOptions3: Partial<ChartOptions3>;
   // @ViewChild('chart4') chart4: ChartComponent;
@@ -140,6 +140,7 @@ export class ScorecardviewComponent extends BaseComponent implements OnInit {
   ComplatedJobs : any = [];
   WeeklyData : any  = [];
   WeeklyJobsLoading: boolean ;
+  api1Data : any = [];
   constructor(
     private confirmationService: ConfirmationService,
     protected baseServices: BaseService,
@@ -186,32 +187,117 @@ export class ScorecardviewComponent extends BaseComponent implements OnInit {
     };
     const myheader = new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded');
     this.WeeklyJobsLoading = true;
+    /* here is code foro  ARTLOG_SCORECARDLOAD  scorecardload action*/
+   
     // tslint:disable-next-line: max-line-length
     this.httpService.extractPostData(CustomerServicesUrls.ARTLOG_MEDIANOVERDUEPERTEAM, JSON.stringify(frmData), { headers: myheader }).subscribe((MedianData) => {
-      debugger
-      console.log(MedianData);
-      var mediamOverDue = MedianData.OverDueData;
-      for (let kin in mediamOverDue ) {
-         if (mediamOverDue[kin].jobDuration && mediamOverDue[kin].jobDuration.length > 0) {
-            var dataJobDuration = mediamOverDue[kin].jobDuration;
-            for (let k2in in  dataJobDuration) {
-                if (!! dataJobDuration[k2in]  && dataJobDuration[k2in].indexOf(' days') > -1 ) {
-                  mediamOverDue[kin].jobDuration[k2in] = parseInt( dataJobDuration[k2in].split(' days')[0]);
-                } else {
-                  mediamOverDue[kin].jobDuration[k2in] = parseInt( dataJobDuration[k2in]);
-                }
-              }
-         }
-        }
+      that.api1Data = MedianData;
+      let promise = new Promise((resolve, reject) => {
+          this.httpService.extractPostData(CustomerServicesUrls.ARTLOG_SCORECARDLOAD, JSON.stringify(frmData), null).subscribe((data) => {
+            resolve(data);
+          });
+      });
+      promise.then(data =>{
 
+        // data.permissionResponce
+        //
+        var permissionResponce=data.permissionResponce;
+        var mediamOverDue = that.api1Data.OverDueData;
+        /* permission Data process*/
+        var permissionArray=permissionResponce.filter((data)=>data.permission=="Permission");
+        let permissionDurations = permissionArray[0].data.map(d => parseInt(d.duration));
+        let permissionOvuerDueDuration = [];
+        let permissiondt = mediamOverDue.filter(d=> d.teams ='Permission');
+        for(let t1 of permissiondt){;
+          permissionOvuerDueDuration = permissionOvuerDueDuration.concat( t1.jobDuration);
+        }
+        let MedianDataSet = [];
+        let OverdueDataSet = [];
+        MedianDataSet.push(((permissionDurations.length)? that.combineMediun(permissionDurations): 0 ));
+        OverdueDataSet.push(((permissionOvuerDueDuration.length)? that.getMedianData(permissionOvuerDueDuration): 0 ));
+        /* Shutterstock */
+        var ShutterStockArray= mediamOverDue.filter((data)=>data.teams=="Shutterstock");
+
+        debugger
+        console.log(MedianTeamOvrData);
+      });
      });
   }
-  
+  combineMediun(arrays: any []): any[] {
+    var TeamMedian=0;
+    if(arrays.length>0){
+    //var sortable=[];  for (var keys in arrays) {  sortable.push([ arrays[keys].overDueIds , arrays[keys].jobDuration]); }
+    TeamMedian= this.getMedianData(arrays.map(d =>d.jobDuration )[0]);
+  }
+  return TeamMedian;
+}
+getMedianData(arrSort: any []): any[] {
+  let len = arrSort.length;
+  arrSort.sort((a,b) => a -b);
+  const mid = Math.ceil(len / 2);
+  const median = len % 2 == 0 ? (arrSort[mid] + arrSort[mid - 1]) / 2 : arrSort[mid - 1];
+  return median;
+}
+   getMedian2(arrays: any []): any[] {
+   arrays.sort(function(a, b) {
+          return a - b;
+      });
+      var data="";
+    if(arrays.length < 2){
+      if(arrays[0]!=null){
+        data=arrays[0];
+      }else{
+        data=0;
+      }  
+    }else{
+      if((arrays.length)%2!=0){
+        var index = Math.round((arrays.length)/2,1);
+        data = arrays[index-1];
+      }
+      else{
+        var index = (arrays.length)/2;
+        var index2 = index-1;
+        data = (arrays[index]+arrays[index2])/2;
+      }
+    }
+    if(data<0){
+      data=data*-1;
+    }
+    return data||0;
+}
+   getMedian(arrays: any []): any[] {
+      arrays.sort(function(a, b) {
+              return a[1] - b[1];
+          });
+          var data="";
+       // console.log("getMedian", arrays);
+        if(arrays.length < 2){
+          if(arrays[0]!=null){
+            data=arrays[0][1];
+          }else{
+            data=0;
+          }  
+        }else{
+          if((arrays.length)%2!=0){
+            var index = Math.round((arrays.length)/2,1);
+            data = arrays[index-1][1];
+          }
+          else{
+            var index = (arrays.length)/2;
+            var index2 = index-1;
+            data = (arrays[index][1]+arrays[index2][1])/2;
+          }
+        }
+        if(data<0){
+          data=data*-1;
+        }
+        return data||0;
+    }
   filterData() {
     let that = this;
     const myheader = new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded');
     this.WeeklyJobsLoading = true;
-    debugger //obji.body
+   // debugger //obji.body
     let frmData = {
       'currentStatus': this.frmdt.currentStatus.toString(),
       'workflowPreset': this.frmdt.workflowPreset,
@@ -244,18 +330,13 @@ export class ScorecardviewComponent extends BaseComponent implements OnInit {
             ComplatedJobs = ComplatedJobs + result2[temp].count;
           }
         }
-        CreatedData.push(CreatedJobs);
-        ComplatedData.push(ComplatedJobs);
+        CreatedData.push({ x: dateRange ,y:CreatedJobs});
+        ComplatedData.push({ x: dateRange ,y:ComplatedJobs});
         WeeklyData.push(dateRange);
-        // dataFormate.push({dateRange: dateRange, Created: CreatedJobs, FinshedJobs : ComplatedJobs} );
         startDate.setDate(startDate.getDate() + 1);
       }
     that.CreatedJobs = CreatedData;
     that.ComplatedJobs = ComplatedData;
-    that.WeeklyData = WeeklyData;
-     // that.createdVSComplated();
-     // optional VAlue
-     debugger
     that.chartOptions.series = [
       {
         name: 'Created Jobs',
@@ -266,12 +347,10 @@ export class ScorecardviewComponent extends BaseComponent implements OnInit {
         data:  ComplatedData
       }
     ];
-    // that.chartOptions.series[1].data = ComplatedData;
-     // that.chartOptions.xaxis.categories = WeeklyData;
-
-       //   console.log(dataFormate);
     });
     console.log('Data filter');
+    
+    
   }
    Month(dd: any) {
     var months    = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -296,30 +375,35 @@ export class ScorecardviewComponent extends BaseComponent implements OnInit {
   ngOnInit() {
     this.frmdt = { currentStatus: [], workflowPreset: '', compaignId : '', jobTypes: '', grade: '', module: '' };
     this.pageinit();
+    this.medianTimePerTeam();
 
-    // this.medianTimePerTeam();
-    this.percentileView();
+   // this.percentileView();
     // this.AllJobsView();
     this.WeeklyJobsLoading = true;
     this.createdVSComplated();
     this.filterData();
-    // this.medianDataLoadAPI();
+    this.medianDataLoadAPI();
   }
   createdVSComplated() {
     this.WeeklyJobsLoading = false;
     this.chartOptions = {
-      series: [
-        {
+      series: [{
           name: 'Created Jobs',
-          data: [0, 2, 3, 3, 3, 3, 3, 0, 0, 0, 0, 0, 0, 0, 0]
+          data: []
+        },{
+          name: 'Completed Jobs',
+          data: []
+        }], 
+        xaxis: {
+          title: {
+          text: 'Weekly Report'
         },
-        {
-          name: 'Complated Jobs',
-          data:  [2, 1, 1, 3, 1, 1, 3, 1, 1, 1, 1, 1, 3, 1, 0]
-        }
-      ],
+          type: 'string'
+        },
+     
       chart: {
         height: 550,
+        fontFamily: '"Open Sans", "Helvetica Neue", sans-serif',
         type: 'line',
         dropShadow: {
           enabled: true,
@@ -352,27 +436,7 @@ export class ScorecardviewComponent extends BaseComponent implements OnInit {
       markers: {
         size: 1
       },
-      xaxis: {
-        categories: [ '10-May To 16-May',
-                      '17-May To 23-May',
-                      '24-May To 30-May',
-                      '31-May To 6-Jun',
-                      '7-Jun To 13-Jun',
-                      '14-Jun To 20-Jun',
-                      '21-Jun To 27-Jun',
-                      '28-Jun To 4-Jul',
-                      '5-Jul To 11-Jul',
-                      '12-Jul To 18-Jul',
-                      '19-Jul To 25-Jul',
-                      '26-Jul To 1-Aug',
-                      '2-Aug To 8-Aug',
-                      '9-Aug To 15-Aug',
-                      '16-Aug To 22-Aug'
-        ],
-        title: {
-          text: 'Weekly Report'
-        }
-      },
+     
       yaxis: {
         title: {
           text: 'Number of jobs'
@@ -391,16 +455,15 @@ export class ScorecardviewComponent extends BaseComponent implements OnInit {
     // -------------end ----------------------
   }
   medianTimePerTeam() {
-    /*
     this.ChartOptions2 = {
       series: [
         {
           name: 'Median Time',
-          data: [44, 55, 57, 2]
+          data: [44, 55, 57, 21,1]
         },
         {
           name: 'Median Duration',
-          data: [76, 85, 101, 9]
+          data: [76, 85, 101, 9,3]
         }
       ],
       chart: {
@@ -430,6 +493,7 @@ export class ScorecardviewComponent extends BaseComponent implements OnInit {
         categories: [
           'Permission Team',
           'Shutterstock Team',
+          'Created Image',
           'Art Team',
           'Clip Art Team'
         ]
@@ -450,7 +514,6 @@ export class ScorecardviewComponent extends BaseComponent implements OnInit {
         }
       }
     };
-    */
   }
   percentileView() {
     /*

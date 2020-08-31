@@ -994,6 +994,7 @@ constructor(
     });
   }
   getinit() {
+    /*
     this.httpService.extractData(CustomerServicesUrls.ARTLOG_INIT, null, null).subscribe((data) => {
       //debugger
       if (data.hasOwnProperty('grade')) {
@@ -1059,12 +1060,13 @@ constructor(
             this.artLogModel.added.value = frmData.added;
           }
           this.filterData();
-        } else {
+        } else { */
           const obj: any = {};
           this.getMetaData(obj);
-        }
+       /* }
       }
     });
+    */
   }
   changeMfilter( val: any, dt: any, colName: any) {
     this.dataloading = true;
@@ -1342,9 +1344,50 @@ constructor(
   exportCombineDataAsCSV(dt: any){
     debugger
     console.log("Combine Data request");
-    this.httpService.extractData(CustomerServicesUrls.COMBINEDATA, null,  null).subscribe((data) => {
-      debugger
-      console.log('Combine data part');
+    //let body = this.getSearchModel(ARTLOG_DATA);
+    let status = ['Active','Approved'];
+    let body = new HttpParams().append('status', status.toString());
+    this.httpService.extractData(CustomerServicesUrls.ARTLOG_DATA, body,  null).subscribe((data) => {
+      //debugger
+      data = data.artLogData;
+      console.log('Combine data part', data, this.cols);
+      let columansArray = this.cols.map(d => d.field);
+      let str = ''; 
+      let row = 'S.No, '; 
+     // for (let i = 0; data.length; i++) { 
+        for (let Key of columansArray) { 
+            row += Key + ', '; 
+        } 
+     // }
+      row = row.slice(0, -1); 
+      str += row + '\r\n'; 
+      for (let i = 0; i < data.length; i++) { 
+        let line = (i+1)+'';
+        for (let Key of columansArray) {
+          if(Key.indexOf('.') != -1){
+            line += ',' + ((eval("data[i]."+Key))?eval("data[i]."+Key):'');
+          } else {
+            line += ',' + ((data[i][Key])?data[i][Key]:'');
+          }
+        }
+        str += line + '\r\n';
+    } 
+      let csvData = str;
+      let filename ='CombineData.csv';
+      let blob = new Blob(['\ufeff' + csvData], { type: 'text/csv;charset=utf-8;' });
+        let dwldLink = document.createElement("a");
+        let url = URL.createObjectURL(blob);
+        let isSafariBrowser = navigator.userAgent.indexOf('Safari') != -1 && navigator.userAgent.indexOf('Chrome') == -1;
+        if (isSafariBrowser) {  //if Safari open in new window to save file with random filename.
+            dwldLink.setAttribute("target", "_blank");
+        }
+        dwldLink.setAttribute("href", url);
+        dwldLink.setAttribute("download", filename + ".csv");
+        dwldLink.style.visibility = "hidden";
+        document.body.appendChild(dwldLink);
+        dwldLink.click();
+        document.body.removeChild(dwldLink);
+    console.log(str);
     });
    // throw new Error('http request error!, Request could not be served')
   }

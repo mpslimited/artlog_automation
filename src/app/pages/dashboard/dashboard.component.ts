@@ -188,7 +188,7 @@ constructor(
       ];
       if (!!user.userGroupName && (user.userGroupName === 'Admin' || user.userGroupName === 'DAM Team' )  ) {
         auth.push( { value: 'AddRow', title: 'Add Row', icon: 'fa fa-plus', ord: 1 });
-        auth.push({ value: 'AddBatchCDate', title: 'Batch Complation Date', icon: 'fa fa-clock-o', ord: 1 });
+        auth.push({ value: 'AddBatchCDate', title: 'Batch Completion Date', icon: 'fa fa-clock-o', ord: 1 });
         auth.push( { value: 'AddExceptionCat', title: 'Add Exception Cat', icon: 'fa fa-address-book-o', ord: 1 });
         auth.push( { value: 'AddException', title: 'Add Exception', icon: 'fa fa-wpexplorer', ord: 1 });
         auth.push({ value: 'LockJobs', title: 'Lock Job & Generate Tags', icon: 'fa fa-lock', ord: 3 });
@@ -657,7 +657,7 @@ constructor(
   showDialogToAdd() {
     this.displayDialog = true;
   }
-  saveSearchDialog() {
+  saveSearchDialog( ) {
     this.saveSearchModal = true;
   }
   lazyLoadEnv(event: LazyLoadEvent ) {
@@ -971,9 +971,10 @@ constructor(
       this.alert.showAlertScucess(['Grid state saved successfully!'], 3000);
     });
   }
-  saveUserSerach() {
+  saveUserSerach(d:string) {
     let body = new HttpParams();
     const frmDt = {
+      tabData:d, 
       grade: this.frmdt.grade, module: this.frmdt.module, status: this.frmdt.status, batch: this.artLogModel.batch.value,
       workflow: this.artLogModel.workflow.value, curricula: this.artLogModel.curricula.value, resTeam: this.artLogModel.resTeam.value,
       added: this.artLogModel.added.value

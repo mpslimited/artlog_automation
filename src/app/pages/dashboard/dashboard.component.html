@@ -21,9 +21,9 @@
           <li class="nav-item" *ngIf="auth.roleName == 'Art Designer'">
             <a class="nav-link" [routerLinkActive]="['active', '']" [routerLink]="['/pages/admin/performance']">Api Performance</a>
           </li>
-          <li class="nav-item" *ngIf="auth.roleName == 'Art Designer'">
+          <!-- <li class="nav-item" *ngIf="auth.roleName == 'Art Designer'">
             <a class="nav-link" [routerLinkActive]="['active', '']" [routerLink]="['/pages/admin/scorecardview']">Recent Log</a>
-          </li>
+          </li>-->
           <li class="nav-item" *ngIf="auth.roleName == 'Digital Asset Lead'">
             <a class="nav-link " [routerLinkActive]="['active', '']" [routerLink]="['/pages/admin/jobrefres']">Job Refresh</a>
           </li>
@@ -253,7 +253,7 @@
 
               </div>
               <div class="pr-2 d-flex align-items-center">
-                  <button pButton type="button" class="custom-clear-btn ml-2" icon="fa fa-close" label="{{gridState.searchTitle}}" (click)="clearGridState()" *ngIf="!!gridState && gridState.hasOwnProperty('searchTitle')"></button>
+                  <button pButton type="button" class="custom-clear-btn mr-2" icon="fa fa-close" label="{{gridState.searchTitle}}" (click)="clearGridState()" *ngIf="!!gridState && gridState.hasOwnProperty('searchTitle')"></button>
                   <!-- <a (click)="clearGridState()" class="btn btn-sm btn-primary" *ngIf="!!gridState && gridState.hasOwnProperty('searchTitle')"><i class="fa fa-close"></i> {{gridState.searchTitle}}</a> -->
                   <p-multiSelect [options]="fixCol" [(ngModel)]="scrollableCols" (onChange)="updateSelection()" optionLabel="header"
                     selectedItemsLabel="{0} columns selected" defaultLabel="Choose Columns" styleClass="mr-1">
@@ -712,7 +712,7 @@
     <div class="ui-g-12 ui-md-12">
         <div class="ui-inputgroup">
             <input type="text"  pInputText  [(ngModel)]="searchText" name="searchText" />
-            <button pButton type="button" (click)="saveUserSerach()" icon="pi pi-check" class="ui-button-success"></button>
+            <button pButton type="button" (click)="saveUserSerach('Active')" icon="pi pi-check" class="ui-button-success"></button>
         </div>
     </div>
 </div>
