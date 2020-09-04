@@ -436,7 +436,7 @@ constructor(
         this.selectedRows[t].flaged = true;
         this.selectedRows[t].flagedTeam = this.flaggedTeam ;
       }
-      
+
       const myheader = new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded');
       let body = new HttpParams()
       .append('flagedID', JSON.stringify(this.selectedRows.map(d => d._id)))
@@ -523,7 +523,7 @@ constructor(
     this.Tdata = Tdata.map(d => ({ value: d, label: d }));
     const jobStatus = ['Active', 'Asset Bank', 'On Hold'];
     this.jobStatus = jobStatus.map(d => ({ field: d, header: d }));
-  
+
     this.getinit();
     ///this.editSetting = new CustomModalPopUpModel('Edit Job');
   }
@@ -794,7 +794,7 @@ constructor(
     body = body.append('selectedids', JSON.stringify(this.selectedRows.map(d => d._id)));
     const self = this;
     this.httpService.extractData(CustomerServicesUrls.ARTLOG_BULK_BULKBATCHCDATE, body, null).subscribe((data) => {
-     
+
       for (const dt of data) {
         const index = self.cartdata.indexOf(self.cartdata.filter((d, i) => d._id === dt._id)[0]);
         self.cartdata[index].batchCDate = dt.batchCDate || self.bulkBatchCDate;
@@ -836,7 +836,7 @@ constructor(
     body = body.append('selectedids', JSON.stringify(this.selectedRows.map(d => d._id)));
     const self = this;
     this.httpService.extractData(CustomerServicesUrls.ARTLOG_BULK_EXCEPTION, body, null).subscribe((data) => {
-     
+
       self.bulkException = '';
       for (const dt of data) {
         const index = self.cartdata.indexOf(self.cartdata.filter((d, i) => d._id === dt._id)[0]);
@@ -974,7 +974,7 @@ constructor(
   saveUserSerach(d:string) {
     let body = new HttpParams();
     const frmDt = {
-      tabData:d, 
+      tabData:d,
       grade: this.frmdt.grade, module: this.frmdt.module, status: this.frmdt.status, batch: this.artLogModel.batch.value,
       workflow: this.artLogModel.workflow.value, curricula: this.artLogModel.curricula.value, resTeam: this.artLogModel.resTeam.value,
       added: this.artLogModel.added.value
@@ -999,7 +999,7 @@ constructor(
   }
   getinit() {
     this.httpService.extractData(CustomerServicesUrls.ARTLOG_INIT, null, null).subscribe((data) => {
-      
+
       if (data.hasOwnProperty('grade')) {
         this.Gdata = data.grade;
         const GradeData = JSON.parse(JSON.stringify(data.grade));

@@ -76,14 +76,14 @@ export type ChartOptions3 = {
   stroke: ApexStroke;
   legend: ApexLegend;
   title: ApexTitleSubtitle;
-}; /*
+};
 export type ChartOptions4 = {
   series: ApexAxisChartSeries;
   chart: ApexChart;
   dataLabels: ApexDataLabels;
   plotOptions: ApexPlotOptions;
   xaxis: ApexXAxis;
-}; */
+};
 @Component({
   selector: 'app-scorecardview',
   templateUrl: './scorecardview.component.html',
@@ -98,8 +98,8 @@ export class ScorecardviewComponent extends BaseComponent implements OnInit {
   public ChartOptions2: Partial<ChartOptions2>;
   @ViewChild('chart3', { static: false }) chart3: ChartComponent;
   public ChartOptions3: Partial<ChartOptions3>;
-  // @ViewChild('chart4') chart4: ChartComponent;
-  // public ChartOptions4: Partial<ChartOptions4>;
+  @ViewChild('chart4', { static: false }) chart4: ChartComponent;
+  public ChartOptions4: Partial<ChartOptions4>;
 
   // -- columans for filter Grid dropdown
 
@@ -211,12 +211,12 @@ export class ScorecardviewComponent extends BaseComponent implements OnInit {
         let PerOverdueMed = (permissionDuration.length > 0 ) ? this.getMedianData( permissionDuration ) : 0 ;
         GraphDataM.push(PermMedian);
         GraphDataO.push(PerOverdueMed);
-        
+
         let per10th = ( permissionMedian.length > 0 ) ? this.getPercentileData(permissionMedian.map(d => d.duration), 10) : 0  ;
         let per90th = ( permissionMedian.length > 0 ) ? this.getPercentileData(permissionMedian.map(d => d.duration), 90) : 0  ;
         GraphData10th.push(per10th);
         GraphData90th.push(per90th);
-        
+
         // l,lihgvfcdsxzc  Shutterstock
         let Shutterstockdt = that.api1Data.filter(d => d.teams === 'Shutterstock');
         let ShutterstockMedian = median.filter( d => d.workflow === 'Shutterstock');
@@ -225,12 +225,12 @@ export class ScorecardviewComponent extends BaseComponent implements OnInit {
         let ShuOverDueMedia = (Shutterstockdt.length > 0 && Shutterstockdt[0].jobDuration.length ) ? this.getMedianData( Shutterstockdt[0].jobDuration ) : 0;
         GraphDataM.push(ShuMedian);
         GraphDataO.push(ShuOverDueMedia);
-        
+
         per10th = ( ShutterstockMedian.length > 0 ) ? this.getPercentileData(ShutterstockMedian.map(d => d.duration), 10) : 0  ;
         per90th = ( ShutterstockMedian.length > 0 ) ? this.getPercentileData(ShutterstockMedian.map(d => d.duration), 90) : 0  ;
         GraphData10th.push(per10th);
         GraphData90th.push(per90th);
-        
+
         // l,lihgvfcdsxzc  Created Image
         let CreatedImagedt = that.api1Data.filter(d => d.teams === 'Created Image' );
         let CreatedImageMedian = median.filter( d => d.workflow === 'Created Image');
@@ -239,7 +239,7 @@ export class ScorecardviewComponent extends BaseComponent implements OnInit {
         let CreatedOverDueMedia = (CreatedImagedt.length > 0 && CreatedImagedt[0].jobDuration.length ) ? this.getMedianData( CreatedImagedt[0].jobDuration ) : 0;
         GraphDataM.push(CreatedMedian);
         GraphDataO.push(CreatedOverDueMedia);
-        
+
         per10th = ( CreatedImagedt.length > 0 ) ? this.getPercentileData(CreatedImagedt.map(d => d.duration), 10) : 0  ;
         per90th = ( CreatedImagedt.length > 0 ) ? this.getPercentileData(CreatedImagedt.map(d => d.duration), 90) : 0  ;
         GraphData10th.push(per10th);
@@ -252,7 +252,7 @@ export class ScorecardviewComponent extends BaseComponent implements OnInit {
         let ClipArtOverDueMedia = (ClipArtdt.length > 0 && ClipArtdt[0].jobDuration.length ) ? this.getMedianData( ClipArtdt[0].jobDuration ) : 0;
         GraphDataM.push(ClipArtMedian);
         GraphDataO.push(ClipArtOverDueMedia);
-        
+
         per10th = ( ClipArtOverMedian.length > 0 ) ? this.getPercentileData(ClipArtOverMedian.map(d => d.duration), 10) : 0  ;
         per90th = ( ClipArtOverMedian.length > 0 ) ? this.getPercentileData(ClipArtOverMedian.map(d => d.duration), 90) : 0  ;
         GraphData10th.push(per10th);
@@ -266,7 +266,7 @@ export class ScorecardviewComponent extends BaseComponent implements OnInit {
 
         that.ChartOptions3.series[0].data =  GraphData10th;
         that.ChartOptions3.series[1].data = GraphData90th;
-         
+
         /**/
       });
      });
@@ -276,12 +276,13 @@ combineMediun(arrays: any []): any {
     if ( arrays.length > 0 ) {
       TeamMedian = this.getMedianData(arrays.map(d => d.jobDuration )[0]);
     }
-  return parseFloat(TeamMedian).toFixed(2);
+    return parseFloat(TeamMedian).toFixed(2);
 }
 getPercentileData(arr: any [], val: number): any {
-  const percentile = (arr, val) =>
+  // tslint:disable-next-line: no-shadowed-variable
+  const percentile = (arr: any [], val: number ): number =>
   (100 * arr.reduce((acc, v) => acc + (v < val ? 1 : 0) + (v === val ? 0.5 : 0), 0)) / arr.length;
-    return  parseFloat(percentile(arr, val )).toFixed(2);
+  return  parseFloat(percentile(arr, val ).toString()).toFixed(2);
 }
 getMedianData(arrSort: any []): any {
   let len = arrSort.length;
@@ -335,7 +336,7 @@ getMedianData(arrSort: any []): any {
       }
     that.CreatedJobs = CreatedData;
     that.ComplatedJobs = ComplatedData;
-    
+
     that.chartOptions.series = [
       {
         name: 'Created Jobs',
@@ -375,14 +376,12 @@ getMedianData(arrSort: any []): any {
     this.frmdt = { currentStatus: [], workflowPreset: '', compaignId : '', jobTypes: '', grade: '', module: '' };
     this.pageinit();
     this.medianTimePerTeam();
-
-   // this.percentileView();
-    // this.AllJobsView();
     this.WeeklyJobsLoading = true;
     this.createdVSComplated();
     this.filterData();
     this.medianDataLoadAPI();
     this.percentileView();
+    this.AllJobsView();
   }
   createdVSComplated() {
     this.WeeklyJobsLoading = false;
@@ -445,8 +444,6 @@ getMedianData(arrSort: any []): any {
         position: 'top',
         horizontalAlign: 'right',
         floating: true,
-        offsetY: -25,
-        offsetX: -5
       }
     };
     // -------------end ----------------------
@@ -513,16 +510,16 @@ getMedianData(arrSort: any []): any {
     };
   }
   percentileView() {
-    
+
     this.ChartOptions3 = {
       series: [
         {
           name: '10th Percentile',
-          data: [1, 1, 1, 1]
+          data: [0, 0, 0, 0]
         },
         {
           name: '90th Percentile',
-          data: [2, 1,1, 0]
+          data: [0, 0, 0, 0]
         }
       ],
       chart: {
@@ -574,7 +571,7 @@ getMedianData(arrSort: any []): any {
     };
   }
   AllJobsView() {
-    /*
+
     this.ChartOptions4 = {
       series: [
         {
@@ -615,6 +612,5 @@ getMedianData(arrSort: any []): any {
         ]
       }
     };
-    */
   }
 }
