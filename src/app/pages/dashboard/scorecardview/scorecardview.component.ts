@@ -63,7 +63,7 @@ export type ChartOptions2 = {
   stroke: ApexStroke;
   legend: ApexLegend;
   title: ApexTitleSubtitle;
-};/*
+};
 export type ChartOptions3 = {
   series: ApexAxisChartSeries;
   chart: ApexChart;
@@ -76,7 +76,7 @@ export type ChartOptions3 = {
   stroke: ApexStroke;
   legend: ApexLegend;
   title: ApexTitleSubtitle;
-};
+}; /*
 export type ChartOptions4 = {
   series: ApexAxisChartSeries;
   chart: ApexChart;
@@ -94,11 +94,10 @@ export type ChartOptions4 = {
 export class ScorecardviewComponent extends BaseComponent implements OnInit {
   @ViewChild('chart1', { static: false }) chart1: ChartComponent;
   public chartOptions: Partial<ChartOptions>;
-
-  @ViewChild('chart2') chart2: ChartComponent;
+  @ViewChild('chart2', { static: false }) chart2: ChartComponent;
   public ChartOptions2: Partial<ChartOptions2>;
-  // @ViewChild('chart3') chart3: ChartComponent;
-  // public ChartOptions3: Partial<ChartOptions3>;
+  @ViewChild('chart3', { static: false }) chart3: ChartComponent;
+  public ChartOptions3: Partial<ChartOptions3>;
   // @ViewChild('chart4') chart4: ChartComponent;
   // public ChartOptions4: Partial<ChartOptions4>;
 
@@ -199,7 +198,7 @@ export class ScorecardviewComponent extends BaseComponent implements OnInit {
           });
       });
       promise.then(data => {
-        let median = data.permissionResponce;
+        let median = (data as any ).permissionResponce ;
         let permissionDuration = [];
         let permissiondt = that.api1Data.filter(d => d.teams === 'Permission');
         for ( let t1 of permissiondt) {
@@ -207,10 +206,17 @@ export class ScorecardviewComponent extends BaseComponent implements OnInit {
         }
         let permissionMedian = median.filter( d => d.workflow === 'Permission');
         let GraphDataM = []; let GraphDataO = [];
+        let GraphData10th = []; let GraphData90th = [];
         let PermMedian = ( permissionMedian.length > 0 ) ? this.getMedianData(permissionMedian.map(d => d.duration)) : 0  ;
         let PerOverdueMed = (permissionDuration.length > 0 ) ? this.getMedianData( permissionDuration ) : 0 ;
         GraphDataM.push(PermMedian);
         GraphDataO.push(PerOverdueMed);
+        
+        let per10th = ( permissionMedian.length > 0 ) ? this.getPercentileData(permissionMedian.map(d => d.duration), 10) : 0  ;
+        let per90th = ( permissionMedian.length > 0 ) ? this.getPercentileData(permissionMedian.map(d => d.duration), 90) : 0  ;
+        GraphData10th.push(per10th);
+        GraphData90th.push(per90th);
+        
         // l,lihgvfcdsxzc  Shutterstock
         let Shutterstockdt = that.api1Data.filter(d => d.teams === 'Shutterstock');
         let ShutterstockMedian = median.filter( d => d.workflow === 'Shutterstock');
@@ -219,6 +225,12 @@ export class ScorecardviewComponent extends BaseComponent implements OnInit {
         let ShuOverDueMedia = (Shutterstockdt.length > 0 && Shutterstockdt[0].jobDuration.length ) ? this.getMedianData( Shutterstockdt[0].jobDuration ) : 0;
         GraphDataM.push(ShuMedian);
         GraphDataO.push(ShuOverDueMedia);
+        
+        per10th = ( ShutterstockMedian.length > 0 ) ? this.getPercentileData(ShutterstockMedian.map(d => d.duration), 10) : 0  ;
+        per90th = ( ShutterstockMedian.length > 0 ) ? this.getPercentileData(ShutterstockMedian.map(d => d.duration), 90) : 0  ;
+        GraphData10th.push(per10th);
+        GraphData90th.push(per90th);
+        
         // l,lihgvfcdsxzc  Created Image
         let CreatedImagedt = that.api1Data.filter(d => d.teams === 'Created Image' );
         let CreatedImageMedian = median.filter( d => d.workflow === 'Created Image');
@@ -227,6 +239,11 @@ export class ScorecardviewComponent extends BaseComponent implements OnInit {
         let CreatedOverDueMedia = (CreatedImagedt.length > 0 && CreatedImagedt[0].jobDuration.length ) ? this.getMedianData( CreatedImagedt[0].jobDuration ) : 0;
         GraphDataM.push(CreatedMedian);
         GraphDataO.push(CreatedOverDueMedia);
+        
+        per10th = ( CreatedImagedt.length > 0 ) ? this.getPercentileData(CreatedImagedt.map(d => d.duration), 10) : 0  ;
+        per90th = ( CreatedImagedt.length > 0 ) ? this.getPercentileData(CreatedImagedt.map(d => d.duration), 90) : 0  ;
+        GraphData10th.push(per10th);
+        GraphData90th.push(per90th);
         // l,lihgvfcdsxzc  Clip Art
         let ClipArtdt = that.api1Data.filter(d => d.teams === 'Clip Art' );
         let ClipArtOverMedian = median.filter( d => d.workflow === 'Clip Art');
@@ -235,25 +252,43 @@ export class ScorecardviewComponent extends BaseComponent implements OnInit {
         let ClipArtOverDueMedia = (ClipArtdt.length > 0 && ClipArtdt[0].jobDuration.length ) ? this.getMedianData( ClipArtdt[0].jobDuration ) : 0;
         GraphDataM.push(ClipArtMedian);
         GraphDataO.push(ClipArtOverDueMedia);
+        
+        per10th = ( ClipArtOverMedian.length > 0 ) ? this.getPercentileData(ClipArtOverMedian.map(d => d.duration), 10) : 0  ;
+        per90th = ( ClipArtOverMedian.length > 0 ) ? this.getPercentileData(ClipArtOverMedian.map(d => d.duration), 90) : 0  ;
+        GraphData10th.push(per10th);
+        GraphData90th.push(per90th);
+
         that.OverDueMedianData = GraphDataM;
         that.MedianData = GraphDataO;
+        debugger
+        that.ChartOptions2.series[0].data =  GraphDataM;
+        that.ChartOptions2.series[1].data = GraphDataO;
+
+        that.ChartOptions3.series[0].data =  GraphData10th;
+        that.ChartOptions3.series[1].data = GraphData90th;
+         
         /**/
       });
      });
   }
-  combineMediun(arrays: any []): any {
+combineMediun(arrays: any []): any {
     let TeamMedian: any = 0;
     if ( arrays.length > 0 ) {
       TeamMedian = this.getMedianData(arrays.map(d => d.jobDuration )[0]);
     }
-  return TeamMedian;
+  return parseFloat(TeamMedian).toFixed(2);
+}
+getPercentileData(arr: any [], val: number): any {
+  const percentile = (arr, val) =>
+  (100 * arr.reduce((acc, v) => acc + (v < val ? 1 : 0) + (v === val ? 0.5 : 0), 0)) / arr.length;
+    return  parseFloat(percentile(arr, val )).toFixed(2);
 }
 getMedianData(arrSort: any []): any {
   let len = arrSort.length;
   arrSort.sort((a, b ) => a - b );
   const mid = Math.ceil(len / 2);
   const median = len % 2 == 0 ? (arrSort[mid] + arrSort[mid - 1]) / 2 : arrSort[mid - 1];
-  return median;
+  return parseFloat(median).toFixed(2);
 }
 
   filterData() {
@@ -300,6 +335,7 @@ getMedianData(arrSort: any []): any {
       }
     that.CreatedJobs = CreatedData;
     that.ComplatedJobs = ComplatedData;
+    
     that.chartOptions.series = [
       {
         name: 'Created Jobs',
@@ -346,6 +382,7 @@ getMedianData(arrSort: any []): any {
     this.createdVSComplated();
     this.filterData();
     this.medianDataLoadAPI();
+    this.percentileView();
   }
   createdVSComplated() {
     this.WeeklyJobsLoading = false;
@@ -419,11 +456,11 @@ getMedianData(arrSort: any []): any {
       series: [
         {
           name: 'Median Time',
-          data: this.MedianData
+          data: [1, 3, 1, 0]
         },
         {
           name: 'Median Duration',
-          data: this.OverDueMedianData
+          data: [1, 3, 2, 0]
         }
       ],
       chart: {
@@ -469,23 +506,23 @@ getMedianData(arrSort: any []): any {
       tooltip: {
         y: {
           formatter: function(val) {
-            return '$ ' + val + ' thousands';
+            return ' ' + val + ' Median';
           }
         }
       }
     };
   }
   percentileView() {
-    /*
+    
     this.ChartOptions3 = {
       series: [
         {
           name: '10th Percentile',
-          data: [44, 55, 57, 1]
+          data: [1, 1, 1, 1]
         },
         {
-          name: '10th Percentile',
-          data: [76, 85, 101, 3]
+          name: '90th Percentile',
+          data: [2, 1,1, 0]
         }
       ],
       chart: {
@@ -530,12 +567,11 @@ getMedianData(arrSort: any []): any {
       tooltip: {
         y: {
           formatter: function(val) {
-            return '$ ' + val + ' thousands';
+            return ' ' + val + ' ';
           }
         }
       }
     };
-    */
   }
   AllJobsView() {
     /*

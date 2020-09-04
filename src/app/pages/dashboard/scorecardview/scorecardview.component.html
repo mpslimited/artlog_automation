@@ -167,7 +167,7 @@
                         Loading..
                         </div>-->
                         <div id="chart1" >
-                          <apx-chart #chart1
+                          <apx-chart 
                             [series]="chartOptions.series"
                             [chart]="chartOptions.chart"
                             [xaxis]="chartOptions.xaxis"
@@ -180,15 +180,15 @@
                             [yaxis]="chartOptions.yaxis"
                             [title]="chartOptions.title"
                           ></apx-chart>
-                        </div>
+                        </div> 
                       </div>
                 </div>
                 <div class="col-md-12 mb-2">
             	    <div  class="w-100 border p-2">
                     <div class="loading-box">
                     </div>
-                    <div id="chart2">
-                     <apx-chart #chart2
+                    <div id="chart2" >
+                          <apx-chart 
                         [series]="ChartOptions2.series"
                         [chart]="ChartOptions2.chart"
                         [dataLabels]="ChartOptions2.dataLabels"
@@ -208,7 +208,8 @@
               <div  class="w-100 border p-2">
                 <div class="loading-box">
                 </div>
-                   <!--<apx-chart #chart3
+                <div id="chart3" >
+                   <apx-chart 
                     [series]="ChartOptions3.series"
                     [chart]="ChartOptions3.chart"
                     [dataLabels]="ChartOptions3.dataLabels"
@@ -220,7 +221,8 @@
                     [tooltip]="ChartOptions3.tooltip"
                     [xaxis]="ChartOptions3.xaxis"
                     [title]="ChartOptions3.title"
-                  ></apx-chart>-->
+                  ></apx-chart>
+                </div>
               </div>
           </div>
           <div class="col-md-12 mb-2">
