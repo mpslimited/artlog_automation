@@ -188,7 +188,7 @@ constructor(
       ];
     if (!!user.userGroupName && (user.userGroupName === 'Admin' || user.userGroupName === 'DAM Team' )  ) {
         auth.push( { value: 'AddRow', title: 'Add Row', icon: 'fa fa-plus', ord: 1 });
-        auth.push({ value: 'AddBatchCDate', title: 'Batch Complation Date', icon: 'fa fa-clock-o', ord: 1 });
+        auth.push({ value: 'AddBatchCDate', title: 'Batch Completion Date', icon: 'fa fa-clock-o', ord: 1 });
         auth.push( { value: 'AddExceptionCat', title: 'Add Exception Cat', icon: 'fa fa-address-book-o', ord: 1 });
         auth.push( { value: 'AddException', title: 'Add Exception', icon: 'fa fa-wpexplorer', ord: 1 });
         auth.push({ value: 'LockJobs', title: 'Lock Job & Generate Tags', icon: 'fa fa-lock', ord: 3 });
@@ -643,7 +643,7 @@ constructor(
   ngOnChanges() {
     this.artLogModel.jobkey.value = this.baseService.getMessage();
     const obj = {};
-    this.getMetaData(obj);
+    //this.getMetaData(obj);
   }
   searchByjobKey(evt: any) {
     this.filterData();
@@ -790,7 +790,7 @@ constructor(
     body = body.append('selectedids', JSON.stringify(this.selectedRows.map(d => d._id)));
     const self = this;
     this.httpService.extractData(CustomerServicesUrls.ARTLOG_BULK_BULKBATCHCDATE, body, null).subscribe((data) => {
-     debugger
+
      for (const dt of data) {
         const index = self.cartdata.indexOf(self.cartdata.filter((d, i) => d._id === dt._id)[0]);
         self.cartdata[index].batchCDate = dt.batchCDate || self.bulkBatchCDate;
@@ -827,13 +827,12 @@ constructor(
     });
   }
   savebulkException(){
-    debugger
     let body = new HttpParams();
     body = body.append('exception', this.bulkException);
     body = body.append('selectedids', JSON.stringify(this.selectedRows.map(d => d._id)));
     const self = this;
     this.httpService.extractData(CustomerServicesUrls.ARTLOG_BULK_EXCEPTION, body, null).subscribe((data) => {
-      debugger
+
       self.bulkException = '';
       for (const dt of data) {
         const index = self.cartdata.indexOf(self.cartdata.filter((d, i) => d._id === dt._id)[0]);
@@ -968,9 +967,10 @@ constructor(
       this.alert.showAlertScucess(['Grid state saved successfully!'], 3000);
     });
   }
-  saveUserSerach() {
+  saveUserSerach(d:string) {
     let body = new HttpParams();
     const frmDt = {
+      tabData:d,
       grade: this.frmdt.grade, module: this.frmdt.module, status: this.frmdt.status, batch: this.artLogModel.batch.value,
       workflow: this.artLogModel.workflow.value, curricula: this.artLogModel.curricula.value, resTeam: this.artLogModel.resTeam.value,
       added: this.artLogModel.added.value
@@ -994,9 +994,8 @@ constructor(
     });
   }
   getinit() {
-    /*
     this.httpService.extractData(CustomerServicesUrls.ARTLOG_INIT, null, null).subscribe((data) => {
-      //debugger
+
       if (data.hasOwnProperty('grade')) {
         this.Gdata = data.grade;
         const GradeData = JSON.parse(JSON.stringify(data.grade));
@@ -1039,6 +1038,7 @@ constructor(
           const dt = JSON.parse(this.gridState.fields);
           this.scrollableCols = dt.selectedColumn;
         }
+        /*
         this.savedsearchLists = data.inData.filter(d => d.state !== 'GridStage');
         const defalutSearch = this.savedsearchLists.filter(d => d.isDefault == true);
         if (this.savedsearchLists.length && defalutSearch.length > 0) {
@@ -1056,17 +1056,20 @@ constructor(
             this.artLogModel.curricula.value = frmData.curricula;
           } if (frmData.status !== '') {
             this.frmdt.status = frmData.status;
+          } else {
+            this.frmdt.status = ['Approved'];
           } if (frmData.added !== '') {
             this.artLogModel.added.value = frmData.added;
           }
           this.filterData();
-        } else { */
+        } else {
           const obj: any = {};
           this.getMetaData(obj);
-       /* }
+        }*/
+          const obj: any = {};
+        this.getMetaData(obj);
       }
     });
-    */
   }
   changeMfilter( val: any, dt: any, colName: any) {
     this.dataloading = true;
@@ -1352,16 +1355,16 @@ constructor(
       data = data.artLogData;
       console.log('Combine data part', data, this.cols);
       let columansArray = this.cols.map(d => d.field);
-      let str = ''; 
-      let row = 'S.No, '; 
-     // for (let i = 0; data.length; i++) { 
-        for (let Key of columansArray) { 
-            row += Key + ', '; 
-        } 
+      let str = '';
+      let row = 'S.No, ';
+     // for (let i = 0; data.length; i++) {
+        for (let Key of columansArray) {
+            row += Key + ', ';
+        }
      // }
-      row = row.slice(0, -1); 
-      str += row + '\r\n'; 
-      for (let i = 0; i < data.length; i++) { 
+      row = row.slice(0, -1);
+      str += row + '\r\n';
+      for (let i = 0; i < data.length; i++) {
         let line = (i+1)+'';
         for (let Key of columansArray) {
           if(Key.indexOf('.') != -1){
@@ -1371,7 +1374,7 @@ constructor(
           }
         }
         str += line + '\r\n';
-    } 
+    }
       let csvData = str;
       let filename ='CombineData.csv';
       let blob = new Blob(['\ufeff' + csvData], { type: 'text/csv;charset=utf-8;' });

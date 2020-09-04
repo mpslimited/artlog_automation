@@ -50,7 +50,7 @@ export type ChartOptions = {
   grid: ApexGrid;
   legend: ApexLegend;
   title: ApexTitleSubtitle;
-}; 
+};
 export type ChartOptions2 = {
   series: ApexAxisChartSeries;
   chart: ApexChart;
@@ -92,7 +92,7 @@ export type ChartOptions4 = {
 })
 
 export class ScorecardviewComponent extends BaseComponent implements OnInit {
-  @ViewChild('chart', { static: false }) chart: ChartComponent;
+  @ViewChild('chart1', { static: false }) chart1: ChartComponent;
   public chartOptions: Partial<ChartOptions>;
 
   @ViewChild('chart2') chart2: ChartComponent;
@@ -106,7 +106,8 @@ export class ScorecardviewComponent extends BaseComponent implements OnInit {
 
   auth: any = [];
   criteria: boolean;
-
+  OverDueMedianData: any = [];
+  MedianData: any = [];
   dataloading: boolean ;
   medianLoading: boolean ;
 
@@ -188,111 +189,73 @@ export class ScorecardviewComponent extends BaseComponent implements OnInit {
     const myheader = new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded');
     this.WeeklyJobsLoading = true;
     /* here is code foro  ARTLOG_SCORECARDLOAD  scorecardload action*/
-   
+
     // tslint:disable-next-line: max-line-length
     this.httpService.extractPostData(CustomerServicesUrls.ARTLOG_MEDIANOVERDUEPERTEAM, JSON.stringify(frmData), { headers: myheader }).subscribe((MedianData) => {
-      that.api1Data = MedianData;
+      that.api1Data = MedianData.OverDueData;
       let promise = new Promise((resolve, reject) => {
           this.httpService.extractPostData(CustomerServicesUrls.ARTLOG_SCORECARDLOAD, JSON.stringify(frmData), null).subscribe((data) => {
             resolve(data);
           });
       });
-      promise.then(data =>{
-
-        // data.permissionResponce
-        //
-        var permissionResponce=data.permissionResponce;
-        var mediamOverDue = that.api1Data.OverDueData;
-        /* permission Data process*/
-        var permissionArray=permissionResponce.filter((data)=>data.permission=="Permission");
-        let permissionDurations = permissionArray[0].data.map(d => parseInt(d.duration));
-        let permissionOvuerDueDuration = [];
-        let permissiondt = mediamOverDue.filter(d=> d.teams ='Permission');
-        for(let t1 of permissiondt){;
-          permissionOvuerDueDuration = permissionOvuerDueDuration.concat( t1.jobDuration);
+      promise.then(data => {
+        let median = data.permissionResponce;
+        let permissionDuration = [];
+        let permissiondt = that.api1Data.filter(d => d.teams === 'Permission');
+        for ( let t1 of permissiondt) {
+          permissionDuration = permissionDuration.concat( t1.jobDuration);
         }
-        let MedianDataSet = [];
-        let OverdueDataSet = [];
-        MedianDataSet.push(((permissionDurations.length)? that.combineMediun(permissionDurations): 0 ));
-        OverdueDataSet.push(((permissionOvuerDueDuration.length)? that.getMedianData(permissionOvuerDueDuration): 0 ));
-        /* Shutterstock */
-        var ShutterStockArray= mediamOverDue.filter((data)=>data.teams=="Shutterstock");
-
-        debugger
-        console.log(MedianTeamOvrData);
+        let permissionMedian = median.filter( d => d.workflow === 'Permission');
+        let GraphDataM = []; let GraphDataO = [];
+        let PermMedian = ( permissionMedian.length > 0 ) ? this.getMedianData(permissionMedian.map(d => d.duration)) : 0  ;
+        let PerOverdueMed = (permissionDuration.length > 0 ) ? this.getMedianData( permissionDuration ) : 0 ;
+        GraphDataM.push(PermMedian);
+        GraphDataO.push(PerOverdueMed);
+        // l,lihgvfcdsxzc  Shutterstock
+        let Shutterstockdt = that.api1Data.filter(d => d.teams === 'Shutterstock');
+        let ShutterstockMedian = median.filter( d => d.workflow === 'Shutterstock');
+        let ShuMedian = (ShutterstockMedian.length > 0 ) ? this.getMedianData(ShutterstockMedian.map(d => d.duration )) : 0 ;
+        // tslint:disable-next-line: max-line-length
+        let ShuOverDueMedia = (Shutterstockdt.length > 0 && Shutterstockdt[0].jobDuration.length ) ? this.getMedianData( Shutterstockdt[0].jobDuration ) : 0;
+        GraphDataM.push(ShuMedian);
+        GraphDataO.push(ShuOverDueMedia);
+        // l,lihgvfcdsxzc  Created Image
+        let CreatedImagedt = that.api1Data.filter(d => d.teams === 'Created Image' );
+        let CreatedImageMedian = median.filter( d => d.workflow === 'Created Image');
+        let CreatedMedian = (CreatedImageMedian.length > 0 ) ? this.getMedianData(CreatedImageMedian.map(d => d.duration )) : 0 ;
+        // tslint:disable-next-line: max-line-length
+        let CreatedOverDueMedia = (CreatedImagedt.length > 0 && CreatedImagedt[0].jobDuration.length ) ? this.getMedianData( CreatedImagedt[0].jobDuration ) : 0;
+        GraphDataM.push(CreatedMedian);
+        GraphDataO.push(CreatedOverDueMedia);
+        // l,lihgvfcdsxzc  Clip Art
+        let ClipArtdt = that.api1Data.filter(d => d.teams === 'Clip Art' );
+        let ClipArtOverMedian = median.filter( d => d.workflow === 'Clip Art');
+        let ClipArtMedian = (ClipArtOverMedian.length > 0 ) ? this.getMedianData(ClipArtOverMedian.map(d => d.duration )) : 0 ;
+        // tslint:disable-next-line: max-line-length
+        let ClipArtOverDueMedia = (ClipArtdt.length > 0 && ClipArtdt[0].jobDuration.length ) ? this.getMedianData( ClipArtdt[0].jobDuration ) : 0;
+        GraphDataM.push(ClipArtMedian);
+        GraphDataO.push(ClipArtOverDueMedia);
+        that.OverDueMedianData = GraphDataM;
+        that.MedianData = GraphDataO;
+        /**/
       });
      });
   }
-  combineMediun(arrays: any []): any[] {
-    var TeamMedian=0;
-    if(arrays.length>0){
-    //var sortable=[];  for (var keys in arrays) {  sortable.push([ arrays[keys].overDueIds , arrays[keys].jobDuration]); }
-    TeamMedian= this.getMedianData(arrays.map(d =>d.jobDuration )[0]);
-  }
+  combineMediun(arrays: any []): any {
+    let TeamMedian: any = 0;
+    if ( arrays.length > 0 ) {
+      TeamMedian = this.getMedianData(arrays.map(d => d.jobDuration )[0]);
+    }
   return TeamMedian;
 }
-getMedianData(arrSort: any []): any[] {
+getMedianData(arrSort: any []): any {
   let len = arrSort.length;
-  arrSort.sort((a,b) => a -b);
+  arrSort.sort((a, b ) => a - b );
   const mid = Math.ceil(len / 2);
   const median = len % 2 == 0 ? (arrSort[mid] + arrSort[mid - 1]) / 2 : arrSort[mid - 1];
   return median;
 }
-   getMedian2(arrays: any []): any[] {
-   arrays.sort(function(a, b) {
-          return a - b;
-      });
-      var data="";
-    if(arrays.length < 2){
-      if(arrays[0]!=null){
-        data=arrays[0];
-      }else{
-        data=0;
-      }  
-    }else{
-      if((arrays.length)%2!=0){
-        var index = Math.round((arrays.length)/2,1);
-        data = arrays[index-1];
-      }
-      else{
-        var index = (arrays.length)/2;
-        var index2 = index-1;
-        data = (arrays[index]+arrays[index2])/2;
-      }
-    }
-    if(data<0){
-      data=data*-1;
-    }
-    return data||0;
-}
-   getMedian(arrays: any []): any[] {
-      arrays.sort(function(a, b) {
-              return a[1] - b[1];
-          });
-          var data="";
-       // console.log("getMedian", arrays);
-        if(arrays.length < 2){
-          if(arrays[0]!=null){
-            data=arrays[0][1];
-          }else{
-            data=0;
-          }  
-        }else{
-          if((arrays.length)%2!=0){
-            var index = Math.round((arrays.length)/2,1);
-            data = arrays[index-1][1];
-          }
-          else{
-            var index = (arrays.length)/2;
-            var index2 = index-1;
-            data = (arrays[index][1]+arrays[index2][1])/2;
-          }
-        }
-        if(data<0){
-          data=data*-1;
-        }
-        return data||0;
-    }
+
   filterData() {
     let that = this;
     const myheader = new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded');
@@ -349,8 +312,8 @@ getMedianData(arrSort: any []): any[] {
     ];
     });
     console.log('Data filter');
-    
-    
+
+
   }
    Month(dd: any) {
     var months    = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -390,17 +353,15 @@ getMedianData(arrSort: any []): any[] {
       series: [{
           name: 'Created Jobs',
           data: []
-        },{
+        }, {
           name: 'Completed Jobs',
           data: []
-        }], 
+        }],
         xaxis: {
           title: {
           text: 'Weekly Report'
+          }
         },
-          type: 'string'
-        },
-     
       chart: {
         height: 550,
         fontFamily: '"Open Sans", "Helvetica Neue", sans-serif',
@@ -436,12 +397,11 @@ getMedianData(arrSort: any []): any[] {
       markers: {
         size: 1
       },
-     
       yaxis: {
         title: {
           text: 'Number of jobs'
         },
-        min: 5,
+        min: 20,
         max: 40
       },
       legend: {
@@ -459,11 +419,11 @@ getMedianData(arrSort: any []): any[] {
       series: [
         {
           name: 'Median Time',
-          data: [44, 55, 57, 21,1]
+          data: this.MedianData
         },
         {
           name: 'Median Duration',
-          data: [76, 85, 101, 9,3]
+          data: this.OverDueMedianData
         }
       ],
       chart: {

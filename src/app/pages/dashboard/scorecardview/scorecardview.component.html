@@ -167,7 +167,7 @@
                         Loading..
                         </div>-->
                         <div id="chart1" >
-                          <apx-chart #chart
+                          <apx-chart #chart1
                             [series]="chartOptions.series"
                             [chart]="chartOptions.chart"
                             [xaxis]="chartOptions.xaxis"
@@ -187,6 +187,7 @@
             	    <div  class="w-100 border p-2">
                     <div class="loading-box">
                     </div>
+                    <div id="chart2">
                      <apx-chart #chart2
                         [series]="ChartOptions2.series"
                         [chart]="ChartOptions2.chart"
@@ -200,6 +201,7 @@
                         [xaxis]="ChartOptions2.xaxis"
                         [title]="ChartOptions2.title"
                       ></apx-chart>
+                    </div>
                   </div>
             </div>
             <div class="col-md-12 mb-2">
