@@ -38,6 +38,7 @@
     "lodash": "^4.17.20",
     "moment": "^2.27.0",
     "ng-apexcharts": "^1.5.1",
+    "percentile": "^1.4.0",
     "primeicons": "^4.0.0",
     "primeng": "^10.0.0-rc.3",
     "rxjs": "~6.5.4",

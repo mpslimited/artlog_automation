@@ -140,7 +140,11 @@ export class ScorecardviewComponent extends BaseComponent implements OnInit {
   ComplatedJobs : any = [];
   WeeklyData : any  = [];
   WeeklyJobsLoading: boolean ;
+  medianDataLoading: boolean;
+  percentileDataLoading : boolean;
+  oherGraphDataLoading : boolean;
   api1Data : any = [];
+  ScoreCard : any = { NumHold: 0, };
   constructor(
     private confirmationService: ConfirmationService,
     protected baseServices: BaseService,
@@ -176,6 +180,7 @@ export class ScorecardviewComponent extends BaseComponent implements OnInit {
     });
   }
   medianDataLoadAPI() {
+    this.medianDataLoading = true;
     let that = this;
     let frmData = {
       'currentStatus': this.frmdt.currentStatus.toString(),
@@ -186,7 +191,7 @@ export class ScorecardviewComponent extends BaseComponent implements OnInit {
       'module': this.frmdt.module
     };
     const myheader = new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded');
-    this.WeeklyJobsLoading = true;
+    this.medianDataLoading = true;
     /* here is code foro  ARTLOG_SCORECARDLOAD  scorecardload action*/
 
     // tslint:disable-next-line: max-line-length
@@ -260,13 +265,42 @@ export class ScorecardviewComponent extends BaseComponent implements OnInit {
 
         that.OverDueMedianData = GraphDataM;
         that.MedianData = GraphDataO;
-        debugger
-        that.ChartOptions2.series[0].data =  GraphDataM;
-        that.ChartOptions2.series[1].data = GraphDataO;
+        that.ChartOptions2.series = [
+          {
+            name: 'Median Time',
+            data: GraphDataM
+          },
+          {
+            name: 'Median Duration',
+            data: GraphDataO
+          }
+        ];
+        that.ChartOptions3.series = [
+          {
+            name: '10th Percentile',
+            data: GraphData10th
+          },
+          {
+            name: '90th Percentile',
+            data: GraphData90th
+          }
+        ];
+       this.medianDataLoading = false;
+       this.ChartOptions4.series = [
+        {
+          name: 'In-Progress',
+          data: [400, 430, 448, 470, 540, 580]
+        },
+        {
+          name: 'Hold',
+          data: [400, 430, 448, 470, 540, 580]
+        },
+        {
+          name: 'Complated',
+          data: [400, 430, 448, 470, 540, 580]
+        }
 
-        that.ChartOptions3.series[0].data =  GraphData10th;
-        that.ChartOptions3.series[1].data = GraphData90th;
-
+      ];
         /**/
       });
      });
@@ -347,6 +381,7 @@ getMedianData(arrSort: any []): any {
         data:  ComplatedData
       }
     ];
+     that.WeeklyJobsLoading = false;
     });
     console.log('Data filter');
 
@@ -377,6 +412,9 @@ getMedianData(arrSort: any []): any {
     this.pageinit();
     this.medianTimePerTeam();
     this.WeeklyJobsLoading = true;
+    this.medianDataLoading = true;
+    this.percentileDataLoading = true;
+    this.oherGraphDataLoading = true;
     this.createdVSComplated();
     this.filterData();
     this.medianDataLoadAPI();
@@ -384,7 +422,7 @@ getMedianData(arrSort: any []): any {
     this.AllJobsView();
   }
   createdVSComplated() {
-    this.WeeklyJobsLoading = false;
+    
     this.chartOptions = {
       series: [{
           name: 'Created Jobs',
@@ -453,11 +491,11 @@ getMedianData(arrSort: any []): any {
       series: [
         {
           name: 'Median Time',
-          data: [1, 3, 1, 0]
+          data: [0, 0, 0, 0]
         },
         {
           name: 'Median Duration',
-          data: [1, 3, 2, 0]
+          data: [0, 0, 0, 0]
         }
       ],
       chart: {
@@ -576,15 +614,15 @@ getMedianData(arrSort: any []): any {
       series: [
         {
           name: 'In-Progress',
-          data: [400, 430, 448, 470, 540, 580]
+          data: [0, 0, 0, 0, 0, 0]
         },
         {
           name: 'Hold',
-          data: [400, 430, 448, 470, 540, 580]
+          data: [0, 0, 0, 0, 0, 0]
         },
         {
           name: 'Complated',
-          data: [400, 430, 448, 470, 540, 580]
+          data: [0, 0, 0, 0, 0, 0]
         }
 
       ],
@@ -602,7 +640,7 @@ getMedianData(arrSort: any []): any {
       },
       xaxis: {
         categories: [
-          'South Korea',
+          'I',
           'Canada',
           'United Kingdom',
           'Netherlands',
