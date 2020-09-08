@@ -109,7 +109,8 @@ export class ScorecardviewComponent extends BaseComponent implements OnInit {
   MedianData: any = [];
   dataloading: boolean ;
   medianLoading: boolean ;
-
+  NanCampaignID = [ 'f2e038c4-9191-4480-a55e-2dc92d3f52e7', '3b6d57c7-55c1-489b-aeff-b81b7aaff1ef', '0ad18ec8-8648-4d15-8681-2c3f4e0ee914', 'bb6f3943-5a47-49f0-ab82-c6278d1dad29'];
+  summaryOfoverdueModel: boolean;
   public dataSource = new BehaviorSubject<AbstractControl[]>([]);
   WeeklyJobsCData: any = [];
   WeeklyJobsCOptions: any = {};
@@ -144,7 +145,11 @@ export class ScorecardviewComponent extends BaseComponent implements OnInit {
   percentileDataLoading : boolean;
   oherGraphDataLoading : boolean;
   api1Data : any = [];
-  ScoreCard : any = { NumHold: 0, };
+  cartdata: any = [];
+  cols: any = [];
+  gridApi;
+  gridColumnApi;
+
   constructor(
     private confirmationService: ConfirmationService,
     protected baseServices: BaseService,
@@ -203,8 +208,12 @@ export class ScorecardviewComponent extends BaseComponent implements OnInit {
           });
       });
       promise.then(data => {
+        debugger
         let median = (data as any ).permissionResponce ;
         let permissionDuration = [];
+        that.ScoreCard.NumOver = that.api1Data.reduce((a, b) => {  return a+b.overDueCount},0)
+        that.ScoreCard.overDueIDs = that.api1Data.reduce((a, b) => {  return a.concat(b.overDueIds)},[]);
+        that.ScoreCard.MedianDur = that.getMedianData(median.map(d => d.duration));
         let permissiondt = that.api1Data.filter(d => d.teams === 'Permission');
         for ( let t1 of permissiondt) {
           permissionDuration = permissionDuration.concat( t1.jobDuration);
@@ -262,7 +271,6 @@ export class ScorecardviewComponent extends BaseComponent implements OnInit {
         per90th = ( ClipArtOverMedian.length > 0 ) ? this.getPercentileData(ClipArtOverMedian.map(d => d.duration), 90) : 0  ;
         GraphData10th.push(per10th);
         GraphData90th.push(per90th);
-
         that.OverDueMedianData = GraphDataM;
         that.MedianData = GraphDataO;
         that.ChartOptions2.series = [
@@ -285,26 +293,42 @@ export class ScorecardviewComponent extends BaseComponent implements OnInit {
             data: GraphData90th
           }
         ];
+        
        this.medianDataLoading = false;
-       this.ChartOptions4.series = [
-        {
-          name: 'In-Progress',
-          data: [400, 430, 448, 470, 540, 580]
-        },
-        {
-          name: 'Hold',
-          data: [400, 430, 448, 470, 540, 580]
-        },
-        {
-          name: 'Complated',
-          data: [400, 430, 448, 470, 540, 580]
-        }
-
-      ];
+       debugger
+        let setOfCamp = [...new Set((data as any ).campaignIDDt.map(d => d._id.campaignID))];
+        setOfCamp = that.Campaigns.filter(d => d.value !='').map(d => d.value);
+        that.Campaigns; // all set of campaignID and Names
+       let GraphData = [];
+       that.ChartOptions4.series = [];
+       for ( let sofCam of setOfCamp ) {
+         let dd = (data as any ).campaignIDDt.filter(d => d._id.campaignID == sofCam)
+         let dd1 = dd.map(d => ({ status: d._id.status, count: d.count})).sort( (a, b) =>  a.status.localeCompare(b.status));
+         let ActiveC = (dd.filter(d => d._id.status == 'Active').length) ? dd.filter(d => d._id.status == 'Active')[0].count : 0 ;
+         let ApprovedC = (dd.filter(d => d._id.status == 'Approved').length) ? dd.filter(d => d._id.status == 'Approved')[0].count : 0 ;
+         let CancelledC = (dd.filter(d => d._id.status == 'Cancelled').length) ? dd.filter(d => d._id.status == 'Cancelled')[0].count : 0 ;
+         let NeedsChangesC = (dd.filter(d => d._id.status == 'NeedsChanges').length) ? dd.filter(d => d._id.status == 'NeedsChanges')[0].count : 0 ;
+         GraphData.push([ActiveC, ApprovedC, CancelledC, NeedsChangesC]);
+         that.ChartOptions4.series.push({ 'name': that.getCampNameByID(sofCam), 'data': [ActiveC, ApprovedC, CancelledC, NeedsChangesC]})
+       }
+       that.ScoreCard.NumHold = (data as any ).campaignIDDt.filter(d => d._id.status =='NeedsChanges').reduce( (a, b) => {
+        return a + b.count;
+       }, 0);
+       that.ScoreCard.totalJobs = (data as any ).campaignIDDt.reduce( (a, b) => {
+        return a + b.count;
+       }, 0);
         /**/
       });
      });
   }
+getCampNameByID(id: any): string {
+  let ret = '-';
+  let dt = this.Campaigns.filter( d => d.value == id);
+  if(dt.length > 0 && !!dt[0].label) {
+    ret = dt[0].label;
+  }
+  return ret;
+}
 combineMediun(arrays: any []): any {
     let TeamMedian: any = 0;
     if ( arrays.length > 0 ) {
@@ -370,14 +394,13 @@ getMedianData(arrSort: any []): any {
       }
     that.CreatedJobs = CreatedData;
     that.ComplatedJobs = ComplatedData;
-
     that.chartOptions.series = [
       {
         name: 'Created Jobs',
         data: CreatedData
       },
       {
-        name: 'Complated Jobs',
+        name: 'Completed Jobs',
         data:  ComplatedData
       }
     ];
@@ -406,11 +429,64 @@ getMedianData(arrSort: any []): any {
   clearData() {
     console.log('Data filter');
   }
-
+  OverDuejobs(ids:any) {
+    debugger
+    let body = new HttpParams();
+    body = body.append('ids', JSON.stringify(ids));
+    this.httpService.extractPostData(CustomerServicesUrls.ARTLOG_SCORECARDOverDue, body, null).subscribe((data) => {
+     debugger
+     console.log(data);
+    });
+    //this.viewSummary();
+  }
+  viewSummary() {
+    this.summaryOfoverdueModel = true;
+  }
+  onGridReady (params : any) {
+    this.gridApi = params.api;
+    this.gridColumnApi = params.columnApi;
+  }
+  exportAsCSV() {
+    this.gridApi.exportDataAsCsv({});
+  }
   ngOnInit() {
+    this.cols = [
+      { field: 'job_key', header: 'Job Key' },
+      { field: 'name', header: 'Job Name' },
+      { field: 'grade', header: 'Grade' },
+      { field: 'module', header: 'Module' },
+      { field: 'batch', header: 'Batch' },
+      { field: 'topic', header: 'Topic' },
+      { field: 'cstage', header: 'Current Stage' },
+
+      { field: 'currentRTeam', header: 'CR Team' },
+      { field: 'curriculum', header: 'Curriculum' },
+      { field: 'revisionC', header: 'Revision Count' },
+      { field: 'artcomplex', header: 'Art-Complexity' },
+      { field: 'artassion', header: 'Art-Assignment' },
+      { field: 'flowStatus', header: 'Inflow/Outflow' },
+      { field: 'job_active_stage.status', header: 'Completion Status' },
+
+      { field: 'batchCDate', header: 'Batch Completion Date ' },
+      { field: 'receiveddate', header: 'ArtTeam Recived Date' },
+      { field: 'mpsDueDate', header: 'MPS DueDate' },
+      { field: 'artTeamStatus', header: 'ArtTeam Status' },
+      { field: 'artTeamPriority', header: 'ArtTeam Priority' },
+      { field: 'exceptionCategory', header: 'Exception Cat.' },
+      { field: 'exception', header: 'Exceptoin' },
+
+      { field: 'risk', header: 'Permission-Risk' },
+      { field: 'impact', header: 'Permission-Impact' },
+      { field: 'workflow', header: 'Workflow' },
+      { field: 'permissionType', header: 'Permission Type' },
+    ];
+    this.ScoreCard = { NumHold: 0, totalJobs: 0, Exptat: 0, MedianDur: 0, NumOver : 0 };
     this.frmdt = { currentStatus: [], workflowPreset: '', compaignId : '', jobTypes: '', grade: '', module: '' };
     this.pageinit();
     this.medianTimePerTeam();
+
+   // this.percentileView();
+    // this.AllJobsView();
     this.WeeklyJobsLoading = true;
     this.medianDataLoading = true;
     this.percentileDataLoading = true;
@@ -422,7 +498,7 @@ getMedianData(arrSort: any []): any {
     this.AllJobsView();
   }
   createdVSComplated() {
-    
+    this.WeeklyJobsLoading = false;
     this.chartOptions = {
       series: [{
           name: 'Created Jobs',
@@ -433,7 +509,7 @@ getMedianData(arrSort: any []): any {
         }],
         xaxis: {
           title: {
-          text: 'Weekly Report'
+          text: 'Weekly Report',
           }
         },
       chart: {
@@ -446,9 +522,6 @@ getMedianData(arrSort: any []): any {
           blur: 10,
           opacity: 0.2
         },
-        toolbar: {
-          show: false
-        }
       },
       colors: ['#77B6EA', '#545454'],
       dataLabels: {
@@ -458,7 +531,7 @@ getMedianData(arrSort: any []): any {
         curve: 'smooth'
       },
       title: {
-        text: 'Created Jobs & Complated Jobs',
+        text: 'Created Jobs & Completed Jobs',
         align: 'left'
       },
       grid: {
@@ -468,20 +541,13 @@ getMedianData(arrSort: any []): any {
           opacity: 0.5
         }
       },
-      markers: {
-        size: 1
-      },
-      yaxis: {
-        title: {
-          text: 'Number of jobs'
-        },
-        min: 20,
-        max: 40
-      },
+      
       legend: {
         position: 'top',
         horizontalAlign: 'right',
         floating: true,
+        offsetY: -10,
+        offsetX: -5
       }
     };
     // -------------end ----------------------
@@ -506,7 +572,7 @@ getMedianData(arrSort: any []): any {
         bar: {
           horizontal: false,
           columnWidth: '55%',
-          endingShape: 'rounded'
+          endingShape: 'flat'
         }
       },
       dataLabels: {
@@ -568,7 +634,7 @@ getMedianData(arrSort: any []): any {
         bar: {
           horizontal: false,
           columnWidth: '55%',
-          endingShape: 'rounded'
+          endingShape: 'flat'
         }
       },
       dataLabels: {
@@ -609,23 +675,8 @@ getMedianData(arrSort: any []): any {
     };
   }
   AllJobsView() {
-
-    this.ChartOptions4 = {
-      series: [
-        {
-          name: 'In-Progress',
-          data: [0, 0, 0, 0, 0, 0]
-        },
-        {
-          name: 'Hold',
-          data: [0, 0, 0, 0, 0, 0]
-        },
-        {
-          name: 'Complated',
-          data: [0, 0, 0, 0, 0, 0]
-        }
-
-      ],
+   this.ChartOptions4 = {
+      series: [ ],
       chart: {
         type: 'bar',
         height: 350
@@ -640,13 +691,7 @@ getMedianData(arrSort: any []): any {
       },
       xaxis: {
         categories: [
-          'I',
-          'Canada',
-          'United Kingdom',
-          'Netherlands',
-          'Italy',
-          'France',
-          'Japan',
+          'In Progress','Completed','Cancelled','Hold'
         ]
       }
     };

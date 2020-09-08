@@ -19,7 +19,7 @@
             <a class="nav-link" [routerLinkActive]="['active', '']" [routerLink]="['/pages/admin/scorecardview']">Scorecard View</a>
           </li>
           <li class="nav-item" *ngIf="auth.roleName == 'Art Designer'">
-            <a class="nav-link" [routerLinkActive]="['active', '']" [routerLink]="['/pages/admin/performance']">Api Performance</a>
+            <a class="nav-link" [routerLinkActive]="['active', '']" [routerLink]="['/pages/admin/performance']">API Performance</a>
           </li>
           <!-- <li class="nav-item" *ngIf="auth.roleName == 'Art Designer'">
             <a class="nav-link" [routerLinkActive]="['active', '']" [routerLink]="['/pages/admin/scorecardview']">Recent Log</a>
@@ -31,21 +31,25 @@
       </div>
     </div>
     <form #baseForm="ngForm" class="form-horizontal border" >
+      <div class="loading-box"*ngIf="arrangeKkeys.length == 0 " >
+        Loading.. </div>
     <div class="row">
-      <div class="col-lg-12 grid-margin stretch-card">
 
+      <div class="col-lg-12 grid-margin stretch-card">
+        
           <div class="card-body ">
             <div class="card border-0">
               <div class="card-header bg-white border-bottom px-0 mb-3">
                   <div class="d-flex align-items-start">
                       <div class="p-0 mr-auto" >
-                          <h6 style="cursor: pointer;" >Summary Of Designer Create Asset Task</h6>
+                          <h6 style="cursor: pointer;">Designer Create Asset Task: Summary</h6>
                       </div>
                       <div>
                       </div>
                   </div>
               </div>
             <div class="row">
+              
               <div class="col-lg-12 mt-3">
                 <div class="table-responsive">
                 <table class="table table-bordered border-top">
@@ -60,30 +64,31 @@
                     <tr >
                       <td>Art-2 Designer Create Asset </td>
                       <td></td>
-                      <td class="text-center">High</td>
-                      <td class="text-center">Medium</td>
-                      <td class="text-center">Low</td>
+                      <td class="text-center font-weight-bold">High</td>
+                      <td class="text-center font-weight-bold">Medium</td>
+                      <td class="text-center font-weight-bold">Low</td>
                   </tr>
                     <tr>
                       <td>Work In-Progress</td>
-                      <td class="text-center"><a class="atag" (click)="allDataOfDCATastsummary()">{{dcaSummary.length}}</a></td>
+                      <td class="text-center"><a href="javascript:void(0)" (click)="allDataOfDCATastsummary()">{{dcaSummary.length}}</a></td>
                       <td></td>
                       <td></td>
                       <td></td>
                     </tr>
                     <tr>
                       <td>Overdue</td>
-                      <td class="text-center"><a class="atag" (click)="overdueDataOfDCATastsummary()">{{overDuedt.length}}</a></td>
+                      <td class="text-center">
+                        <a href="javascript:void(0)" (click)="overdueDataOfDCATastsummary()">{{overDuedt.length}}</a></td>
                       <td></td>
                       <td></td>
                       <td></td>
                     </tr>
                     <tr>
                       <td>Current Work Load</td>
-                      <td class="text-center"><a class="atag" (click)="allDataOfDCATastsummary()">{{dcaSummary.length}}</a></td>
-                      <td class="text-center"><a class="atag" (click)="highDataOfDCATastsummary()">{{highDt.length}}</a></td>
-                      <td class="text-center"><a class="atag" (click)="mediumDataOfDCATastsummary()">{{mediumDt.length}}</a></td>
-                      <td class="text-center"><a class="atag" (click)="lowDataOfDCATastsummary()">{{lowDt.length}}</a></td>
+                      <td class="text-center"><a href="javascript:void(0)" (click)="allDataOfDCATastsummary()">{{dcaSummary.length}}</a></td>
+                      <td class="text-center"><a href="javascript:void(0)" (click)="highDataOfDCATastsummary()">{{highDt.length}}</a></td>
+                      <td class="text-center"><a href="javascript:void(0)" (click)="mediumDataOfDCATastsummary()">{{mediumDt.length}}</a></td>
+                      <td class="text-center"><a href="javascript:void(0)" (click)="lowDataOfDCATastsummary()">{{lowDt.length}}</a></td>
                     </tr>
                   </tbody>
                 </table>
@@ -102,7 +107,7 @@
           <div class="card-header bg-white px-0 mb-2">
               <div class="d-flex align-items-start">
                   <div class="p-0 mr-auto" >
-                      <h6 style="cursor: pointer;" >Batch Wise Breakup Summary Of Designer Create Asset Task</h6>
+                      <h6 style="cursor: pointer;">Designer Create Asset: Batch Wise Breakup Summary</h6>
                   </div>
                   <div>
                 </div>
@@ -110,6 +115,7 @@
           </div>
           <div class="card-body ">
             <div class="row">
+              
               <div class="table-responsive">
                 <table class="table table-bordered border-top">
                   <thead>
@@ -122,7 +128,7 @@
                       <td *ngFor="let dt of arrangeKkeys; " style="width:110px"> {{dt.date}} </td>
                     </tr>
                     <tr>
-                      <td *ngFor="let dt of arrangeKkeys; let i = index" style="width:110px"> {{arrangData[dt.key].length |json}} </td>
+                      <td *ngFor="let dt of arrangeKkeys; let i = index" style="width:110px" class="text-center"><a href="javascript:void(0);" (click)="getDateWideSummary(dt)"> {{arrangData[dt.key].length |json}} </a> </td>
                     </tr>
                   </tbody>
                 </table>
@@ -142,12 +148,13 @@
   </form>
 </div>
 <!--Modal dialog for bulk data verification-->
- <p-dialog header="Summary of Designer Create Asset Task" [(visible)]="summaryOfDCATaskModel" [responsive]="true" showEffect="fade" [modal]="true"  [contentStyle]="{'min-height':'100px','overflow':'visible' }" [style]="{width: '70%'}" [maximizable]="true">
+ <p-dialog header="Designer Create Asset: Summary" [(visible)]="summaryOfDCATaskModel" [responsive]="true" showEffect="fade" [modal]="true"  [contentStyle]="{'min-height':'100px','overflow':'visible' }" [style]="{width: '70%'}" [maximizable]="true">
   <div class="card">
     <div class="row mb-2">
-        <div class="col-8  mt-2"> Total No. Of Jobs:<span class="font-weight-bold"> {{cartdata.length}}</span></div>
+        <div class="col-8  mt-2"> 
+          Total No. of Jobs:<span class="font-weight-bold"> {{cartdata.length}}</span>
+        </div>
         <div class="col-4 text-right "><a (click)="exportAsCSV()" class="text-white btn-primary btn btn-sm" >Export as CSV</a></div>
-
     </div>
     </div>
  <ag-grid-angular style="width: 100%; height: 400px;"

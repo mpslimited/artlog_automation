@@ -19,7 +19,7 @@
             <a class="nav-link" [routerLinkActive]="['active', '']" [routerLink]="['/pages/admin/scorecardview']">Scorecard View</a>
           </li>
           <li class="nav-item" *ngIf="auth.roleName == 'Art Designer'">
-            <a class="nav-link" [routerLinkActive]="['active', '']" [routerLink]="['/pages/admin/performance']">Api Performance</a>
+            <a class="nav-link" [routerLinkActive]="['active', '']" [routerLink]="['/pages/admin/performance']">API Performance</a>
           </li>
           <!-- <li class="nav-item" *ngIf="auth.roleName == 'Art Designer'">
             <a class="nav-link" [routerLinkActive]="['active', '']" [routerLink]="['/pages/admin/scorecardview']">Recent Log</a>
@@ -38,7 +38,7 @@
               <div class="d-flex align-items-start">
 
                   <div class="p-0 mr-auto" >
-                      <h6 style="cursor: pointer;" (click)="criteria=(criteria!=true)" data-toggle="collapse" href="#collapseSearch"> <i aria-hidden="true" class="fa fa-filter"></i> Search Filter
+                      <h6 style="cursor: pointer;" (click)="criteria=(criteria!=true)" data-toggle="collapse" href="#collapseSearch">Search Filter
                           <i [ngClass]="{' fa-angle-right': !criteria, ' fa-angle-down': criteria  }" class="fa " ></i>
                         </h6>
                   </div>
@@ -138,6 +138,7 @@
                 <div class="col-4">
                   <div class="loading-box"*ngIf="medianDataLoading" >
                         Loading.. 
+                        <img src="assets/images/loader.gif">
                   </div>
                   <table class="table table-striped table-bordered">
                     <tbody>
@@ -155,7 +156,10 @@
                         </tr>
                         <tr>
                           <td>NUMBER OF OVERDUE</td>
-                          <td><!-- <a href="#" @click.prevent="openModalDuration(overDueIds)">{{ScoreCard.NumOver}}</a> --> </td>
+                          <td>
+                            <a href="javascript:void(0)" (click)="OverDuejobs( ScoreCard.overDueIDs)">
+                              {{ScoreCard.NumOver}}</a>
+                          </td>
                         </tr>
                         <tr>
                           <td>NUMBER ON HOLD</td>
@@ -210,7 +214,7 @@
             </div>
             <div class="col-md-12 mb-2">
               <div  class="w-100 border p-2">
-                <div class="loading-box"*ngIf="medianDataLoading" >
+                <div class="loading-box" *ngIf="medianDataLoading" >
                         Loading.. 
                 </div>
                 <div id="chart3" >
@@ -232,7 +236,7 @@
           </div>
           <div class="col-md-12 mb-2">
             <div  class="w-100 border p-2">
-              <div class="loading-box">
+              <div class="loading-box" *ngIf="medianDataLoading" >
               </div>
               <div id="chart4" >
               <apx-chart
@@ -240,7 +244,7 @@
                 [chart]="ChartOptions4.chart"
                 [dataLabels]="ChartOptions4.dataLabels"
                 [plotOptions]="ChartOptions4.plotOptions"
-               
+                [xaxis]="ChartOptions4.xaxis"
               ></apx-chart>
             </div>
           </div>
@@ -252,3 +256,23 @@
       </div>
     </div>
 </div>
+<!--Modal dialog for bulk data verification-->
+<p-dialog header="Summary of Overdue jobs" [(visible)]="summaryOfoverdueModel" [responsive]="true" showEffect="fade" [modal]="true"  [contentStyle]="{'min-height':'100px','overflow':'visible' }" [style]="{width: '70%'}" [maximizable]="true">
+  <div class="card">
+    <div class="row mb-2">
+        <div class="col-8  mt-2"> 
+          Total No. of Jobs:<span class="font-weight-bold"> {{cartdata.length}}</span>
+        </div>
+        <div class="col-4 text-right "><a (click)="exportAsCSV()" class="text-white btn-primary btn btn-sm" >Export as CSV</a></div>
+    </div>
+    </div>
+ <ag-grid-angular style="width: 100%; height: 400px;"
+ class="ag-theme-balham"
+    [rowData]="cartdata"
+    [columnDefs]="cols"
+    (gridReady)="onGridReady($event)"
+    pagination="true">
+  </ag-grid-angular>
+
+  </p-dialog>
+

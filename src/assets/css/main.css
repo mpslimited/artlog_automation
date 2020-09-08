@@ -3406,7 +3406,7 @@ select.form-control:focus::-ms-value {
 .col-form-label-sm {
   padding-top: calc(0.5rem + 1px);
   padding-bottom: calc(0.5rem + 1px);
-  font-size: 0.875rem;
+  font-size: 0.80rem;
   line-height: 1.5; }
 
 .form-control-plaintext {
@@ -3427,7 +3427,7 @@ select.form-control:focus::-ms-value {
 .form-control-sm {
   height: 2rem;
   padding: 0.5rem 0.81rem;
-  font-size: 0.875rem;
+  font-size: 0.80rem;
   line-height: 1.5;
   border-radius: 0.2rem; }
 
@@ -3509,7 +3509,7 @@ textarea.form-control {
   max-width: 100%;
   padding: 0.25rem 0.5rem;
   margin-top: .1rem;
-  font-size: 0.875rem;
+  font-size: 0.80rem;
   line-height: 1.5;
   color: #fff;
   background-color: rgba(40, 167, 69, 0.9);
@@ -3610,7 +3610,7 @@ textarea.form-control {
   max-width: 100%;
   padding: 0.25rem 0.5rem;
   margin-top: .1rem;
-  font-size: 0.875rem;
+  font-size: 0.80rem;
   line-height: 1.5;
   color: #fff;
   background-color: rgba(220, 53, 69, 0.9);
@@ -3786,8 +3786,8 @@ textarea.form-control {
   user-select: none;
   background-color: transparent;
   border: 1px solid transparent;
-  padding: 0.875rem 2.5rem;
-  font-size: 0.875rem;
+  padding: 0.80rem 2.5rem;
+  font-size: 0.80rem;
   line-height: 1;
   border-radius: 0.1875rem;
   -webkit-transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, -webkit-box-shadow 0.15s ease-in-out;
@@ -4213,13 +4213,13 @@ fieldset:disabled a.btn {
 
 .btn-lg, .btn-group-lg > .btn {
   padding: 1rem 3rem;
-  font-size: 0.875rem;
+  font-size: 0.80rem;
   line-height: 1.5;
   border-radius: 0.1875rem; }
 
 .btn-sm, .btn-group-sm > .btn {
   padding: 0.5rem 0.81rem;
-  font-size: 0.875rem;
+  font-size: 0.80rem;
   line-height: 1.5;
   border-radius: 0.1875rem; }
 
@@ -4452,7 +4452,7 @@ input[type="button"].btn-block {
   display: block;
   padding: 0.5rem 1.5rem;
   margin-bottom: 0;
-  font-size: 0.875rem;
+  font-size: 0.80rem;
   color: #343a40;
   white-space: nowrap; }
 
@@ -4703,7 +4703,7 @@ input[type="button"].btn-block {
 .input-group-sm > .input-group-prepend > .btn,
 .input-group-sm > .input-group-append > .btn {
   padding: 0.5rem 0.81rem;
-  font-size: 0.875rem;
+  font-size: 0.80rem;
   line-height: 1.5;
   border-radius: 0.2rem; }
 
@@ -4885,7 +4885,7 @@ input[type="button"].btn-block {
   padding-top: 0.25rem;
   padding-bottom: 0.25rem;
   padding-left: 0.5rem;
-  font-size: 0.875rem; }
+  font-size: 0.80rem; }
 
 .custom-select-lg {
   height: calc(1.5em + 1rem + 2px);
@@ -5108,7 +5108,8 @@ input[type="button"].btn-block {
   .nav-tabs .nav-link {
     border: 1px solid transparent;
     border-top-left-radius: 0.25rem;
-    border-top-right-radius: 0.25rem; }
+    border-top-right-radius: 0.25rem;
+  color:#666; }
     .nav-tabs .nav-link:hover, .nav-tabs .nav-link:focus {
       border-color: #ebedf2 #ebedf2 #ebedf2; }
     .nav-tabs .nav-link.disabled {
@@ -5117,7 +5118,7 @@ input[type="button"].btn-block {
       border-color: transparent; }
   .nav-tabs .nav-link.active,
   .nav-tabs .nav-item.show .nav-link {
-    color: #343a40;
+    color: navy;font-weight:700;
     background-color: #ffffff;
     border-color: #ebedf2 #ebedf2 #ffffff; }
   .nav-tabs .dropdown-menu {
@@ -5796,7 +5797,7 @@ input[type="button"].btn-block {
 
 .pagination-sm .page-link {
   padding: 0.25rem 0.5rem;
-  font-size: 0.875rem;
+  font-size: 0.80rem;
   line-height: 1.5; }
 
 .pagination-sm .page-item:first-child .page-link {
@@ -6376,7 +6377,7 @@ a.close.disabled {
 .toast {
   max-width: 350px;
   overflow: hidden;
-  font-size: 0.875rem;
+  font-size: 0.80rem;
   background-color: rgba(255, 255, 255, 0.85);
   background-clip: padding-box;
   border: 1px solid rgba(0, 0, 0, 0.1);
@@ -6703,7 +6704,7 @@ a.close.disabled {
   word-spacing: normal;
   white-space: normal;
   line-break: auto;
-  font-size: 0.875rem;
+  font-size: 0.80rem;
   word-wrap: break-word;
   background-color: #fff;
   background-clip: padding-box;
@@ -9939,7 +9940,8 @@ a.text-dark:hover, a.text-dark:focus {
 body {
   padding: 0;
   margin: 0;
-  overflow-x: hidden; }
+  overflow-x: hidden;
+font-family:"Open Sans", sans-serif }
 
 .form-control,
 .form-control:focus {
@@ -10158,7 +10160,7 @@ h1, h2, h3, h4, h5, h6,
   font-family: "Open Sans", "Helvetica Neue", sans-serif }
 
 p {
-  font-size: 0.875rem; }
+  font-size: 0.80rem; }
 
 h1, .h1 {
   font-size: 2.19rem; }
@@ -10297,7 +10299,7 @@ code {
   padding: 5px;
   color: #d0002a;
   font-family: "Open Sans", "Helvetica Neue", sans-serif;
-  font-size: 0.875rem;
+  font-size: 0.80rem;
   border-radius: 4px; }
 
 .page-header {
@@ -10331,7 +10333,7 @@ code {
   -moz-transition: all 0.25s ease;
   -webkit-transition: all 0.25s ease;
   -ms-transition: all 0.25s ease;
-  font-size: calc(0.875rem - 0.05rem);
+  font-size: calc(0.80rem - 0.05rem);
   font-family: "Open Sans", "Helvetica Neue", sans-serif; }
   .footer a {
     color: #1bcfb4;
@@ -10968,7 +10970,7 @@ code {
 
 /* Buttons */
 .btn {
-  font-size: 0.875rem;
+  font-size: 0.80rem;
   line-height: 1;
   font-family: "Open Sans", sans-serif;
   /* Buttons with only icons */
@@ -10980,9 +10982,9 @@ code {
   .btn.btn-fw {
     min-width: 150px; }
   .btn.btn-sm, .btn-group-sm > .btn {
-    font-size: 12px; }
+    font-size: 11px; }
   .btn.btn-lg, .btn-group-lg > .btn {
-    font-size: 0.875rem; }
+    font-size: 0.80rem; }
   .btn.btn-xs {
     padding: 0.5rem 0.75rem;
     font-size: 0.625rem; }
@@ -11642,14 +11644,14 @@ code {
 .breadcrumb {
   border: 1px solid #ebedf2; }
   .breadcrumb .breadcrumb-item {
-    font-size: 0.875rem; }
+    font-size: 0.80rem; }
     .breadcrumb .breadcrumb-item.active {
       color: rgba(52, 58, 64, 0.8); }
   .breadcrumb.breadcrumb-custom {
     padding: 0 0;
     border-color: #dbe3e6; }
     .breadcrumb.breadcrumb-custom .breadcrumb-item {
-      font-size: 0.875rem;
+      font-size: 0.80rem;
       background: #dbe3e6;
       padding: 0.56rem 10px;
       color: #000;
@@ -11996,7 +11998,7 @@ code {
   .form-check .form-check-label {
     display: block;
     margin-left: 1.75rem;
-    font-size: 0.875rem;
+    font-size: 0.80rem;
     line-height: 1.5; }
     .rtl .form-check .form-check-label {
       margin-left: 0;
@@ -12206,7 +12208,7 @@ code {
 
 .dropdown .dropdown-menu {
   margin-top: .75rem;
-  font-size: 0.875rem;
+  font-size: 0.80rem;
   -webkit-box-shadow: 0px 1px 15px 1px rgba(230, 234, 236, 0.35);
   box-shadow: 0px 1px 15px 1px rgba(230, 234, 236, 0.35); }
   .dropdown .dropdown-menu .dropdown-item {
@@ -12314,7 +12316,7 @@ select.form-control {
     align-items: center;
     padding: 15px 15px;
     font-family: "ubuntu-regular", sans-serif;
-    font-size: 0.875rem; }
+    font-size: 0.80rem; }
     .icons-list > div i {
       display: inline-block;
       font-size: 20px;
@@ -12327,7 +12329,7 @@ ul,
 ol,
 dl {
   padding-left: 1rem;
-  font-size: 0.875rem; }
+  font-size: 11px; }
   ul li,
   ol li,
   dl li {
@@ -12551,14 +12553,14 @@ dl {
   .table thead th {
     border-top: 0;
     border-bottom-width: 1px;
-    font-family: "ubuntu-medium", sans-serif;
-    font-weight: initial; }
+    font-family: "Open Sans", sans-serif;
+    font-weight: 700; }
     .table thead th i {
       margin-left: 0.325rem; }
   .table th,
   .table td {
     vertical-align: middle;
-    font-size: 0.875rem;
+    font-size: 11px;
     line-height: 1;
     white-space: nowrap; }
     .table th img,
@@ -12653,7 +12655,7 @@ dl {
   line-height: 1.5; }
 
 .auth form .auth-link {
-  font-size: 0.875rem; }
+  font-size: 0.80rem; }
   .auth form .auth-link:hover {
     color: initial; }
 
@@ -12737,22 +12739,22 @@ dl {
           padding-right: 11px;
           border-right: none; } }
     .navbar .navbar-menu-wrapper .search-field .input-group input {
-      font-size: 0.875rem;
+      font-size: 0.80rem;
       padding: .5rem; }
       .navbar .navbar-menu-wrapper .search-field .input-group input:-ms-input-placeholder {
-        font-size: 0.875rem;
+        font-size: 0.80rem;
         color: #9c9fa6;
         font-family: "ubuntu-light", sans-serif; }
       .navbar .navbar-menu-wrapper .search-field .input-group input:-moz-placeholder {
-        font-size: 0.875rem;
+        font-size: 0.80rem;
         color: #9c9fa6;
         font-family: "ubuntu-light", sans-serif; }
       .navbar .navbar-menu-wrapper .search-field .input-group input::-moz-placeholder {
-        font-size: 0.875rem;
+        font-size: 0.80rem;
         color: #9c9fa6;
         font-family: "ubuntu-light", sans-serif; }
       .navbar .navbar-menu-wrapper .search-field .input-group input::-webkit-input-placeholder {
-        font-size: 0.875rem;
+        font-size: 0.80rem;
         color: #9c9fa6;
         font-family: "ubuntu-light", sans-serif; }
     .navbar .navbar-menu-wrapper .search-field .input-group i {
@@ -12794,7 +12796,7 @@ dl {
       align-items: center; }
       .navbar .navbar-menu-wrapper .navbar-nav .nav-item .nav-link {
         color: inherit;
-        font-size: 0.875rem;
+        font-size: 0.80rem;
         margin-left: 1.5rem;
         margin-right: 0;
         height: 70px;
@@ -13116,7 +13118,7 @@ dl {
         .sidebar .nav .nav-item .nav-link .menu-title {
           color: inherit;
           display: inline-block;
-          font-size: 0.875rem;
+          font-size: 0.80rem;
           line-height: 1;
           vertical-align: middle; }
         .sidebar .nav .nav-item .nav-link .badge {

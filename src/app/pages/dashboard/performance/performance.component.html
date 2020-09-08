@@ -19,7 +19,7 @@
             <a class="nav-link" [routerLinkActive]="['active', '']" [routerLink]="['/pages/admin/scorecardview']">Scorecard View</a>
           </li>
           <li class="nav-item" *ngIf="auth.roleName == 'Art Designer'">
-            <a class="nav-link" [routerLinkActive]="['active', '']" [routerLink]="['/pages/admin/performance']">Api Performance</a>
+            <a class="nav-link" [routerLinkActive]="['active', '']" [routerLink]="['/pages/admin/performance']">API Performance</a>
           </li>
           <!-- <li class="nav-item" *ngIf="auth.roleName == 'Art Designer'">
             <a class="nav-link" [routerLinkActive]="['active', '']" [routerLink]="['/pages/admin/scorecardview']">Recent Log</a>
@@ -39,7 +39,7 @@
               <div class="card-header bg-white border-bottom px-0 mb-3">
                   <div class="d-flex align-items-start">
                       <div class="p-0 mr-auto" >
-                          <h6 style="cursor: pointer;" >Summary Of Api Performance</h6>
+                          <h6 style="cursor: pointer;">API Performance: Summary</h6>
                       </div>
                       <div>
                       </div>
@@ -95,7 +95,7 @@
                       <th>Next Run Time</th>
                       <th>Last Run Time</th>
                       <th>Last Run Result</th>
-                      <th>Api Summary</th>
+                      <th>API Summary</th>
                   </tr>
                   </thead>
                   <tbody>
@@ -107,8 +107,8 @@
                       <td> {{ dt.process.nextRunTime}} </td>
                       <td> <span *ngIf="!!dt.process && !!dt.process.startTime">{{ dt.process.startTime }}</span></td>
                       <td>{{ (!dt.isError)? 'Successfull' : 'Failed'}}</td>
-                      <td> <a (click)="showapiDetails(dt)">Details </a>
-                      <a (click)="showhistoryOfApiPerformance(dt)">History</a></td>
+                      <td> <a href="javascript:void(0);" (click)="showapiDetails(dt)">Details </a>
+                      <a href="javascript:void(0);" (click)="showhistoryOfApiPerformance(dt)">History</a></td>
                     </tr>
                   </tbody>
                 </table>
@@ -123,7 +123,7 @@
 </div>
 
 <!--Modal dialog for bulk data verification-->
- <p-dialog header="History of Api Performance" [(visible)]="historyOfApiPerformance" [responsive]="true" showEffect="fade" [modal]="true"   [contentStyle]="{'min-height':'100px','overflow':'visible' }" [style]="{width: '70%'}" [maximizable]="true">
+ <p-dialog header="History of API Performance" [(visible)]="historyOfApiPerformance" [responsive]="true" showEffect="fade" [modal]="true"   [contentStyle]="{'min-height':'100px','overflow':'visible' }" [style]="{width: '70%'}" [maximizable]="true">
   <div class="card">
     <div class="row mb-2">
         <div class="col-8  mt-2"> Total data:<span class="font-weight-bold"> {{cartdata.length}}</span></div>
@@ -144,7 +144,7 @@
   </p-dialog>
 
   <!--Modal dialog for bulk data verification-->
- <p-dialog header="Api Details" [(visible)]="apiDetails" [responsive]="true" showEffect="fade" [modal]="true"   [contentStyle]="{'min-height':'100px','overflow':'visible' }" [style]="{width: '70%'}" [maximizable]="true">
+ <p-dialog header="API Details" [(visible)]="apiDetails" [responsive]="true" showEffect="fade" [modal]="true"   [contentStyle]="{'min-height':'100px','overflow':'visible' }" [style]="{width: '70%'}" [maximizable]="true">
   <div class="card">
     <div class="row mb-2">
         
@@ -162,15 +162,15 @@
                   </thead>
                   <tbody >
                     <tr>
-                     <td>Api Name </td>
+                     <td>API Name </td>
                      <td>{{ detailsData.apiTaskName }} for <span *ngIf=" !!detailsData.dataProcessed && !!detailsData.dataProcessed.key">{{ detailsData.dataProcessed.key}}</span></td>
                     </tr>
                     <tr>
-                     <td>Api URL </td>
+                     <td>API URL </td>
                      <td><span *ngIf="!!detailsData.APISendInfo "> {{detailsData.APISendInfo.url }}</span></td>
                     </tr>
                     <tr *ngIf="!!detailsData.APISendInfo">
-                     <td>Api data sended </td>
+                     <td>API data sended </td>
                      <td><span *ngIf="!!detailsData.APISendInfo.data "> {{detailsData.APISendInfo.data | json }}</span></td>
                     </tr>
                     <tr [ngClass]="{' alert-danger': detailsData.isError  }">
@@ -178,15 +178,14 @@
                      <td *ngIf="!!detailsData.responce" >{{detailsData.responce}}</td>
                     </tr>
                     <tr *ngIf="!!detailsData.process">
-                     <td>Api Trigger </td>
+                     <td>API Trigger </td>
                      <td> <span *ngI}f="!!detailsData.process.trigger">{{detailsData.process.trigger}}</span></td>
                     </tr>
                     <tr *ngIf="!!detailsData.process">
-                     <td>Api Timing </td>
+                     <td>API Timing </td>
                      <td>Started: <span *ngIf="!!detailsData.process.startTime">{{detailsData.process.startTime}}</span> And ended: <span *ngIf="!!detailsData.process.endTime">{{detailsData.process.endTime}}</span> and Next Run Time:<span *ngIf="!!detailsData.process.nextRunTime">{{detailsData.process.nextRunTime}}</span></td>
                     </tr>
                   </tbody>
                 </table> 
               </div>
   </p-dialog>
-

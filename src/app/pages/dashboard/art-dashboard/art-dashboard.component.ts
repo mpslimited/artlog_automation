@@ -135,23 +135,28 @@ export class ArtDashboardComponent extends BaseComponent implements OnInit {
     this.viewSummary();
   }
   overdueDataOfDCATastsummary() {
-    console.log('function');
+    this.cartdata = this.overDuedt;
     this.viewSummary();
   }
   highDataOfDCATastsummary() {
-    console.log('function');
+    this.cartdata = this.highDt;
     this.viewSummary();
   }
   mediumDataOfDCATastsummary() {
-    console.log('function');
+    this.cartdata = this.mediumDt;
     this.viewSummary();
   }
   lowDataOfDCATastsummary() {
-    console.log('function');
+    this.cartdata = this.lowDt;
     this.viewSummary();
   }
-  getDateWideSummary() {
-    console.log('function');
+  getWorkinprogress( dt: any){
+    debugger
+    //this.cartdata = this.OptData.filter(d => d.receiveddate == dt.date && d.grade ==dt.grade && d.module == dt.module  && d.batch == dt.batch  );
+    this.viewSummary();
+  }
+  getDateWideSummary(dt: any) {
+    this.cartdata = this.OptData.filter(d => d.receiveddate == dt.date && d.grade ==dt.grade && d.module == dt.module  && d.batch == dt.batch  );
     this.viewSummary();
   }
 

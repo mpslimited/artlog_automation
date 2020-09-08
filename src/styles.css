@@ -120,7 +120,7 @@ body .ui-dialog{z-index:1031!important}
 .ui-table-frozen-view .ui-table-scrollable-header-table .ui-table-thead > tr > th{padding-bottom: 8px!important;}
 .ui-table .ui-menubar{border:0 none!important}
 th .ui-multiselect-open{ position: absolute !important;top:39px!important;}
-.ui-splitbutton button{font-size:12px!important}
+.ui-splitbutton button{font-size:11px!important}
 .ui-menubar-custom{margin-bottom:8px!important}
 .ui-menubar .ui-menubar-custom, .ui-table-caption, .ui-table-summary, body .ui-table .ui-table-caption, body .ui-table .ui-table-summary{padding: 0!important}
 .ui-splitbutton .ui-menuitem-link{text-align: left!important;}
@@ -131,12 +131,12 @@ th .ui-multiselect-open{ position: absolute !important;top:39px!important;}
   color:#000000;
 }
 .custom-clear-btn{
-  font-size:12px!important;
+  font-size:11px!important;
 }
 .custom-btn-dropdown{
   padding: 8px!important;
   color: #333333!important;
-  font-size: 12px!important;
+  font-size: 11px!important;
   background: #ffffff!important;
   border: 1px solid #a6a6a6!important;
   transition: border-color 0.2s;
@@ -155,7 +155,9 @@ dashboard{ width:100%; }
 .width60Perc {
   width: 60%;
 }
-
+.table-responsive > table > thead{
+  font-weight: 700;
+}
 .width40Perc {
   width: 40%;
 }

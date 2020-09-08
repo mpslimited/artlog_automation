@@ -54,7 +54,7 @@ export class PerformanceComponent extends BaseComponent implements OnInit {
     let that = this;
     this.httpService.extractPostData(CustomerServicesUrls.ARTLOG_APIPERFORMANCE, null, null).subscribe((data) => {
         debugger
-        console.log(data.length);
+      //  console.log(data.length);
       that.ApiData = data.data;
       that.ApiHistory = data.result;
     });
@@ -79,11 +79,11 @@ export class PerformanceComponent extends BaseComponent implements OnInit {
   ngOnInit() {
     this.getAPIStatusData();
     this.cols = [{ field: 'apiTaskName', headerName: 'Rule' },
-    { field: 'responce', headerName: 'Details/Responce' },
+    { field: 'responce', headerName: 'Details/Response' },
     { field: 'process.trigger', headerName: 'Status' },
     { field: 'process.nextRunTime', headerName: 'Next Run Time' },
     { field: 'process.startTime', headerName: 'Last Run Time' },
-    { field: 'isError', headerName: 'Api Result' },
+    { field: 'isError', headerName: 'API Result' },
     { field: 'isError', headerName: 'API Summary' },
     ];
   }

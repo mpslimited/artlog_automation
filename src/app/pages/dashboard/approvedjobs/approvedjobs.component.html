@@ -19,7 +19,7 @@
             <a class="nav-link" [routerLinkActive]="['active', '']" [routerLink]="['/pages/admin/scorecardview']">Scorecard View</a>
           </li>
           <li class="nav-item" *ngIf="auth.roleName == 'Art Designer'">
-            <a class="nav-link" [routerLinkActive]="['active', '']" [routerLink]="['/pages/admin/performance']">Api Performance</a>
+            <a class="nav-link" [routerLinkActive]="['active', '']" [routerLink]="['/pages/admin/performance']">API Performance</a>
           </li>
          <!-- <li class="nav-item" *ngIf="auth.roleName == 'Art Designer'">
             <a class="nav-link" [routerLinkActive]="['active', '']" [routerLink]="['/pages/admin/scorecardview']">Recent Log</a>
@@ -37,7 +37,7 @@
           <div class="card-header">
               <div class="d-flex align-items-start">
                   <div class="p-0 mr-auto" >
-                      <h6 style="cursor: pointer;" (click)="criteria=(criteria!=true)" data-toggle="collapse" href="#collapseSearch"> <i aria-hidden="true" class="fa fa-filter"></i>Search Filter
+                      <h6 style="cursor: pointer;" (click)="criteria=(criteria!=true)" data-toggle="collapse" href="#collapseSearch">Search Filter
                           <i [ngClass]="{' fa-angle-right': !criteria, ' fa-angle-down': criteria  }" class="fa " ></i>
                         </h6>
                   </div>
@@ -777,7 +777,7 @@
                     <td>{{rowsmoveTags.lessonlet}}</td>
                     <td>{{rowsmoveTags.batch}}</td>
                     <td>{{rowsmoveTags.tags}}</td>
-                    <td> <textarea pInputTextarea type="text" [(ngModel)]="rowsmoveTags.generatedTags" ></textarea></td>
+                    <td> <textarea pInputTextarea class="w-100" type="text" [(ngModel)]="rowsmoveTags.generatedTags" ></textarea></td>
                    <!--<td></td>
                 --> </tr>
             </ng-template>
@@ -794,14 +794,14 @@
 <!--Modal dialog for bulk batch generation-->
 <p-dialog header="Bulk Insert Batch" [(visible)]="bulkBatchModal" [responsive]="true" showEffect="fade" [modal]="true"  [style]="{width: '30%'}">
   <div class="ui-g ui-fluid">
-      <input type="text" pInputText [(ngModel)]="bulkBatch"/>
+      <input type="text" class="w-100" pInputText [(ngModel)]="bulkBatch"/>
     </div>
     <p-footer>
       <button type="button" pButton icon="fa fa-floppy-o" class="ui-button-success btn btn-sm" (click)="saveBatchData()" label="Save"></button>
   </p-footer>
 </p-dialog>
 <!--Modal dialog for bulk bulkExceptionCatModal generation-->
-<p-dialog header="Bulk Insert Exception Cat" [(visible)]="bulkExceptionCatModal" [responsive]="true" showEffect="fade" [modal]="true"  [contentStyle]="{'min-height':'100px','overflow':'visible' }" [style]="{width: '70%'}" [maximizable]="true">
+<p-dialog header="Bulk Insert Exception Cat" [(visible)]="bulkExceptionCatModal" [responsive]="true" showEffect="fade" [modal]="true"  [contentStyle]="{'min-height':'100px','overflow':'visible' }" [style]="{width: '30%'}" [maximizable]="false">
   <div class="ui-g ui-fluid">
      <!-- <input type="text" pInputText [(ngModel)]="bulkExceptionCat"/>-->
      <p-dropdown  class="ml-1" [options]="excCat" [(ngModel)]="bulkExceptionCat" ></p-dropdown >
@@ -813,7 +813,7 @@
 <!--Modal dialog for bulk bulkExceptionModal generation-->
 <p-dialog header="Bulk Insert Exception " [(visible)]="bulkExceptionModal" [responsive]="true" showEffect="fade" [modal]="true"  [style]="{width: '30%'}">
   <div class="ui-g ui-fluid">
-      <input type="text" pInputText [(ngModel)]="bulkException"/>
+      <input type="text" class="w-100" pInputText [(ngModel)]="bulkException"/>
     </div>
     <p-footer>
       <button type="button" pButton icon="fa fa-floppy-o" class="ui-button-success btn btn-sm" (click)="savebulkException()" label="Save"></button>
@@ -823,7 +823,7 @@
 <p-dialog header="Bulk Batch Complation Date " [(visible)]="bulkBatchCDateModal" [responsive]="true" showEffect="fade" [modal]="true"  [style]="{width: '30%'}">
   <div class="ui-g ui-fluid">
     <span class="">Formate : MM-DD-YYYY</span>
-      <input type="text" pInputText [(ngModel)]="bulkBatchCDate" placeholder="MM-DD-YYYY"/>
+      <input type="text" class="w-100" pInputText [(ngModel)]="bulkBatchCDate" placeholder="MM-DD-YYYY"/>
     </div>
     <p-footer>
       <button type="button" pButton icon="fa fa-floppy-o" class="ui-button-success btn btn-sm" (click)="savebulkBatchCDate()" label="Save"></button>
@@ -863,7 +863,7 @@
 <!--Modal dialog for bulk tag generation-->
 <p-dialog header="Bulk Insert Tags" [(visible)]="bulkTagModal" [responsive]="true" showEffect="fade" [modal]="true"  [style]="{width: '30%'}">
   <div class="ui-g ui-fluid">
-      <input type="text" pInputText [(ngModel)]="bulkTags"/>
+      <input type="text" class="w-100" pInputText [(ngModel)]="bulkTags"/>
     </div>
     <p-footer>
       <button type="button" pButton icon="fa fa-floppy-o" class="ui-button-success btn btn-sm" (click)="saveTagData()" label="Save"></button>
@@ -915,7 +915,7 @@
   [plotOptions]="apex.plotOptions" [chart]="apex.chart"
   [dataLabels]="apex.dataLabels" [autoUpdateSeries]="false"></apx-chart>
 </div>
-  <p> <!--Here is graph code  : type="BarChart" <google-chart [data]="myData"></google-chart> -->{{selectedTagsData| json}}</p>
+  <p> <!--Here is graph code  : type="BarChart" <google-chart [data]="myData"></google-chart> {{selectedTagsData| json}}--></p>
 </div>
 <p-footer>
    <!-- <button type="button" pButton icon="pi pi-check" class="ui-button-success btn btn-sm" (click)="saveVerifiedData()" label="Submit"></button>
