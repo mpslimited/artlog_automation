@@ -93,7 +93,6 @@ export class ArtProductivityComponent extends BaseComponent implements OnInit {
       { field: 'batch', header: 'Batch' },
       { field: 'topic', header: 'Topic' },
       { field: 'cstage', header: 'Current Stage' },
-
       { field: 'currentRTeam', header: 'CR Team' },
       { field: 'curriculum', header: 'Curriculum' },
       { field: 'revisionC', header: 'Revision Count' },
@@ -101,7 +100,6 @@ export class ArtProductivityComponent extends BaseComponent implements OnInit {
       { field: 'artassion', header: 'Art-Assignment' },
       { field: 'flowStatus', header: 'Inflow/Outflow' },
       { field: 'job_active_stage.status', header: 'Completion Status' },
-
       { field: 'batchCDate', header: 'Batch Completion Date ' },
       { field: 'receiveddate', header: 'ArtTeam Recived Date' },
       { field: 'mpsDueDate', header: 'MPS DueDate' },
@@ -109,7 +107,6 @@ export class ArtProductivityComponent extends BaseComponent implements OnInit {
       { field: 'artTeamPriority', header: 'ArtTeam Priority' },
       { field: 'exceptionCategory', header: 'Exception Cat.' },
       { field: 'exception', header: 'Exceptoin' },
-
       { field: 'risk', header: 'Permission-Risk' },
       { field: 'impact', header: 'Permission-Impact' },
       { field: 'workflow', header: 'Workflow' },
@@ -122,14 +119,14 @@ export class ArtProductivityComponent extends BaseComponent implements OnInit {
       if (!(element.field === '' || element.field === 'job_key')) {
         this.fixCol.push(element);
       }
-    });
-      this.finddsmsummary();
+      });
     }
     filterData() {
+      if(!!this.model)
+      this.dataloading = true;
       let that = this;
       const myheader = new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded');
-      let body = new HttpParams()
-      .append('filters', JSON.stringify(this.model));
+      let body = new HttpParams().append('filters', JSON.stringify(this.model));
       this.httpService.extractPostData(CustomerServicesUrls.ARTLOG_TeamData, body, myheader).subscribe((data) => {
         debugger
         console.log(" ACTION data =>", data);
@@ -143,19 +140,7 @@ export class ArtProductivityComponent extends BaseComponent implements OnInit {
           } 
         }
        that.cartdata =  [...that.Inflow, ...that.Outflow]; //that.Inflow.cancat(that.Outflow);
+      that.dataloading = false;
       });
     }
-    finddsmsummary() {
-      let that = this;
-      this.httpService.extractPostData(CustomerServicesUrls.ARTLOG_DCASUMMARY, null, null).subscribe((data) => {
-        that.dcaSummary = data;
-        that.overDuedt = data.filter( d => d.artTeamStatus == 'Overdue' );
-        that.highDt = data.filter( d => d.artTeamPriority == 'High ' );
-        that.mediumDt = data.filter( d => d.artTeamPriority == 'Medium' );
-        that.lowDt = data.filter( d => d.artTeamPriority == 'Low' );
-        /// here in OptData have group wise By date data;
-        that.OptData = data;
-      });
-    }
-
 }

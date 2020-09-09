@@ -432,7 +432,7 @@ getMedianData(arrSort: any []): any {
   OverDuejobs(ids:any) {
     debugger
     let body = new HttpParams();
-    body = body.append('ids', JSON.stringify(ids));
+    body = body.append('ids', ids.join(','));
     this.httpService.extractPostData(CustomerServicesUrls.ARTLOG_SCORECARDOverDue, body, null).subscribe((data) => {
      debugger
      console.log(data);
@@ -691,7 +691,7 @@ getMedianData(arrSort: any []): any {
       },
       xaxis: {
         categories: [
-          'In Progress','Completed','Cancelled','Hold'
+          'In Progress','Completed','Cancelled','Onhold'
         ]
       }
     };

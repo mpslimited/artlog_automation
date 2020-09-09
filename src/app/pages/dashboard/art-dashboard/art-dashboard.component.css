@@ -1,8 +1,12 @@
 .loading-box {
     height: 100%;
     width: 100%;
-    background: #403232;
+    background: #4032324d;
     position: absolute;
-    opacity: 0.3;
-    z-index: 9;
+    z-index: 99;
+}
+.spinner{
+    position: relative;
+    text-align: center;
+    top:59px;
 }

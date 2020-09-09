@@ -1492,7 +1492,7 @@ constructor(
     this.apex = {
       series: [
       {
-        name: ['round','1'],
+        name: ['Iteration','1'],
         data: newDrawPattern.map(d=> ({x:d.StageNames, y: d.duration}))/*[
           {
             x: ['Stage A'],
@@ -1513,15 +1513,15 @@ constructor(
         ]*/
       },
       {
-        name: ['round','2'],
+        name: ['Iteration','2'],
         data: newDrawPattern2.map(d=> ({x:d.StageNames, y: d.duration}))
       },
       {
-        name: ['round','3'],
+        name: ['Iteration','3'],
         data: newDrawPattern3.map(d=> ({x:d.StageNames, y: d.duration}))
       },
       {
-        name: ['round','4'],
+        name: ['Iteration','4'],
         data: newDrawPattern4.map(d=> ({x:d.StageNames, y: d.duration}))
       }
 
@@ -1530,7 +1530,7 @@ constructor(
       type: 'bar',
       stacked: true,
       height: 450,
-      width: '70%'
+      width: '100%'
     },
     plotOptions: {
       bar: {
