@@ -124,7 +124,6 @@ export class ScorecardviewComponent extends BaseComponent implements OnInit {
     { value: 'Clip Art', label: 'Clip Art' },
   ];
   StatusDt = [
-    { value: '', label: 'Please Select' },
     { value: 'Active', label: 'Active' },
     { value: 'NeedsChanges', label: 'NeedsChanges' },
     { value: 'Overdue', label: 'Overdue' },
@@ -147,6 +146,8 @@ export class ScorecardviewComponent extends BaseComponent implements OnInit {
   api1Data : any = [];
   cartdata: any = [];
   cols: any = [];
+  OverDueJobsData: any = [];
+  median: any = [];
   gridApi;
   gridColumnApi;
 
@@ -173,8 +174,10 @@ export class ScorecardviewComponent extends BaseComponent implements OnInit {
     const that = this;
     this.httpService.extractPostData(CustomerServicesUrls.ARTLOG_SCORECARDINIT, null, null).subscribe((data) => {
       console.log('getting data=>', data);
-      that.Mdata = data.module;
-      that.Gdata = data.grade;
+      data.module.splice(0, 0, { id: '', value: 'Please Select'});
+      data.grade.splice(0, 0, { id: '', value: 'Please Select'});
+      that.Mdata = data.module.map(d => ({ value: d.id, label: d.value}));
+      that.Gdata = data.grade.map(d => ({ value: d.id, label: d.value}));
       data.campaigns.splice(0, 0, { ID: '', name: 'Please Select'});
       that.Campaigns = data.campaigns.map(d => ({ value: d.ID, label: d.name}));
       if ( data.jobType.length > 0 && !!data.jobType[0].options) {
@@ -187,42 +190,55 @@ export class ScorecardviewComponent extends BaseComponent implements OnInit {
   medianDataLoadAPI() {
     this.medianDataLoading = true;
     let that = this;
-    let frmData = {
-      'currentStatus': this.frmdt.currentStatus.toString(),
-      'workflowPreset': this.frmdt.workflowPreset,
-      'compaignId': this.frmdt.compaignId,
-      'jobTypes': this.frmdt.jobTypes,
-      'grade': this.frmdt.grade,
-      'module': this.frmdt.module
-    };
     const myheader = new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded');
     this.medianDataLoading = true;
     /* here is code foro  ARTLOG_SCORECARDLOAD  scorecardload action*/
-
+    let body = new HttpParams()
+    .append('currentStatus', JSON.stringify(this.frmdt.currentStatus))
+    .append('workflowPreset',this.frmdt.workflowPreset)
+    .append('compaignId',this.frmdt.compaignId)
+    .append('jobType',this.frmdt.jobTypes)
+    .append('grade',this.frmdt.grade)
+    .append('module',this.frmdt.module);
     // tslint:disable-next-line: max-line-length
-    this.httpService.extractPostData(CustomerServicesUrls.ARTLOG_MEDIANOVERDUEPERTEAM, JSON.stringify(frmData), { headers: myheader }).subscribe((MedianData) => {
-      that.api1Data = MedianData.OverDueData;
-      let promise = new Promise((resolve, reject) => {
-          this.httpService.extractPostData(CustomerServicesUrls.ARTLOG_SCORECARDLOAD, JSON.stringify(frmData), null).subscribe((data) => {
-            resolve(data);
-          });
-      });
-      promise.then(data => {
+    this.httpService.extractPostData(CustomerServicesUrls.ARTLOG_SCORECARDLOAD, body, null).subscribe((data) => {
         debugger
+        let OverDueJobsData = (data as any ).permissionResponce.filter(d=> d.overDueStatus == true)
+        that.OverDueJobsData = OverDueJobsData;
         let median = (data as any ).permissionResponce ;
-        let permissionDuration = [];
-        that.ScoreCard.NumOver = that.api1Data.reduce((a, b) => {  return a+b.overDueCount},0)
-        that.ScoreCard.overDueIDs = that.api1Data.reduce((a, b) => {  return a.concat(b.overDueIds)},[]);
-        that.ScoreCard.MedianDur = that.getMedianData(median.map(d => d.duration));
-        let permissiondt = that.api1Data.filter(d => d.teams === 'Permission');
-        for ( let t1 of permissiondt) {
-          permissionDuration = permissionDuration.concat( t1.jobDuration);
+        let TatData = (data as any ).TatRes ;
+        if( that.frmdt.workflowPreset ) {
+          if(that.frmdt.workflowPreset =='Permission' ) {
+            if(that.frmdt.jobTypes != ''){
+              let dd = TatData.filter(d => d.asset_typeId.split('-').join('') == that.frmdt.jobTypes);
+              that.ScoreCard.Exptat = (dd.length > 0) ? dd[0].tat: 0;
+            } else {
+              let dd = TatData.filter(d => d.asset_typeId == "Unallocated");
+              that.ScoreCard.Exptat = (dd.length > 0) ? dd[0].tat: 0;
+            }
+          } else if(that.frmdt.workflowPreset != ''){
+            let dd = TatData.filter(d => d.asset_typeId == that.frmdt.workflowPreset);
+            that.ScoreCard.Exptat = (dd.length > 0) ? dd[0].tat: 0;
+          }
+          else {
+            let dd = TatData.filter(d => d.asset_typeId == "Unallocated");
+            that.ScoreCard.Exptat = (dd.length > 0) ? dd[0].tat: 0;
+          }
+        } else {
+          that.ScoreCard.Exptat = 0;
         }
+        that.median = median;
+        let permissionDuration = [];
+        that.ScoreCard.NumOver = OverDueJobsData.length; // that.api1Data.reduce((a, b) => {  return a+b.overDueCount},0)
+        that.ScoreCard.overDueIDs = OverDueJobsData.map(d=> d._id); //that.api1Data.reduce((a, b) => {  return a.concat(b.overDueIds)},[]);
+        that.ScoreCard.MedianDur = that.getMedianData(median.map(d => d.duration));
+        
+        permissionDuration = OverDueJobsData.filter(d => d.workflow =='Permission');
         let permissionMedian = median.filter( d => d.workflow === 'Permission');
         let GraphDataM = []; let GraphDataO = [];
         let GraphData10th = []; let GraphData90th = [];
         let PermMedian = ( permissionMedian.length > 0 ) ? this.getMedianData(permissionMedian.map(d => d.duration)) : 0  ;
-        let PerOverdueMed = (permissionDuration.length > 0 ) ? this.getMedianData( permissionDuration ) : 0 ;
+        let PerOverdueMed = (permissionDuration.length > 0 ) ? this.getMedianData( permissionDuration.map(d => d.CalDuration) ) : 0 ;
         GraphDataM.push(PermMedian);
         GraphDataO.push(PerOverdueMed);
 
@@ -232,11 +248,11 @@ export class ScorecardviewComponent extends BaseComponent implements OnInit {
         GraphData90th.push(per90th);
 
         // l,lihgvfcdsxzc  Shutterstock
-        let Shutterstockdt = that.api1Data.filter(d => d.teams === 'Shutterstock');
+        let Shutterstockdt = OverDueJobsData.filter(d => d.workflow === 'Shutterstock');
         let ShutterstockMedian = median.filter( d => d.workflow === 'Shutterstock');
         let ShuMedian = (ShutterstockMedian.length > 0 ) ? this.getMedianData(ShutterstockMedian.map(d => d.duration )) : 0 ;
         // tslint:disable-next-line: max-line-length
-        let ShuOverDueMedia = (Shutterstockdt.length > 0 && Shutterstockdt[0].jobDuration.length ) ? this.getMedianData( Shutterstockdt[0].jobDuration ) : 0;
+        let ShuOverDueMedia = (Shutterstockdt.length > 0 ) ? this.getMedianData( Shutterstockdt.map(d => d.CalDuration) ) : 0;
         GraphDataM.push(ShuMedian);
         GraphDataO.push(ShuOverDueMedia);
 
@@ -246,11 +262,11 @@ export class ScorecardviewComponent extends BaseComponent implements OnInit {
         GraphData90th.push(per90th);
 
         // l,lihgvfcdsxzc  Created Image
-        let CreatedImagedt = that.api1Data.filter(d => d.teams === 'Created Image' );
+        let CreatedImagedt = OverDueJobsData.filter(d => d.workflow === 'Created Image' );
         let CreatedImageMedian = median.filter( d => d.workflow === 'Created Image');
         let CreatedMedian = (CreatedImageMedian.length > 0 ) ? this.getMedianData(CreatedImageMedian.map(d => d.duration )) : 0 ;
         // tslint:disable-next-line: max-line-length
-        let CreatedOverDueMedia = (CreatedImagedt.length > 0 && CreatedImagedt[0].jobDuration.length ) ? this.getMedianData( CreatedImagedt[0].jobDuration ) : 0;
+        let CreatedOverDueMedia = (CreatedImagedt.length > 0  ) ? this.getMedianData( CreatedImagedt.map(d => d.CalDuration) ) : 0;
         GraphDataM.push(CreatedMedian);
         GraphDataO.push(CreatedOverDueMedia);
 
@@ -259,11 +275,11 @@ export class ScorecardviewComponent extends BaseComponent implements OnInit {
         GraphData10th.push(per10th);
         GraphData90th.push(per90th);
         // l,lihgvfcdsxzc  Clip Art
-        let ClipArtdt = that.api1Data.filter(d => d.teams === 'Clip Art' );
+        let ClipArtdt = OverDueJobsData.filter(d => d.workflow === 'Clip Art' );
         let ClipArtOverMedian = median.filter( d => d.workflow === 'Clip Art');
         let ClipArtMedian = (ClipArtOverMedian.length > 0 ) ? this.getMedianData(ClipArtOverMedian.map(d => d.duration )) : 0 ;
         // tslint:disable-next-line: max-line-length
-        let ClipArtOverDueMedia = (ClipArtdt.length > 0 && ClipArtdt[0].jobDuration.length ) ? this.getMedianData( ClipArtdt[0].jobDuration ) : 0;
+        let ClipArtOverDueMedia = (ClipArtdt.length > 0  ) ? this.getMedianData( ClipArtdt.map(d => d.CalDuration) ) : 0;
         GraphDataM.push(ClipArtMedian);
         GraphDataO.push(ClipArtOverDueMedia);
 
@@ -319,7 +335,7 @@ export class ScorecardviewComponent extends BaseComponent implements OnInit {
        }, 0);
         /**/
       });
-     });
+    // });
   }
 getCampNameByID(id: any): string {
   let ret = '-';
@@ -349,21 +365,18 @@ getMedianData(arrSort: any []): any {
   const median = len % 2 == 0 ? (arrSort[mid] + arrSort[mid - 1]) / 2 : arrSort[mid - 1];
   return parseFloat(median).toFixed(2);
 }
-
-  filterData() {
+filterData() {
     let that = this;
     const myheader = new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded');
     this.WeeklyJobsLoading = true;
-   // debugger //obji.body
-    let frmData = {
-      'currentStatus': this.frmdt.currentStatus.toString(),
-      'workflowPreset': this.frmdt.workflowPreset,
-      'compaignId': this.frmdt.compaignId,
-      'jobTypes': this.frmdt.jobTypes,
-      'grade': this.frmdt.grade,
-      'module': this.frmdt.module
-    };
-    this.httpService.extractPostData(CustomerServicesUrls.ARTLOG_CREATEDCOMPLETEDJOBS, JSON.stringify(frmData), null).subscribe((data) => {
+    let body = new HttpParams()
+    .append('currentStatus', JSON.stringify(this.frmdt.currentStatus))
+    .append('workflowPreset',this.frmdt.workflowPreset)
+    .append('compaignId',this.frmdt.compaignId)
+    .append('jobType',this.frmdt.jobTypes)
+    .append('grade',this.frmdt.grade)
+    .append('module',this.frmdt.module);
+    this.httpService.extractPostData(CustomerServicesUrls.ARTLOG_CREATEDCOMPLETEDJOBS, body, null).subscribe((data) => {
     var startDate = new Date(data.StartTime);
     var endDate = new Date(data.EndTime);
     var dataFormate = [];
@@ -407,7 +420,7 @@ getMedianData(arrSort: any []): any {
      that.WeeklyJobsLoading = false;
     });
     console.log('Data filter');
-
+    this.medianDataLoadAPI();
 
   }
    Month(dd: any) {
@@ -429,15 +442,13 @@ getMedianData(arrSort: any []): any {
   clearData() {
     console.log('Data filter');
   }
+  viewAlljobs(){
+    this.cartdata = this.median;
+    this.viewSummary();
+  }
   OverDuejobs(ids:any) {
-    debugger
-    let body = new HttpParams();
-    body = body.append('ids', ids.join(','));
-    this.httpService.extractPostData(CustomerServicesUrls.ARTLOG_SCORECARDOverDue, body, null).subscribe((data) => {
-     debugger
-     console.log(data);
-    });
-    //this.viewSummary();
+    this.cartdata = this.OverDueJobsData;
+    this.viewSummary();
   }
   viewSummary() {
     this.summaryOfoverdueModel = true;
@@ -451,35 +462,18 @@ getMedianData(arrSort: any []): any {
   }
   ngOnInit() {
     this.cols = [
-      { field: 'job_key', header: 'Job Key' },
-      { field: 'name', header: 'Job Name' },
-      { field: 'grade', header: 'Grade' },
-      { field: 'module', header: 'Module' },
-      { field: 'batch', header: 'Batch' },
-      { field: 'topic', header: 'Topic' },
-      { field: 'cstage', header: 'Current Stage' },
+      { field: 'job_key', headerName: 'Job Key' },
+      { field: 'name', headerName: 'Job Name' },
+      { field: 'campaignName', headerName: 'Campaign' },
+      { field: 'grade', headerName: 'Grade' },
+      { field: 'module', headerName: 'Module' },
+      { field: 'batch', headerName: 'Batch' },
+      { field: 'job_active_stage.status', headerName:'Completion Status' },
+      { field: 'dateCreated', headerName:'Date Created' },
+      { field: 'job_date_finished', headerName:'Date Completed' },
+      { field: 'CalDuration', headerName: 'Cumulative Age' },
 
-      { field: 'currentRTeam', header: 'CR Team' },
-      { field: 'curriculum', header: 'Curriculum' },
-      { field: 'revisionC', header: 'Revision Count' },
-      { field: 'artcomplex', header: 'Art-Complexity' },
-      { field: 'artassion', header: 'Art-Assignment' },
-      { field: 'flowStatus', header: 'Inflow/Outflow' },
-      { field: 'job_active_stage.status', header: 'Completion Status' },
-
-      { field: 'batchCDate', header: 'Batch Completion Date ' },
-      { field: 'receiveddate', header: 'ArtTeam Recived Date' },
-      { field: 'mpsDueDate', header: 'MPS DueDate' },
-      { field: 'artTeamStatus', header: 'ArtTeam Status' },
-      { field: 'artTeamPriority', header: 'ArtTeam Priority' },
-      { field: 'exceptionCategory', header: 'Exception Cat.' },
-      { field: 'exception', header: 'Exceptoin' },
-
-      { field: 'risk', header: 'Permission-Risk' },
-      { field: 'impact', header: 'Permission-Impact' },
-      { field: 'workflow', header: 'Workflow' },
-      { field: 'permissionType', header: 'Permission Type' },
-    ];
+      { field: 'workflow', header: 'Workflow' }   ];
     this.ScoreCard = { NumHold: 0, totalJobs: 0, Exptat: 0, MedianDur: 0, NumOver : 0 };
     this.frmdt = { currentStatus: [], workflowPreset: '', compaignId : '', jobTypes: '', grade: '', module: '' };
     this.pageinit();
@@ -493,7 +487,6 @@ getMedianData(arrSort: any []): any {
     this.oherGraphDataLoading = true;
     this.createdVSComplated();
     this.filterData();
-    this.medianDataLoadAPI();
     this.percentileView();
     this.AllJobsView();
   }

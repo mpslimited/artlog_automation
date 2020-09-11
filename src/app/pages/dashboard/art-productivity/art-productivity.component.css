@@ -1,3 +1,7 @@
 .p-datatable-frozen-view thead.p-datatable-thead> tr > th {
     padding-bottom: 25px!important;
 }
+.p-datatable-scrollable-view.p-datatable-frozen-view {
+    z-index: 999999;
+    position: relative;
+}

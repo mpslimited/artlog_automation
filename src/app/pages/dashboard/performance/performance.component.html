@@ -31,6 +31,23 @@
       </div>
     </div>
     <form #baseForm="ngForm" class="form-horizontal border" >
+      <div class="loading-box" *ngIf="ApiData.length == 0" >
+        <div class="spinner">
+        <div class="spinner-grow text-primary" role="status">
+          <span class="sr-only">Loading...</span>
+        </div>
+        <div class="spinner-grow text-info" role="status">
+          <span class="sr-only">Loading...</span>
+        </div>
+        <div class="spinner-grow text-warning" role="status">
+          <span class="sr-only">Loading...</span>
+        </div>
+        <div class="spinner-grow text-light" role="status">
+          <span class="sr-only">Loading...</span>
+        </div>
+        
+        </div>
+  </div>
     <div class="row">
       <div class="col-lg-12 grid-margin stretch-card1 mb-0">
 
@@ -57,33 +74,7 @@
 
           <div class="card-body ">
             <div class="row">
-              <div class="table-responsive">
-              <!--  <table class="table table-bordered border-top">
-                  <thead>
-                    <tr class="font-weight-bold table-secondary">
-                      <th>API Name</th>
-                      <!--- <th>Data Processed</th> --
-                      <th>API URL</th>
-                      <th>API Response</th>
-                      <th>API Execution Time</th>
-                      <th>API Process Excution Time</th>
-                      <th>Taken time</th>
-
-                  </tr>
-                  </thead>
-                  <tbody>
-                    <tr  *ngFor="let dt of ApiData" [ngClass]="{' alert-danger': dt.isError  }">
-                      <td>{{ dt.apiTaskName }} <span *ngIf="!!dt.dataProcessed.key">{{ dt.dataProcessed.key}}</span></td>
-                     <!-- <td> {{dt.APISendInfo.data | json}}</td>--
-                      <td><span *ngIf="!!dt.APISendInfo "> {{dt.APISendInfo.url }}</span></td>
-                     <td class="text-center">{{ dt.responce | json }}</td>
-                    <td class="text-center"><span *ngIf="!!dt.APISendInfo ">{{ dt.process.startTime  }}, {{ dt.process.endTime  }}</span></td>
-                    <td class="text-center"><span *ngIf="!!dt.APISendInfo ">{{ dt.APIprocess.startTime  }}, {{ dt.APIprocess.endTime  }}</span></td>
-                      <td class="text-center">{{ takenTime( dt.process.startTime,  dt.process.endTime) }} S</td>
-                  </tr>
-                  </tbody>
-                </table> -->
-              </div>
+              
               <div class="table-responsive">
                 <table class="table table-bordered border-top">
                   <thead>

@@ -133,10 +133,10 @@ export class ArtProductivityComponent extends BaseComponent implements OnInit {
         that.Inflow = [];  that.Outflow = [];
         for( let dd of data){
           dd.flowStatus = 'Inflow';
-          that.Inflow.push(dd);
+          that.Inflow.push(JSON.parse(JSON.stringify(dd)));
           if(dd.artComplateDate!=''){
             dd.flowStatus = 'Outflow';
-            that.Outflow.push(dd);
+            that.Outflow.push(JSON.parse(JSON.stringify(dd)));
           } 
         }
        that.cartdata =  [...that.Inflow, ...that.Outflow]; //that.Inflow.cancat(that.Outflow);
