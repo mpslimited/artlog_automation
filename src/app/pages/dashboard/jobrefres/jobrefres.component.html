@@ -1,0 +1,210 @@
+<div class="main-panel">
+    <div class="content-wrapper">
+      <div class="row mt-5">
+        <div class="col-12">
+          <ul class="nav nav-tabs border-bottom-0">
+            <li class="nav-item">
+              <a class="nav-link " [routerLinkActive]="['active', '']" [routerLink]="['/pages/admin/home']">Active Jobs</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link " [routerLinkActive]="['active', '']" [routerLink]="['/pages/admin/approved']">Approved Jobs</a>
+            </li>
+            <li class="nav-item" *ngIf="auth.roleName == 'Art Designer'">
+              <a class="nav-link" [routerLinkActive]="['active', '']" [routerLink]="['/pages/admin/artdashboard']">Art Dashboard</a>
+            </li>
+            <li class="nav-item" *ngIf="auth.roleName == 'Art Designer'">
+              <a class="nav-link" [routerLinkActive]="['active', '']" [routerLink]="['/pages/admin/dashboard']">Art Productivity</a>
+            </li>
+            <li class="nav-item" *ngIf="auth.roleName == 'Art Designer'">
+              <a class="nav-link" [routerLinkActive]="['active', '']" [routerLink]="['/pages/admin/scorecardview']">Scorecard View</a>
+            </li>
+            <li class="nav-item" *ngIf="auth.roleName == 'Art Designer'">
+              <a class="nav-link" [routerLinkActive]="['active', '']" [routerLink]="['/pages/admin/performance']">API Performance</a>
+            </li>
+            <!-- <li class="nav-item" *ngIf="auth.roleName == 'Art Designer'">
+              <a class="nav-link" [routerLinkActive]="['active', '']" [routerLink]="['/pages/admin/scorecardview']">Recent Log</a>
+            </li>-->
+            <li class="nav-item" *ngIf="auth.roleName == 'Digital Asset Lead'">
+              <a class="nav-link " [routerLinkActive]="['active', '']" [routerLink]="['/pages/admin/jobrefres']">Job Refresh</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <form #baseForm="ngForm" class="form-horizontal border" (submit)="dataSubmit()">
+        
+      <div class="row">
+        <div class="col-lg-12 grid-margin stretch-card1 mb-0">
+  
+            <div class="card-body ">
+              <div class="card border-0">
+                <div class="card-header bg-white border-bottom px-0 mb-3">
+                    <div class="d-flex align-items-start">
+                        <div class="p-0 mr-auto" >
+                            <h6 style="cursor: pointer;">Job Metaproperty Refersh</h6>
+                        </div>
+                        <div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                    <div class="form-group mb-0">
+                    <label for="formGroupExampleInput2">Job Key (comma separated)</label><div class="input-group ">
+                        <textarea [(ngModel)]="job_keys" class="form-control w-100 rounded-0 ng-pristine ng-valid ng-touched" id="exampleFormControlTextarea1" name="job_keys" rows="5"></textarea></div>
+                    <p-footer class="float-right">
+                        <button class="btn btn-primary btn-sm mt-2" type="submit">Refresh</button>
+                    </p-footer>
+                    </div>
+                    </div>
+                    </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+    <div class="row">
+        <div class="col-lg-12 mt-3">
+            <p-table #dt editMode="row" dataKey="_id" [value]="cartdata" 
+            [totalRecords]='cartdata.length'
+            [rowsPerPageOptions]='[5,10,50,100,150]'
+            scrollable="isScrollable" [loading]="dataloading"
+            [frozenColumns]="freezeCols" [columns]="scrollableCols" frozenWidth="170px"
+            scrollHeight="600px"  [paginator]="true" [rows]="100">
+            <ng-template pTemplate="colgroup" let-columns>
+              <colgroup>
+                  <col *ngFor="let col of columns" style="width:180px">
+              </colgroup>
+            </ng-template>
+  
+            <ng-template pTemplate="caption">
+              <p-menubar>
+              <div class="row m-0 ng-star-inserted">
+              <div class="col-md-6">
+                <p class=" text-left py-2 mb-0"> Total: {{cartdata.length}} (Requested: {{cartdata.length}} &amp; Completed : {{cartdata.length}})</p>
+              </div>
+              <div class="col-md-6 text-right ">
+                <button class="btn btn-sm btn-primary my-2" type="button" (click)="dt.exportCSV()"> Export Data </button>
+              </div>
+            </div>
+  
+  
+              </p-menubar>
+  
+            </ng-template>
+            <ng-template pTemplate="header" let-columns>
+              <tr>
+                <!-- <th *ngFor="let col of fixCol"> {{col.header}} </th> -->
+                <th *ngFor="let col of columns">
+                  <div *ngIf="col.field =='job_key'">
+                      {{col.header}}
+                  </div>
+                  <div *ngIf="col.field !='job_key'" [pSortableColumn]="col.field">
+                    {{col.header}}
+                    <p-sortIcon  [field]="col.field" ariaLabel="Activate to sort"
+                      ariaLabelDesc="Activate to sort in descending order"
+                      ariaLabelAsc="Activate to sort in ascending order">
+                    </p-sortIcon>
+                  </div>
+                </th>
+              </tr>
+  
+            </ng-template>
+            <ng-template pTemplate="body" let-columns="columns" let-rowData let-editing="editing" let-ri="rowIndex">
+              <tr [pEditableRow]="rowData" [pSelectableRow]="rowData" >
+                <td *ngFor="let col of columns"  >
+                    <ng-container *ngIf="col.field =='job_key' " >
+                      <i aria-hidden="true" class="fa fa-circle-o-notch" *ngIf="!rowData['isRefresh']"></i>
+                      <i aria-hidden="true" class="fa fa-check-circle fa-6" *ngIf="rowData['isRefresh']"></i>
+                      <a  href="https://greatminds.getbynder.com/workflow/job/view/{{rowData[col.field]}}" target="_blank">
+                      {{rowData[col.field]}}
+                      </a>
+                    </ng-container>
+                   
+                  <ng-container *ngIf="col.field !='job_key' ">
+                      {{rowData[col.field]}}
+                  </ng-container>
+                  
+                  </td>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage" let-columns>
+                <tr>
+                    <td [attr.colspan]="columns.length">
+                        No records found
+                    </td>
+                </tr>
+            </ng-template>
+          </p-table>
+  </div>
+  </div>
+      
+  </div>
+  
+  <!--Modal dialog for bulk data verification-->
+   <p-dialog header="History of API Performance" [(visible)]="historyOfApiPerformance" [responsive]="true" showEffect="fade" [modal]="true"   [contentStyle]="{'min-height':'100px','overflow':'visible' }" [style]="{width: '70%'}" [maximizable]="true">
+    <div class="card">
+      <div class="row mb-2">
+          <div class="col-8  mt-2"> Total data:<span class="font-weight-bold"> {{cartdata.length}}</span></div>
+          <div class="col-4 text-right "><a (click)="exportAsCSV()" class="text-white btn-primary btn btn-sm" >Export as CSV</a></div>
+  
+      </div>
+      </div>
+   <ag-grid-angular style="width: 100%; height: 400px;"
+   class="ag-theme-balham"
+      [rowData]="cartdata"
+      [columnDefs]="cols"
+      (gridReady)="onGridReady($event)"
+      pagination="true" resizable=
+      'true'
+        >
+    </ag-grid-angular>
+  
+    </p-dialog>
+  
+    <!--Modal dialog for bulk data verification-->
+   <p-dialog header="API Details" [(visible)]="apiDetails" [responsive]="true" showEffect="fade" [modal]="true"   [contentStyle]="{'min-height':'100px','overflow':'visible' }" [style]="{width: '70%'}" [maximizable]="true">
+    <div class="card">
+      <div class="row mb-2">
+          
+      </div>
+      </div>
+      
+      <div class="table-responsive"> <!--
+      {{ detailsData | json}}-->
+                  <table class="table table-bordered border-top" *ngIf="detailsData">
+                    <thead>
+                      <tr class="font-weight-bold table-secondary">
+                        <th>Title</th>
+                        <th>Details</th>
+                    </tr>
+                    </thead>
+                    <tbody >
+                      <tr>
+                       <td>API Name </td>
+                       <td>{{ detailsData.apiTaskName }} for <span *ngIf=" !!detailsData.dataProcessed && !!detailsData.dataProcessed.key">{{ detailsData.dataProcessed.key}}</span></td>
+                      </tr>
+                      <tr>
+                       <td>API URL </td>
+                       <td><span *ngIf="!!detailsData.APISendInfo "> {{detailsData.APISendInfo.url }}</span></td>
+                      </tr>
+                      <tr *ngIf="!!detailsData.APISendInfo">
+                       <td>API data sended </td>
+                       <td><span *ngIf="!!detailsData.APISendInfo.data "> {{detailsData.APISendInfo.data | json }}</span></td>
+                      </tr>
+                      <tr [ngClass]="{' alert-danger': detailsData.isError  }">
+                       <td>API Response </td>
+                       <td *ngIf="!!detailsData.responce" >{{detailsData.responce}}</td>
+                      </tr>
+                      <tr *ngIf="!!detailsData.process">
+                       <td>API Trigger </td>
+                       <td> <span *ngI}f="!!detailsData.process.trigger">{{detailsData.process.trigger}}</span></td>
+                      </tr>
+                      <tr *ngIf="!!detailsData.process">
+                       <td>API Timing </td>
+                       <td>Started: <span *ngIf="!!detailsData.process.startTime">{{detailsData.process.startTime}}</span> And ended: <span *ngIf="!!detailsData.process.endTime">{{detailsData.process.endTime}}</span> and Next Run Time:<span *ngIf="!!detailsData.process.nextRunTime">{{detailsData.process.nextRunTime}}</span></td>
+                      </tr>
+                    </tbody>
+                  </table> 
+                </div>
+    </p-dialog>
+  

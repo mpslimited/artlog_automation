@@ -47,6 +47,7 @@ import { PerformanceComponent } from './performance/performance.component';
 import { GoogleChartsModule, ScriptLoaderService } from 'angular-google-charts';
 import { AgGridModule } from 'ag-grid-angular';
 import { NgbDate, NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { JobrefresComponent } from './jobrefres/jobrefres.component';
 //import { DashboardComponent } from './dashboard.component';
 @NgModule({
       imports: [
@@ -95,6 +96,7 @@ import { NgbDate, NgbModule } from '@ng-bootstrap/ng-bootstrap';
             JobcardviewComponent,
             EditjobComponent,
             PerformanceComponent,
+            JobrefresComponent,
            // DataGridComponent,
            // EditjobComponent,
            // AddjobComponent

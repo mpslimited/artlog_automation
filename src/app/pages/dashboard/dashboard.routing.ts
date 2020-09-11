@@ -6,7 +6,7 @@ import { ArtDashboardComponent } from './art-dashboard/art-dashboard.component';
 import { ArtProductivityComponent } from './art-productivity/art-productivity.component';
 import { ScorecardviewComponent } from './scorecardview/scorecardview.component';
 import { PerformanceComponent } from './performance/performance.component';
-
+import { JobrefresComponent } from './jobrefres/jobrefres.component';
 // import { DataGridComponent  } from './DataGrid.Component';
 import { AuthGuard } from '../../core/guard';
 //import { AuthGuard } from '../dashboard/dashboard.module';
@@ -46,7 +46,13 @@ export const routes: Routes = [
             path: 'performance',
             component: PerformanceComponent,
             canActivate: [AuthGuard],
-      }/*,{ PerformanceComponent
+      },
+      {
+            path: 'jobrefres',
+            component: JobrefresComponent,
+            canActivate: [AuthGuard],
+      }
+      /*,{ PerformanceComponent 
             path: 'datagrid', dashboard
             component: DataGridComponent,
       }*/

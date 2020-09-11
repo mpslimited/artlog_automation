@@ -872,25 +872,40 @@
 <p-dialog header="Manuscript Verification & Paging Approval" [(visible)]="bulkDataVerifyModal" [responsive]="true" showEffect="fade" [modal]="true"  [contentStyle]="{'min-height':'100px','overflow':'visible' }" [style]="{width: '70%'}" [maximizable]="true">
 <div class="ui-g ui-fluid">
   <p-table [value]="bulkVerificationData" [(selection)]="selectedVerifyData">
-      <ng-template pTemplate="header">
+    <ng-template  pTemplate="header"  >
+    
+    </ng-template>
+    <ng-template pTemplate="header">
+      <tr>
+        <th  colspan="3" ></th>
+        <th><p-dropdown [options]="verificationsDt" 
+          [(ngModel)]="verifi.mverification" [style]="{'width':'100%'}"></p-dropdown></th>
+        <th><p-dropdown [options]="pagingCol" [(ngModel)]="verifi.isPaging" [style]="{'width':'100%'}">
+        </p-dropdown></th>
+        <th><input pInputText class="form-control form-control-sm" [(ngModel)]="verifi.pageNo" placeholder="Page No">
+        </th>
+    </tr>
           <tr>
               <th style="width: 3em">
                   <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
-              </th>
-              <th style="width: 5em">Job key</th>
+              Job key</th>
               <th style="width: 5em">Grade</th>
               <th style="width: 5em">Module</th>
               <th style="width: 8em">M. Verification</th>
               <th style="width: 8em">Paging Approved</th>
-              <th style="width: 8em">Paging No</th>
+              <th style="width: 8em">Paging No 
+                <span class="pl-4 float-right" style="position: relative;  top: -2px; ">
+                  <input [(ngModel)]="verifi.isBlank" class="form-check-input ng-valid ng-dirty ng-touched" type="checkbox">
+                  <label class="form-check-label" for="defaultCheck1">Blank</label>
+                </span>
+              </th>
           </tr>
       </ng-template>
       <ng-template pTemplate="body" let-bulkVerificationData>
           <tr > <!-- rowsmoveTags-->
             <td>
                 <p-tableCheckbox [value]="bulkVerificationData"></p-tableCheckbox>
-            </td>
-              <td>{{bulkVerificationData.job_key}}</td>
+            {{bulkVerificationData.job_key}}</td>
               <td>{{bulkVerificationData.grade}}</td>
               <td>{{bulkVerificationData.module}}</td>
               <td><p-dropdown [options]="verificationsDt" [(ngModel)]="bulkVerificationData.mverification" [style]="{'width':'100%'}"></p-dropdown></td>
@@ -903,6 +918,7 @@
   <!-- <p>{{selectedTagsData| json}}</p> -->
 </div>
 <p-footer>
+  <button type="button" pButton icon="pi pi-check" class="ui-button-success btn btn-sm" (click)="applyVerification()" label="Apply"></button>
     <button type="button" pButton icon="pi pi-check" class="ui-button-success btn btn-sm" (click)="saveVerifiedData()" label="Submit"></button>
 </p-footer>
 </p-dialog>
