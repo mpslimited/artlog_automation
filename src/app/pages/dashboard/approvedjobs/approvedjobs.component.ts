@@ -163,6 +163,7 @@ export class ApprovedjobsComponent extends BaseComponent implements OnInit, OnCh
   flaggedTeam: String;
   MathAuditors: any;
   assignAuthor: any;
+  verifi : any ;
   public dataSource = new BehaviorSubject<AbstractControl[]>([]);
   public form: FormGroup;
   public contactList: FormArray;
@@ -295,7 +296,7 @@ constructor(
       { field: 'artTeamStatus', header: 'ArtTeam Status' },
       { field: 'artTeamPriority', header: 'ArtTeam Priority' },
       { field: 'exceptionCategory', header: 'Exception Cat.' },
-      { field: 'exception', header: 'Exceptoin' },/**/
+      { field: 'exception', header: 'Explanation' },/**/
     ];
     this.cols = this.cols.map(d => ({ field: d.field, header: d.header, tid: this.cols.indexOf(d) }));
   }
@@ -461,6 +462,7 @@ constructor(
     }
   }
   ngOnInit() {
+    this.verifi = {pageNo:'', isPaging:'', mverification:'', isBlank: false};
     this.bulkBatchCDate = moment().format('MM-DD-YYYY');
     this.MathAuditors = Array(
       {name: '--Please Select--', email: ''},
@@ -598,6 +600,24 @@ constructor(
       return t + ' newrecordEdited';
     } else if (d.duplicate) {
       return t + ' newrecord';
+    }
+  }
+  applyVerification(): void {
+    if (this.selectedVerifyData.length == 0) {
+      alert('Please select at least one row');
+    } else {
+      for( let i in this.selectedVerifyData){
+        this.selectedVerifyData[i].mverification = this.verifi.mverification;
+        this.selectedVerifyData[i].isPaging = this.verifi.isPaging;
+        if(this.verifi.pageNo=="" && this.verifi.isBlank) {
+          this.selectedVerifyData[i].pageNo ='';
+        } else {
+          this.selectedVerifyData[i].pageNo = this.verifi.pageNo;
+        }
+      }
+      debugger
+      console.log(this.verifi);
+      //verifi
     }
   }
   saveVerifiedData() {
@@ -1128,10 +1148,8 @@ constructor(
     });
   }
   getOtherData(action: string) {
-    debugger
     // background Process
     this.loadDataFromApi(this.NAME_ARTLOG).subscribe((data) => {
-      debugger
       console.log(data);
     });
     console.log(action);

@@ -296,7 +296,7 @@ constructor(
       { field: 'artTeamStatus', header: 'ArtTeam Status' },
       { field: 'artTeamPriority', header: 'ArtTeam Priority' },
       { field: 'exceptionCategory', header: 'Exception Cat.' },
-      { field: 'exception', header: 'Exceptoin' },/**/
+      { field: 'exception', header: 'Explanation' },/**/
     ];
     this.cols = this.cols.map(d => ({ field: d.field, header: d.header, tid: this.cols.indexOf(d) }));
   }

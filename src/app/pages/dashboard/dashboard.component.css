@@ -1,3 +1,6 @@
 .ui-dialog-resizable .ui-dialog-content {
     overflow: visible !important;
 }
+.batch {
+    height: 1.45rem;
+}

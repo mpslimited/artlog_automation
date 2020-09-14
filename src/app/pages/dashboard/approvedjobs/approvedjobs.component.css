@@ -12,3 +12,6 @@
     -webkit-animation: .75s linear infinite spinner-border;
     animation: .75s linear infinite spinner-border;
 }
+.batch {
+    height: 1.45rem;
+}

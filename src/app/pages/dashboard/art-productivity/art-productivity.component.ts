@@ -106,7 +106,7 @@ export class ArtProductivityComponent extends BaseComponent implements OnInit {
       { field: 'artTeamStatus', header: 'ArtTeam Status' },
       { field: 'artTeamPriority', header: 'ArtTeam Priority' },
       { field: 'exceptionCategory', header: 'Exception Cat.' },
-      { field: 'exception', header: 'Exceptoin' },
+      { field: 'exception', header: 'Explanation' },
       { field: 'risk', header: 'Permission-Risk' },
       { field: 'impact', header: 'Permission-Impact' },
       { field: 'workflow', header: 'Workflow' },

@@ -131,6 +131,7 @@ export class ArtDashboardComponent extends BaseComponent implements OnInit {
     });
   }
   allDataOfDCATastsummary() {
+    
     this.cartdata = this.OptData;
     this.viewSummary();
   }
@@ -156,6 +157,7 @@ export class ArtDashboardComponent extends BaseComponent implements OnInit {
     this.viewSummary();
   }
   getDateWideSummary(dt: any) {
+    debugger
     this.cartdata = this.OptData.filter(d => d.receiveddate == dt.date && d.grade ==dt.grade && d.module == dt.module  && d.batch == dt.batch  );
     this.viewSummary();
   }

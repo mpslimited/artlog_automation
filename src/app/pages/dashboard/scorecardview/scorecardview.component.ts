@@ -111,6 +111,7 @@ export class ScorecardviewComponent extends BaseComponent implements OnInit {
   medianLoading: boolean ;
   NanCampaignID = [ 'f2e038c4-9191-4480-a55e-2dc92d3f52e7', '3b6d57c7-55c1-489b-aeff-b81b7aaff1ef', '0ad18ec8-8648-4d15-8681-2c3f4e0ee914', 'bb6f3943-5a47-49f0-ab82-c6278d1dad29'];
   summaryOfoverdueModel: boolean;
+  JobsType: string;
   public dataSource = new BehaviorSubject<AbstractControl[]>([]);
   WeeklyJobsCData: any = [];
   WeeklyJobsCOptions: any = {};
@@ -443,14 +444,17 @@ filterData() {
     console.log('Data filter');
   }
   viewAlljobs(){
+    this.JobsType ="all";
     this.cartdata = this.median;
     this.viewSummary();
   }
   OverDuejobs(ids:any) {
+    this.JobsType ="Overdue";
     this.cartdata = this.OverDueJobsData;
     this.viewSummary();
   }
   viewSummary() {
+    
     this.summaryOfoverdueModel = true;
   }
   onGridReady (params : any) {
@@ -600,7 +604,7 @@ filterData() {
       tooltip: {
         y: {
           formatter: function(val) {
-            return ' ' + val + ' Median';
+            return ' ' + val ;
           }
         }
       }
