@@ -48,6 +48,10 @@ import { GoogleChartsModule, ScriptLoaderService } from 'angular-google-charts';
 import { AgGridModule } from 'ag-grid-angular';
 import { NgbDate, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { JobrefresComponent } from './jobrefres/jobrefres.component';
+
+import { JobsviewComponent } from './jobsview/jobsview.component';
+import { DeleteJobsComponent } from './delete-jobs/delete-jobs.component';
+import { TopmenuComponent } from './topmenu/topmenu.component';
 //import { DashboardComponent } from './dashboard.component';
 @NgModule({
       imports: [
@@ -97,6 +101,9 @@ import { JobrefresComponent } from './jobrefres/jobrefres.component';
             EditjobComponent,
             PerformanceComponent,
             JobrefresComponent,
+            JobsviewComponent,
+            DeleteJobsComponent,
+            TopmenuComponent,
            // DataGridComponent,
            // EditjobComponent,
            // AddjobComponent

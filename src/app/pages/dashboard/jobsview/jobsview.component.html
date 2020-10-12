@@ -1,0 +1,107 @@
+<div class="main-panel">
+    <div class="content-wrapper">
+      <div class="row mt-5">
+        <div class="col-12">
+          <app-topmenu></app-topmenu>
+        </div>
+      </div> 
+      <form #baseForm="ngForm" class="form-horizontal" (submit)="filterData()">
+      <div class="row">
+        <div class="col-lg-12 grid-margin stretch-card">
+          <div class="card">
+            <div class="card-header">
+                <div class="d-flex align-items-start">
+                    <div class="p-0 mr-auto" >
+                        <h6 style="cursor: pointer;" (click)="criteria=(criteria!=true)" data-toggle="collapse" href="#collapseSearch">Search Filter
+                            <i [ngClass]="{' fa-angle-right': !criteria, ' fa-angle-down': criteria  }" class="fa " ></i>
+                          </h6>
+                    </div>
+                    <div>
+                        <a  (click)="viewSavedSearchList()"><small role="button">Saved Search List</small></a>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body panel-collapse collapse" id="collapseSearch" >
+              <div class=" row ">
+                <div class="col-md-3">
+                  <div class="form-group">
+                    <label for="formGroupExampleInput2" class="col-sm-12 pl-0">Grade</label>
+                    <p-multiSelect [options]="Gdata" [(ngModel)]="frmdt.grade" name="grade" optionLabel="value"
+                        selectedItemsLabel="{0} selected" [style]="{minWidth: '100%'}"
+                        defaultLabel="Choose Grade" name="grade">
+                    </p-multiSelect>
+                  </div>
+                </div>
+                <div class="col-md-3">
+                  <div class="form-group">
+                    <label for="formGroupExampleInput2" class="col-sm-12 pl-0">Module</label>
+                    <p-multiSelect [options]="Mdata" [(ngModel)]="frmdt.module" optionLabel="value"
+                        selectedItemsLabel="{0} selected" [style]="{minWidth: '100%'}"
+                        defaultLabel="Choose Module" name="module">
+                    </p-multiSelect>
+                  </div>
+                </div>
+                <div class="col-md-3">
+                  <div class="form-group">
+                    <label for="formGroupExampleInput2">Batch</label>
+                    <input type="text" name="batch" pInputText [(ngModel)]="artLogModel.batch.value" placeholder="Batch"
+                      class="batch form-control form-control-sm"  />
+                  </div>
+                </div>
+                <div class="col-md-3">
+                  <div class="form-group">
+                    <label for="workflow" class="col-sm-12 pl-0">Workflow </label>
+                    <p-dropdown [options]="workflows" [(ngModel)]="artLogModel.workflow.value"
+                        id="workflow" name="workflow" [style]="{minWidth: '100%'}"
+                        placeholder="Choose Workflow" name="workflow">
+                    </p-dropdown>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-3">
+                  <div class="form-group">
+                    <label for="curriculum" class="col-sm-12 pl-0">Curriculum</label>
+                    <p-dropdown [options]="wip" [(ngModel)]="artLogModel.curricula.value"
+                        name="curriculum" id="curriculum" [style]="{minWidth: '100%'}"
+                        placeholder="Choose Curriculum">
+                    </p-dropdown>
+                  </div>
+                </div>
+               <!-- <div class="col-md-3">
+                  <div class="form-group">
+                    <label for="formGroupExampleInput2" class="col-sm-12 pl-0">Completion Status </label>
+                    <p-multiSelect [options]="jobStatus" [(ngModel)]="frmdt.status" optionLabel="header"
+                        selectedItemsLabel="{0} selected" [style]="{minWidth: '100%'}"
+                        defaultLabel="Choose Status" name="status">
+                    </p-multiSelect >
+                  </div>
+                </div>-->
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="formGroupExampleInput2" class="col-sm-12 pl-0">Job Type </label>
+                        <p-dropdown [options]="jobsTypes" [(ngModel)]="artLogModel.added.value"
+                            [style]="{minWidth: '100%'}"
+                            defaultLabel="Choose Type" name="job_type">
+                        </p-dropdown >
+                      </div>
+                  </div>
+                  <div class="col-md-12 text-right">
+                    <button type="button" (click)="clearData()" class="btn btn-danger btn-sm mr-1">Reset</button>
+                    <button type="submit" class="btn btn-primary btn-sm mr-1">Search</button>
+                    <button type="button" *ngIf="isSaveSearch" (click)="saveSearchDialog()" class="btn btn-primary btn-sm">Save Search</button>
+                  </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+      <div class="row">
+        <div class="col-lg-12">
+        </div>
+        </div>
+        </div>
+        </div>
+        
+  

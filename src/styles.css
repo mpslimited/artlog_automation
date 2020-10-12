@@ -2,7 +2,7 @@
 /* You can add global styles to this file, and also import other style files */
 app-cust-desktop{ width: 100%}
 app-sync-jobs { width: 100%; }
-app-jobrefres, app-artload-dashboard, app-performance, app-art-dashboard, app-approvedjobs, app-art-productivity,app-scorecardview{ width: 100%}
+app-delete-jobs, app-jobrefres, app-jobsview, app-artload-dashboard, app-performance, app-art-dashboard, app-approvedjobs, app-art-productivity,app-scorecardview{ width: 100%}
 /* for multiselect datatable dropdown overflow*/
 .i-low {
   z-index:1;

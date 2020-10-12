@@ -46,6 +46,9 @@ export class CustomerServicesUrls extends UrlBase {
       public static ARTLOG_APIPERFORMANCE = CustomerServicesUrls.ARTLOGAUTOMATION_URL + "api/apiperformance/";
       public static ARTLOG_JOBS_REFRESH = CustomerServicesUrls.ARTLOGAUTOMATION_URL + "api/refreshjobs/";
       public static ARTLOG_JOBS_REFRESH_SHOW = CustomerServicesUrls.ARTLOGAUTOMATION_URL + "api/showrefreshjobs/";
+      public static ARTLOG_JOBS_DELETELIST = CustomerServicesUrls.ARTLOGAUTOMATION_URL + "api/deletelistjobs/";
+      public static ARTLOG_JOBS_DELETELIST_REFRESH = CustomerServicesUrls.ARTLOGAUTOMATION_URL + "api/deletejobsreferesh/";
+      
       public static ARTLOG_JRAPHADD = CustomerServicesUrls.ARTLOGAUTOMATION_URL + "api/artgraph/";
       public static ARTLOG_SCORECARDINIT = CustomerServicesUrls.ARTLOGAUTOMATION_URL + "api/scorecardinit/";
       public static ARTLOG_SCORECARDOverDue = CustomerServicesUrls.ARTLOGAUTOMATION_URL + "api/jobsbyids";

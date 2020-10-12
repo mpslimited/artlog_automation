@@ -7,6 +7,9 @@ import { ArtProductivityComponent } from './art-productivity/art-productivity.co
 import { ScorecardviewComponent } from './scorecardview/scorecardview.component';
 import { PerformanceComponent } from './performance/performance.component';
 import { JobrefresComponent } from './jobrefres/jobrefres.component';
+import { JobsviewComponent } from './jobsview/jobsview.component';
+import { DeleteJobsComponent } from './delete-jobs/delete-jobs.component';
+
 // import { DataGridComponent  } from './DataGrid.Component';
 import { AuthGuard } from '../../core/guard';
 //import { AuthGuard } from '../dashboard/dashboard.module';
@@ -51,7 +54,18 @@ export const routes: Routes = [
             path: 'jobrefres',
             component: JobrefresComponent,
             canActivate: [AuthGuard],
+      },
+      {
+            path: 'jobview',
+            component: JobsviewComponent,
+            canActivate: [AuthGuard],
+      },
+      {
+            path: 'deleteJobs',
+            component: DeleteJobsComponent,
+            canActivate: [AuthGuard],
       }
+
       /*,{ PerformanceComponent 
             path: 'datagrid', dashboard
             component: DataGridComponent,

@@ -21,12 +21,13 @@ import { unitOfTime } from 'moment';
 import { ConfirmationService } from 'primeng/api';
 import { BehaviorSubject } from 'rxjs';
 import { TopmenuComponent } from '../topmenu/topmenu.component'
+
 @Component({
-  selector: 'app-jobrefres',
-  templateUrl: './jobrefres.component.html',
-  styleUrls: ['./jobrefres.component.css']
+  selector: 'app-delete-jobs',
+  templateUrl: './delete-jobs.component.html',
+  styleUrls: ['./delete-jobs.component.css']
 })
-export class JobrefresComponent  extends BaseComponent implements OnInit {
+export class DeleteJobsComponent extends BaseComponent implements OnInit {
   auth: any = [];
   ApiData : any = [];
   ApiHistory : any = [];
@@ -56,14 +57,11 @@ export class JobrefresComponent  extends BaseComponent implements OnInit {
   }
 
 
-  
-
   ngOnInit(): void {
     this.job_keys ='';
     this.getRefreshJobKeysData();
     this.cols = [
-      { field: 'job_key', header: 'Old Job Key' },
-      { field: 'Newjobkey', header: 'New Job Key' },
+      { field: 'job_key', header: 'Job Key' },
       { field: 'jobID', header: 'JobID' },
       { field: 'grade', header: 'Grade' },
       { field: 'module', header: 'Module' },
@@ -85,7 +83,7 @@ export class JobrefresComponent  extends BaseComponent implements OnInit {
   getRefreshJobKeysData(): any {
     this.dataloading = true;
     const that = this;
-    this.httpService.extractPostData(CustomerServicesUrls.ARTLOG_JOBS_REFRESH_SHOW, null, null).subscribe((data) => {
+    this.httpService.extractPostData(CustomerServicesUrls.ARTLOG_JOBS_DELETELIST, null, null).subscribe((data) => {
       that.cartdata = data;
       that.dataloading = false;
     })
@@ -105,7 +103,8 @@ export class JobrefresComponent  extends BaseComponent implements OnInit {
     const that = this;
     let body = new HttpParams()
     .append('filters', this.job_keys)
-    this.httpService.extractPostData(CustomerServicesUrls.ARTLOG_JOBS_REFRESH, body, null).subscribe((data) => {
+    console.log("CustomerServicesUrls.ARTLOG_JOBS_DELETELIST_REFRESH", CustomerServicesUrls.ARTLOG_JOBS_DELETELIST_REFRESH  );
+    this.httpService.extractPostData(CustomerServicesUrls.ARTLOG_JOBS_DELETELIST_REFRESH, body, null).subscribe((data) => {
       debugger
       for (const k of data.keys) {
         that.cartdata.splice((0 + 1), 0, {job_key: k});

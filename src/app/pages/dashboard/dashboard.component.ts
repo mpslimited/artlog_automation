@@ -19,8 +19,8 @@ import * as moment from 'moment';
 import { unitOfTime } from 'moment';
 
 import { ConfirmationService } from 'primeng/api';
-import { BehaviorSubject } from 'rxjs';
-
+import { BehaviorSubject, from } from 'rxjs';
+import { TopmenuComponent } from './topmenu/topmenu.component'
 // tslint:disable-next-line: class-name
 export interface gGiltrt {
   job_key: string;
@@ -119,6 +119,7 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
   NAME_ARTLOG = 'NAME_ARTLOG';
   gridData: any;
   jobmeta: any;
+  
   Editdata: any;
   search = {};
   displayDialog: boolean;

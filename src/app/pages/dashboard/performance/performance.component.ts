@@ -20,7 +20,7 @@ import * as moment from 'moment';
 import { unitOfTime } from 'moment';
 import { ConfirmationService } from 'primeng/api';
 import { BehaviorSubject } from 'rxjs';
-
+import { TopmenuComponent } from '../topmenu/topmenu.component'
 @Component({
   selector: 'app-performance',
   templateUrl: './performance.component.html',

@@ -2,34 +2,9 @@
   <div class="content-wrapper">
     <div class="row mt-5">
       <div class="col-12">
-        <ul class="nav nav-tabs border-bottom-0">
-          <li class="nav-item">
-            <a class="nav-link " [routerLinkActive]="['active', '']" [routerLink]="['/pages/admin/home']">Active Jobs</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link " [routerLinkActive]="['active', '']" [routerLink]="['/pages/admin/approved']">Approved Jobs</a>
-          </li>
-          <li class="nav-item" *ngIf="auth.roleName == 'Art Designer'">
-            <a class="nav-link" [routerLinkActive]="['active', '']" [routerLink]="['/pages/admin/artdashboard']">Art Dashboard</a>
-          </li>
-          <li class="nav-item" *ngIf="auth.roleName == 'Art Designer'">
-            <a class="nav-link" [routerLinkActive]="['active', '']" [routerLink]="['/pages/admin/dashboard']">Art Productivity</a>
-          </li>
-          <li class="nav-item" *ngIf="auth.roleName == 'Art Designer'">
-            <a class="nav-link" [routerLinkActive]="['active', '']" [routerLink]="['/pages/admin/scorecardview']">Scorecard View</a>
-          </li>
-          <li class="nav-item" *ngIf="auth.roleName == 'Art Designer'">
-            <a class="nav-link" [routerLinkActive]="['active', '']" [routerLink]="['/pages/admin/performance']">API Performance</a>
-          </li>
-          <!-- <li class="nav-item" *ngIf="auth.roleName == 'Art Designer'">
-            <a class="nav-link" [routerLinkActive]="['active', '']" [routerLink]="['/pages/admin/scorecardview']">Recent Log</a>
-          </li>-->
-          <li class="nav-item" *ngIf="auth.roleName == 'Digital Asset Lead'">
-            <a class="nav-link " [routerLinkActive]="['active', '']" [routerLink]="['/pages/admin/jobrefres']">Job Refresh</a>
-          </li>
-        </ul>
+        <app-topmenu></app-topmenu>
       </div>
-    </div>
+    </div> 
     <form #baseForm="ngForm" class="form-horizontal" (submit)="filterData()">
     <div class="row">
       <div class="col-lg-12 grid-margin stretch-card">
