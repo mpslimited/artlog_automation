@@ -35,7 +35,7 @@
     "bootstrap-multiselect": "^0.9.13-1",
     "font-awesome": "^4.7.0",
     "jquery": "^3.5.1",
-    "lodash": "^4.17.20",
+    "lodash": "^4.17.21",
     "moment": "^2.27.0",
     "ng-apexcharts": "^1.5.1",
     "percentile": "^1.4.0",
