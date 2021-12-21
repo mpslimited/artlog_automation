@@ -1,9 +1,10 @@
 
       <ul class="nav nav-tabs border-bottom-0">
         <li class="nav-item">
-          <a class="nav-link " [routerLinkActive]="['active', '']" [routerLink]="['/pages/admin/home']">Active Jobs</a>
+          <a class="nav-link " [routerLinkActive]="['active', '']" [routerLink]="['/pages/admin/home']"> Jobs</a>  
         </li>
-        <li class="nav-item">
+        <!-- Active -->
+         <li class="nav-item">
           <a class="nav-link " [routerLinkActive]="['active', '']" [routerLink]="['/pages/admin/approved']">Approved Jobs</a>
         </li>
         <li class="nav-item" *ngIf="auth.roleName == 'Art Designer'">

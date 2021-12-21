@@ -52,6 +52,7 @@ import { JobrefresComponent } from './jobrefres/jobrefres.component';
 import { JobsviewComponent } from './jobsview/jobsview.component';
 import { DeleteJobsComponent } from './delete-jobs/delete-jobs.component';
 import { TopmenuComponent } from './topmenu/topmenu.component';
+//import { ApprovedJobsServerSideComponent } from './approved-jobs-server-side/approved-jobs-server-side.component';
 //import { DashboardComponent } from './dashboard.component';
 @NgModule({
       imports: [
@@ -104,6 +105,7 @@ import { TopmenuComponent } from './topmenu/topmenu.component';
             JobsviewComponent,
             DeleteJobsComponent,
             TopmenuComponent,
+          //  ApprovedJobsServerSideComponent,
            // DataGridComponent,
            // EditjobComponent,
            // AddjobComponent

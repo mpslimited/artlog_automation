@@ -116,7 +116,7 @@ export class ApprovedjobsComponent extends BaseComponent implements OnInit, OnCh
   WIPdata: any;
   Tdata: any;
   jobStatus: any;
-  NAME_ARTLOG = 'NAME_ARTLOG';
+  NAME_ARTLOG = 'NAME_ARTLOG_APPROVED';
   gridData: any;
   jobmeta: any;
   Editdata: any;
@@ -252,9 +252,9 @@ constructor(
     this.cols = [
       { field: 'job_key', header: 'Job Key' },
       { field: 'name', header: 'Job Name' },
-      { field: 'flagedTeam', header: 'Flagged Team'},
-      { field: 'mathAuditor', header: 'Math Auditors'},
-      { field: 'mathAuditRC', header: 'Math Audit RC'},
+     // { field: 'flagedTeam', header: 'Flagged Team'},
+     // { field: 'mathAuditor', header: 'Math Auditors'},
+     // { field: 'mathAuditRC', header: 'Math Audit RC'},
       { field: 'grade', header: 'Grade' },
       { field: 'module', header: 'Module' },
       { field: 'component', header: 'Component' },
@@ -270,7 +270,7 @@ constructor(
       { field: 'curriculum', header: 'Curriculum' },
       { field: 'dateCreated', header: 'Date Created' },
       { field: 'job_date_finished', header: 'Date Completed' },
-      { field: 'totalage', header: 'Cumulative Age' },
+     /* { field: 'totalage', header: 'Cumulative Age' },
       { field: 'lastage', header: 'Last Age' },
       { field: 'facing', header: 'P.Category' },
       { field: 'series', header: 'Series' },
@@ -615,7 +615,7 @@ constructor(
           this.selectedVerifyData[i].pageNo = this.verifi.pageNo;
         }
       }
-      debugger
+      // debugger
       console.log(this.verifi);
       //verifi
     }
@@ -678,11 +678,21 @@ constructor(
     this.saveSearchModal = true;
   }
   lazyLoadEnv(event: LazyLoadEvent ) {
-    this.loading = true;
-    console.log('Data TEsting ==> Skip:', event.first, 'Getting :', event.rows);
+    console.log('lazyLoadEnv', event);
+    this.dataloading = true;
+    console.log('Data TEsting ==> Skip:', event.first, 'Getti ng :', event.rows);
     this.artLogModel.fromPage.value = event.first;
     this.artLogModel.toPage.value = event.rows;
+    if (event.filters != undefined && !!Object.keys(event.filters) && !! Object.keys(event.filters).length ){
+      // this.example = new Server();
+      // this.example.name = event.filters["name"].value;
+      this.artLogModel.filters.value  = JSON.stringify(event.filters);
+       
+   } else if( typeof event.filters =="object" && Object.keys(event.filters).length > 0){
+    this.artLogModel.filters.value ='';
+   }
     let self = this;
+    setTimeout(() => {
     let promis1 = new Promise(resolve => {
       this.loadDataFromApi(this.NAME_ARTLOG).subscribe((data) => {
         this.dataloading = false;
@@ -726,6 +736,7 @@ constructor(
         resolve(data);
       });
     });
+  }, 1000);
     //in a real application, make a remote request to load data using state metadata from event
         //event.first = First row offset
         //event.rows = Number of rows per page
@@ -1087,7 +1098,7 @@ constructor(
           this.getMetaData(obj);
         }*/
           const obj: any = {};
-        this.getMetaData(obj);
+        //this.getMetaData(obj);
       }
     });
   }
@@ -1136,10 +1147,12 @@ constructor(
         }
         // tslint:disable-next-line: forin
         for ( const d in data.artLogData ) {
+          
           data.artLogData[d].totalage = parseFloat(data.artLogData[d].totalage);
           data.artLogData[d].lastage = parseFloat(data.artLogData[d].lastage);
         }
-        self.cartdata = data.artLogData;
+        debugger
+        self.totalRecords = data.totalCount;
         this.filteredValuesLength = data.artLogData.length;
         self.selectedColumn = this.cols;
         resolve(data);

@@ -58,11 +58,11 @@ export class LoginComponent extends BaseComponent implements OnInit {
 
   onLogin() {
     this.showLoader();
-    debugger
+    // debugger
     console.log("this.NAME_LOGIN=>", this.NAME_LOGIN);
     this.loadDataFromApi(this.NAME_LOGIN).subscribe((data) => {
       console.log("API LoginURL data=>",data);
-      debugger
+      // debugger
       if (data.Status === 'OK') {
         SessionObject.setUserDetails({
           'userInfo': data.id,
@@ -101,6 +101,9 @@ export class LoginComponent extends BaseComponent implements OnInit {
       };
       return obj;
     }
+  }
+  ngOnDestroy(){
+  
   }
 
 }

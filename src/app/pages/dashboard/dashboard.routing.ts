@@ -9,6 +9,7 @@ import { PerformanceComponent } from './performance/performance.component';
 import { JobrefresComponent } from './jobrefres/jobrefres.component';
 import { JobsviewComponent } from './jobsview/jobsview.component';
 import { DeleteJobsComponent } from './delete-jobs/delete-jobs.component';
+//import { ApprovedJobsServerSideComponent } from './approved-jobs-server-side/approved-jobs-server-side.component';
 
 // import { DataGridComponent  } from './DataGrid.Component';
 import { AuthGuard } from '../../core/guard';
@@ -30,6 +31,12 @@ export const routes: Routes = [
             component: ApprovedjobsComponent,
             canActivate: [AuthGuard],
       },
+      // {
+      //       path: 'approvedServer',
+      //       component: ApprovedJobsServerSideComponent,
+      //       canActivate: [AuthGuard],
+      // },
+      //
       {
             path: 'artdashboard',
             component: ArtDashboardComponent,

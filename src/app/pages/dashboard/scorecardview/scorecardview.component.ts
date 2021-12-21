@@ -204,7 +204,7 @@ export class ScorecardviewComponent extends BaseComponent implements OnInit {
     .append('module',this.frmdt.module);
     // tslint:disable-next-line: max-line-length
     this.httpService.extractPostData(CustomerServicesUrls.ARTLOG_SCORECARDLOAD, body, null).subscribe((data) => {
-        debugger
+        // debugger
         let OverDueJobsData = (data as any ).permissionResponce.filter(d=> d.overDueStatus == true)
         that.OverDueJobsData = OverDueJobsData;
         let median = (data as any ).permissionResponce ;
@@ -313,7 +313,7 @@ export class ScorecardviewComponent extends BaseComponent implements OnInit {
         ];
         
        this.medianDataLoading = false;
-       debugger
+      //  debugger
         let setOfCamp = [...new Set((data as any ).campaignIDDt.map(d => d._id.campaignID))];
         setOfCamp = that.Campaigns.filter(d => d.value !='').map(d => d.value);
         that.Campaigns; // all set of campaignID and Names

@@ -4,7 +4,7 @@ import { HttpService } from '../../core/services/http.service';
 import { BaseComponent } from '../../core/base/base.component';
 import { BaseService } from '../../core/base/base.service';
 import { columnDefsArtLogs } from './dashboard.data';
-import { ArtLogModel } from './dashboard.model';
+import { ArtLogModel,FilterArtLogModel } from './dashboard.model';
 import { CustomModalPopUpService } from '../../component/custom-modal-pop-up/custom-modal-pop-up.service';
 import { CustomModalPopUpModel } from '../../component/custom-modal-pop-up/custom-modal-pop-up.model';
 import { CustomerServicesUrls } from '../../core/shared/constant/url-constants/customer-services.constants';
@@ -41,6 +41,9 @@ export interface gGiltrt {
   providers: [ConfirmationService]
 })
 export class DashboardComponent extends BaseComponent implements OnInit, OnChanges {
+  showSearchModal=  false;
+  refineClick=  false;
+  
   apex: any ={};
   blockedPanel = false;
   clonedArtLog: { [s: string]: any; } = {};
@@ -108,6 +111,8 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
   editSetting: any;
   selectedData: any = [];
   artLogModel: ArtLogModel;
+  refineSearchModel: FilterArtLogModel
+  
   Gdata: any;
   addGdata: any = [];
   Mdata: any;
@@ -117,6 +122,7 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
   Tdata: any;
   jobStatus: any;
   NAME_ARTLOG = 'NAME_ARTLOG';
+  REFINE_ARTLOG= 'REFINE_ARTLOG';
   gridData: any;
   jobmeta: any;
   
@@ -160,6 +166,7 @@ export class DashboardComponent extends BaseComponent implements OnInit, OnChang
   isScrollable = true;
   auth: any ;
   g: any = {};
+  // refineSearchModel:any ={};
   teamsGrpup: any = [];
   flaggedTeam: String;
   MathAuditors: any;
@@ -179,7 +186,7 @@ constructor(
     protected alert: AlertMessageService,
     private fb: FormBuilder) {
     super(baseServices, router);
-    this.criteria = false;
+    this.criteria = true;
     this.selectedModesDisabled = false;
     const user = SessionObject.getUserDetails();
     this.auth = user;
@@ -241,7 +248,9 @@ constructor(
       { value: 3, label: 'Moved Jobs' },
       { value: 4, label: 'Flagged Jobs'},
       { value: 5, label: 'Killed Jobs'},
-      { value: 6, label: 'Non-Killed Jobs'}
+      { value: 6, label: 'Non-Killed Jobs'},
+      { value: 8, label: 'Approved'}
+      
     ];
     this.verificationsDt = [
       { value: '', label: 'NA' },
@@ -464,6 +473,7 @@ constructor(
     }
   }
   ngOnInit() {
+    // debugger;
     this.verifi = {pageNo:'', isPaging:'', mverification:'', isBlank: false};
     this.bulkBatchCDate = moment().format('MM-DD-YYYY');
     this.MathAuditors = Array(
@@ -493,7 +503,7 @@ constructor(
     this.teamsGrpup = teamsGrpup.map( d => ({ label: d, value: d}));
     this.teamsGrpup.splice(0, 0, { label: 'Select Team', value: ''});
     this.facingData = [{ label: 'TE', value: 'TE'}, { label: 'SE', value: 'SE'}];
-    this.dataloading = true;
+    // this.dataloading = true;
     this.isSaveSearch = false;
     this.searchText = 'Search List1';
     this.freezeCols = this.cols.filter(d => d.tid < 1);
@@ -593,6 +603,48 @@ constructor(
     this.frmdt.status = '';
     this.artLogModel.added.value = '';
   }
+
+  filterclearData() {
+    
+this.refineSearchModel.name.value = '';
+this.refineSearchModel.flagedTeam.value = '';
+this.refineSearchModel.mathAuditor.value = '';
+
+this.refineSearchModel.grade.value = '';
+this.refineSearchModel.module.value = '';
+this.refineSearchModel.component.value = '';
+this.refineSearchModel.lesson.value = '';
+this.refineSearchModel.lessonlet.value = '';
+this.refineSearchModel.batch.value = '';
+this.refineSearchModel.topic.value = '';
+this.refineSearchModel.description.value = '';
+
+this.refineSearchModel.cstage.value = '';
+
+this.refineSearchModel.currentRTeam.value = '';
+this.refineSearchModel.curriculum.value = '';
+
+this.refineSearchModel.facing.value = '';
+this.refineSearchModel.series.value = '';
+this.refineSearchModel.creditLine.value = '';
+this.refineSearchModel.comment.value = '';
+this.refineSearchModel.tags.value = '';
+this.refineSearchModel.mverification.value = '';
+this.refineSearchModel.isPaging.value = '';
+this.refineSearchModel.pageNo.value = '';
+this.refineSearchModel.revisionC.value = '';
+this.refineSearchModel.printAsset.value = '';
+this.refineSearchModel.printReady.value = '';
+this.refineSearchModel.artcomplex.value = '';
+this.refineSearchModel.artassion.value = '';
+this.refineSearchModel.risk.value = '';
+this.refineSearchModel.impact.value = '';
+this.refineSearchModel.workflow.value = '';
+this.refineSearchModel.permissionType.value = '';
+}
+
+
+  
   isDuplicate(d, edit) {
     let t = '';
     if ( d.killed) {
@@ -618,7 +670,7 @@ constructor(
           this.selectedVerifyData[i].pageNo = this.verifi.pageNo;
         }
       }
-      debugger
+      // debugger
       console.log(this.verifi);
       //verifi
     }
@@ -666,10 +718,12 @@ constructor(
 
   ngOnChanges() {
     this.artLogModel.jobkey.value = this.baseService.getMessage();
+    this.refineSearchModel.jobkey.value = this.baseService.getMessage();
     const obj = {};
     //this.getMetaData(obj);
   }
   searchByjobKey(evt: any) {
+    this.refineClick= false;
     this.filterData();
   }
   viewSavedSearchList() {
@@ -684,12 +738,27 @@ constructor(
   lazyLoadEnv(event: LazyLoadEvent ) {
     this.loading = true;
     console.log('Data TEsting ==> Skip:', event.first, 'Getting :', event.rows);
-    this.artLogModel.fromPage.value = event.first;
-    this.artLogModel.toPage.value = event.rows;
+    let model=  this.NAME_ARTLOG;
+    if(this.refineClick){
+      model=  this.REFINE_ARTLOG;
+      this.refineSearchModel.fromPage.value = event.first;
+      this.refineSearchModel.toPage.value = event.rows;
+      this.refineSearchModel.sortField.value = event.sortField;
+      this.refineSearchModel.sortOrder.value = event.sortOrder;
+    
+    }else {
+       model=  this.NAME_ARTLOG;
+        this.artLogModel.fromPage.value = event.first;
+        this.artLogModel.toPage.value = event.rows;
+        this.artLogModel.sortField.value = event.sortField;
+        this.artLogModel.sortOrder.value = event.sortOrder;
+    }
+    
     let self = this;
     let promis1 = new Promise(resolve => {
-      this.loadDataFromApi(this.NAME_ARTLOG).subscribe((data) => {
+      this.loadDataFromApi(model).subscribe((data) => {
         this.dataloading = false;
+        // debugger;
         if (data.hasOwnProperty('GridFilters')) {
           this.lessons = (!!data.GridFilters.lesson) ? data.GridFilters.lesson.map(d => ({ label: d, value: d })) : [];
           this.lessonLets = (!!data.GridFilters.lessonlet) ? data.GridFilters.lessonlet.map(d => ({ label: d, value: d })) : [];
@@ -718,7 +787,8 @@ constructor(
           this.flagedTeams = (!!data.GridFilters.flagedTeams) ? data.GridFilters.flagedTeams.map(d => ({ label: d, value: d })) : [];
           this.mathAuditors = (!!data.GridFilters.mathAuditors) ? data.GridFilters.mathAuditors.map(d => ({ label: d, value: d })) : [];
         }
-        this.totalRecords = data.totalCount;
+        
+        self.totalRecords = data.totalCount;
         // tslint:disable-next-line: forin
         for ( const d in data.artLogData ) {
           data.artLogData[d].totalage = parseFloat(data.artLogData[d].totalage);
@@ -747,14 +817,19 @@ constructor(
       */
   }
   filterData() {
+    this.refineClick= false;
     // tslint:disable-next-line: triple-equals
-    if ( this.frmdt.grade.length > 0 || this.frmdt.module.length > 0  || this.artLogModel.batch.value != '' || this.artLogModel.workflow.value.length > 0
-      || this.artLogModel.curricula.value.length > 0  || this.frmdt.status.length > 0  || this.artLogModel.added.value > 0 ) {
+    if ( this.frmdt.grade.length > 0 || 
+      this.frmdt.module.length > 0  || this.artLogModel.batch.value != ''
+      || this.artLogModel.workflow.value.length > 0
+      || this.artLogModel.curricula.value.length > 0 
+      || this.frmdt.status.length > 0  || this.artLogModel.added.value > 0 ) {
       this.isSaveSearch = true;
     } else {
       this.isSaveSearch = false;
     }
-    this.getMetaData(this.search);
+    // debugger;
+    this.getMetaData(this.NAME_ARTLOG);
   }
   checkUserinfo() {
     this.httpService.extractPostData(CustomerServicesUrls.USERINFO_DATA, null, null).subscribe((data) => {
@@ -1085,10 +1160,10 @@ constructor(
           } if (frmData.added !== '') {
             this.artLogModel.added.value = frmData.added;
           }
-          this.filterData();
+          // this.filterData();
         } else {
           const obj: any = {};
-          this.getMetaData(obj);
+          // this.getMetaData(this.NAME_ARTLOG);
         }
       }
     });
@@ -1106,8 +1181,9 @@ constructor(
     const self = this;
     this.selectedRows = [];
     return new Promise(resolve => {
-      this.loadDataFromApi(this.NAME_ARTLOG).subscribe((data) => {
+      this.loadDataFromApi(Obj).subscribe((data) => {
         this.dataloading = false;
+        // debugger;
         if (data.hasOwnProperty('GridFilters')) {
           this.lessons = (!!data.GridFilters.lesson) ? data.GridFilters.lesson.map(d => ({ label: d, value: d })) : [];
           this.lessonLets = (!!data.GridFilters.lessonlet) ? data.GridFilters.lessonlet.map(d => ({ label: d, value: d })) : [];
@@ -1279,6 +1355,7 @@ constructor(
 
   initSearchModels() {
     this.artLogModel = new ArtLogModel();
+    this.refineSearchModel=  new FilterArtLogModel();
   }
   getSearchModel(name: string) {
     if (name === this.NAME_ARTLOG) {
@@ -1290,22 +1367,63 @@ constructor(
           this.artLogModel.module.value = this.frmdt.module.map(a => a.id);
         } else { this.artLogModel.module.value = []; }
         if (this.frmdt.status.length > 0) {
+          // debugger;
           this.artLogModel.status.value = this.frmdt.status.map(a => a.field);
-        } else { this.artLogModel.status.value = ['Active']; }
+        } else { 
+          // to add code
+          this.artLogModel.status.value = ['Active']; 
+        }
+        this.checkStatus(this.artLogModel);
       } catch (err) {
         // console.log(err)
       }
       return this.artLogModel;
     }
+
+    if (name === this.REFINE_ARTLOG) {
+      try {
+        // if (this.frmdt.grade.length > 0) {
+        //   this.artLogModel.grade.value = this.frmdt.grade.map(a => a.id);
+        // } else { this.artLogModel.grade.value = []; }
+        // if (this.frmdt.module.length > 0) {
+        //   this.artLogModel.module.value = this.frmdt.module.map(a => a.id);
+        // } else { this.artLogModel.module.value = []; }
+        // if (this.frmdt.status.length > 0) {
+        //   this.artLogModel.status.value = this.frmdt.status.map(a => a.field);
+        // } else { this.artLogModel.status.value = ['Active']; }
+      } catch (err) {
+        // console.log(err)
+      }
+      //11111
+      console.log('refine p---------- ', this.refineSearchModel)
+      
+      this.refineSearchModel['status'].value = 'Active';
+      this.checkStatus(this.refineSearchModel);
+      return this.refineSearchModel;
+    }
+
   }
+
+  checkStatus(model){
+    // debugger;
+    if(model.added.value== '8'){
+      // alert(model.added.value);
+      model.status.value = ['Approved']; 
+    }else{
+
+    }
+  }
+
   selectedImages(event, data: any, overlaypanel: OverlayPanel) {
     this.selectedData = data;
     overlaypanel.toggle(event);
   }
   getServiceUrl(name: string) {
-    if (name === this.NAME_ARTLOG) {
+    if (name === this.NAME_ARTLOG || name ==this.REFINE_ARTLOG) {
       return CustomerServicesUrls.ARTLOG_DATA;
     }
+
+
   }
 
   clearAllFilter(dt: any) {
@@ -1379,13 +1497,13 @@ constructor(
   addGraph(rowData: any) {
     console.log("garph data display::", rowData);
     this.stageDurationGraph = true;
-    debugger
+    // debugger
     let that = this;
     // tslint:disable-next-line: max-line-length
     let rowDuration = rowData.Preset_Stages.map( d => ({ position: d.position, StageNames: d.StageNames ||d.name,
       duration: parseFloat(that.dateDiffinDurationStage( d.job_date_finished ,  d.start_date))
     }));
-    debugger
+    // debugger
     let newDrawPattern = [];
     for ( let  i in  rowDuration) {
       if ( newDrawPattern.filter( d => d.position == rowDuration[i].position).length==0) {
@@ -1394,7 +1512,7 @@ constructor(
       }
     }
     let nextRow = rowDuration.filter(d=> d.ispushed != true);
-    debugger
+    // debugger
     let newDrawPattern2 = [];
     for ( let  i in  nextRow) {
       if ( newDrawPattern2.filter( d => d.position == nextRow[i].position).length==0) {
@@ -1511,4 +1629,70 @@ constructor(
     }
     return parseFloat( (Math.abs(d2.getTime() - d1.getTime()) / 86400000).toString() ).toFixed(1);
   }
+
+  
+  refineSearchToggle(event){
+    this.showSearchModal=  true;
+  }
+
+  getFilterData(){
+    this.refineClick= true;
+    this.setFilterData();
+    
+    if (this.refineSearchModel['status'].value == '') {    
+     this.refineSearchModel['status'].value = 'Active';
+    }
+    this.showSearchModal = false;
+    this.checkStatus(this.refineSearchModel);
+    this.getMetaData(this.REFINE_ARTLOG);
+  }
+  setFilterData(){
+
+    this.refineSearchModel['fromPage'].value = 0;
+    this.refineSearchModel['toPage'].value = 100;   
+    this.refineSearchModel['apiDatakey'] ='artLogData';
+
+    if (this.artLogModel.grade.value) {
+      this.refineSearchModel.grade.value = this.artLogModel.grade.value
+    }
+    if (this.artLogModel.module.value) {
+      this.refineSearchModel.module.value = this.artLogModel.module.value
+    }
+    if (this.artLogModel.batch.value) {
+      this.refineSearchModel.batch.value = this.artLogModel.batch.value
+    }
+    if (this.artLogModel.workflow.value) {
+      this.refineSearchModel.workflow.value = this.artLogModel.workflow.value
+    }
+    if (this.artLogModel.curricula.value) {
+      this.refineSearchModel.curricula.value = this.artLogModel.curricula.value
+    }
+    if (this.artLogModel.added.value) {
+      this.refineSearchModel.added.value = this.artLogModel.added.value
+    }
+  
+    
+  }
+
+  // mySort(event: any, field: string) {
+  // console.log('sorti')
+  //   if (event.order === 1) {
+  //     this.cartdata.sort((a, b) => {
+  //       if (typeof a[field] === 'string') {
+  //         const sortDesc = a[field] < b[field] ? -1 : 0;
+  //         return a[field] > b[field] ? 1 : sortDesc;
+  //       }
+  //       return a[field] - b[field];
+  //     });
+  //   } else {
+  //     this.cartdata.sort((a, b) => {
+  //       if (typeof a[field] === 'string') {
+  //         const sortDesc = a[field] < b[field] ? 1 : 0;
+  //         return a[field] > b[field] ? -1 : sortDesc;
+  //       }
+  //       return b[field] - a[field];
+  //     });
+  //   }
+  //   this.cartdata = [...this.cartdata];
+  // }
 }

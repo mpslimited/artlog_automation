@@ -8,7 +8,7 @@ export class CustomerServicesUrls extends UrlBase {
       public static SMARTSHEET_LOGOUT = CustomerServicesUrls.ARTLOGAUTOMATION_URL + "api/logout";
       public static ARTLOG_INIT = CustomerServicesUrls.ARTLOGAUTOMATION_URL + "api/artloginit/";
       public static ARTLOG_DATA = CustomerServicesUrls.ARTLOGAUTOMATION_URL + "api/artlogdata/";
-      
+      public static ARTLOG_DATA1 = CustomerServicesUrls.ARTLOGAUTOMATION_URL + "api/artlogdataApprove/";
       //setDefaultSearch
       public static ARTLOG_JOBADD = CustomerServicesUrls.ARTLOGAUTOMATION_URL + "api/addnewjobs/";
       public static ARTLOG_UPDATEJOBS = CustomerServicesUrls.ARTLOGAUTOMATION_URL + "api/updateJob/";

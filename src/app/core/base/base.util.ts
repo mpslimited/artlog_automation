@@ -15,11 +15,22 @@ export class BaseUtil {
             keys.forEach((key: string) => {
                   if (typeof searchModel[key] === 'object') {
                         basicSearchKey = searchModel[key];
+                        // debugger;
                         const apiValue = basicSearchKey.value;
                         if (apiValue === null || apiValue === undefined) {
                               apiObj[basicSearchKey.apiKey] = '';
                         } else {
                               apiObj[basicSearchKey.apiKey] = apiValue;
+                        }
+                  }else{
+
+                        basicSearchKey = searchModel[key];
+                        // debugger;
+                        const apiValue = basicSearchKey;
+                        if (apiValue === null || apiValue === undefined) {
+                              apiObj[key] = '';
+                        } else {
+                              apiObj[key] = apiValue;
                         }
                   }
             });

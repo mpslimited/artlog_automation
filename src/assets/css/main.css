@@ -13392,3 +13392,13 @@ dl {
   height:402px;
   white-space: nowrap;
 }
+
+
+
+.refine .p-multiselect{
+    width: 100%;
+}
+
+.refine .row{
+  width: 100%;
+}

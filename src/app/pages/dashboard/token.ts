@@ -7,7 +7,7 @@ export class HeaderOpt {
         this.httpOptions = new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded');
         if(!this.hasTokendata()){
             let tokenDt = this.getTokenData();
-            debugger
+            // debugger
         }
 
     }

@@ -21,7 +21,7 @@
                   </div>
               </div>
           </div>
-          <div class="card-body panel-collapse collapse" id="collapseSearch" >
+          <div class="card-body panel-collapse collapse show" id="collapseSearch" >
             <div class=" row ">
               <div class="col-md-3">
                 <div class="form-group">
@@ -99,13 +99,14 @@
   </form>
     <div class="row">
       <div class="col-lg-12">
-        <!--   [lazy]="true" (onLazyLoad)="lazyLoadEnv($event)"-->
+          
           <p-table #dt editMode="row" dataKey="_id" [value]="cartdata" [totalRecords]='totalRecords'
-          [rowsPerPageOptions]='[5,10,50,100,150]'
+          [lazy]="true" (onLazyLoad)="lazyLoadEnv($event)"
+          [rowsPerPageOptions]='[50,100,200,400,500]'
 
           selectionMode="multiple" [(selection)]="selectedRows" scrollable="isScrollable" [loading]="dataloading"
           [frozenColumns]="freezeCols" [columns]="scrollableCols" frozenWidth="170px"
-          scrollHeight="600px" (onFilter)="onFilter($event, dt)" [paginator]="true" [rows]="100">
+          scrollHeight="600px" (onFilter)="onFilter($event, dt)" [paginator]="true" [rows]="50">
           <ng-template pTemplate="colgroup" let-columns>
             <colgroup>
                 <col *ngFor="let col of columns" style="width:180px">
@@ -209,7 +210,7 @@
                       <!--Filter Bar-->
                     </div>
                     <div class="pl-1">
-                        <p class="rowCountSummary">Showing {{filteredValuesLength}} of {{cartdata?.length}} entries ( selected {{selectedRows.length}})</p>
+                        <p class="rowCountSummary">Showing {{filteredValuesLength}} of {{totalRecords}} entries ( selected {{selectedRows.length}})</p>
                     </div>
                 </div>
               <div class="d-flex">
@@ -221,6 +222,9 @@
                             <div class="input-group-append"><button (click)="searchByjobKey($event)" type="button"
                                 class=" i-low btn btn-secondary btn-sm">Search</button>
                             </div>
+                            <div class="input-group-append ml-2"><button (click)="refineSearchToggle($event)" type="button"
+                              class=" i-low btn btn-secondary btn-sm">Refine Search</button>
+                          </div>
                           </div>
                         </form>
                   </div>
@@ -259,6 +263,7 @@
                 <div *ngIf="col.field !='job_key'" [pSortableColumn]="col.field">
                   {{col.header}}
                   <p-sortIcon  [field]="col.field" ariaLabel="Activate to sort"
+                  
                     ariaLabelDesc="Activate to sort in descending order"
                     ariaLabelAsc="Activate to sort in ascending order">
                   </p-sortIcon>
@@ -267,7 +272,7 @@
             </tr>
             <tr>
               <!-- -->
-              <th *ngFor="let col of columns">
+              <!-- <th *ngFor="let col of columns">
                 <input *ngIf="col.field=='job_key'" [(ngModel)]="g.job_key" placeholder="Search Job Key" pInputText type="text" (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)" class="w-100" style="margin-bottom:1px">
                 <p-multiSelect maxSelectedLabels="1" *ngIf="col.field=='flagedTeam'" [(ngModel)]="g.flagedTeam" [options]="flagedTeams" defaultLabel="All Teams" (onChange)="dt.filter($event.value, col.field, 'in')" [style]="{minWidth: '155px'}"></p-multiSelect>
                 <p-multiSelect maxSelectedLabels="1" *ngIf="col.field=='mathAuditor'" [(ngModel)]="g.mathAuditor" [options]="mathAuditors" defaultLabel="All Auditors" (onChange)="dt.filter($event.value, col.field, 'in')" [style]="{minWidth: '155px'}"></p-multiSelect>
@@ -280,9 +285,7 @@
                 <p-multiSelect maxSelectedLabels="1" *ngIf="col.field=='job_active_stage.status'" [(ngModel)]="g.status" [options]="cstatus" defaultLabel="All Status" (onChange)="dt.filter($event.value, col.field, 'in')" [style]="{minWidth: '155px'}"></p-multiSelect>
 
                 <input *ngIf="col.field=='creditLine'" [(ngModel)]="g.creditLine" placeholder="" pInputText type="text" (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)" class="w-100">
-                <!--<input *ngIf="col.field=='mverification'" [(ngModel)]="g.mverification" placeholder="" pInputText type="text" (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)" class="w-100">
-                <input *ngIf="col.field=='isPaging'" [(ngModel)]="g.isPaging" placeholder="" pInputText type="text" (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)" class="w-100">
-                -->
+               
                 <p-multiSelect maxSelectedLabels="1" *ngIf="col.field=='mverification'" [(ngModel)]="g.mverification" [options]="verificationsDt" defaultLabel="All Verification" (onChange)="dt.filter($event.value, col.field, 'in')" [style]="{minWidth: '155px'}"></p-multiSelect>
                 <p-multiSelect maxSelectedLabels="1" *ngIf="col.field=='isPaging'" [(ngModel)]="g.isPaging" [options]="pagingCol" defaultLabel="All " (onChange)="changeMfilter($event.value,dt, col.field)" [style]="{minWidth: '155px'}"></p-multiSelect>
                 <p-multiSelect maxSelectedLabels="1" *ngIf="col.field=='pageNo'" [(ngModel)]="g.pageNo" [options]="pageNos" defaultLabel="All PageNo " (onChange)="changeMfilter($event.value,dt, col.field)" [style]="{minWidth: '155px'}"></p-multiSelect>
@@ -326,7 +329,7 @@
                 <p-multiSelect maxSelectedLabels="1" *ngIf="col.field=='permissionType'" [(ngModel)]="g.permissionType"  [options]="permissionTypes" defaultLabel="All Permission"
                 (onChange)="dt.filter($event.value, col.field, 'in')" [style]="{minWidth: '155px'}"></p-multiSelect>
 
-              </th>
+              </th> -->
             </tr>
           </ng-template>
           <ng-template pTemplate="body" let-columns="columns" let-rowData let-editing="editing" let-ri="rowIndex">
@@ -613,7 +616,7 @@
                           <div class="col-2 font-weight-bold">Component</div>
                           <div class="col-2 font-weight-bold">Lesson</div>
                           <div class="col-1 font-weight-bold">P.Category</div>
-                          <div class="col-2 font-weight-bold">Topic</div>
+                          <div class="col-2 font-weight-bold">Topic </div>
                           <div class="col-1">*</div>
                           </div>
                       </div>
@@ -919,3 +922,210 @@
    <!-- <button type="button" pButton icon="pi pi-check" class="ui-button-success btn btn-sm" (click)="saveVerifiedData()" label="Submit"></button>
 --></p-footer>
 </p-dialog>
+
+
+
+
+
+
+<!-- refine search  -->
+
+
+
+<p-dialog header="Refine Search" [(visible)]="showSearchModal"  [responsive]="true" showEffect="fade" [modal]="true"  [style]="{width: '80%'}">
+  <div class="ui-g ui-fluid refine">
+      <div class="ui-g-12 ui-md-12 row">
+        <div class="col-md-3">
+          <div class="form-group">
+        <input  [(ngModel)]="refineSearchModel.jobkey.value" placeholder="Search Job Key" pInputText type="text"  class="w-100" style="margin-bottom:1px">
+        </div></div>
+        <div class="col-md-3">
+          <div class="form-group">
+        <p-multiSelect maxSelectedLabels="1" [(ngModel)]="refineSearchModel.flagedTeam.value" [options]="flagedTeams" defaultLabel="All Teams"  [style]="{minWidth: '155px'}"></p-multiSelect>
+      </div></div>
+        
+        <div class="col-md-3">
+          <div class="form-group">
+        <p-multiSelect maxSelectedLabels="1"  [(ngModel)]="refineSearchModel.mathAuditor.value" [options]="mathAuditors" defaultLabel="All Auditors"  [style]="{minWidth: '155px'}"></p-multiSelect>
+      </div></div>
+
+        <div class="col-md-3">
+          <div class="form-group">
+        <input  [(ngModel)]="refineSearchModel.name.value" placeholder="Search Job Name" pInputText type="text"  class="w-100">
+      </div></div>  
+        <div class="col-md-3">
+          <div class="form-group">
+        <input  [(ngModel)]="refineSearchModel.lessonlet.value" placeholder="Lesson Letter" pInputText type="text"  class="w-100">
+        </div></div>
+        
+        <div class="col-md-3">
+          <div class="form-group">
+        <input  [(ngModel)]="refineSearchModel.tags.value" placeholder="Tags" pInputText type="text"  class="w-100">
+      </div></div>
+
+        <div class="col-md-3">
+          <div class="form-group">
+        <input  [(ngModel)]="refineSearchModel.comment.value" placeholder="Comment" pInputText type="text"  class="w-100">
+      </div></div>
+
+        <div class="col-md-3">
+          <div class="form-group">
+        <input  [(ngModel)]="refineSearchModel.description.value" placeholder="Description" pInputText type="text"  class="w-100">
+      </div></div>
+
+        <div class="col-md-3">
+          <div class="form-group">
+        <p-multiSelect maxSelectedLabels="1"  [(ngModel)]="refineSearchModel.cstage.value" [options]="cstages" defaultLabel="All Stages"  [style]="{minWidth: '155px'}"></p-multiSelect>
+      </div></div>
+      
+      
+        <div class="col-md-3">
+          <div class="form-group">
+        <p-multiSelect maxSelectedLabels="1" [(ngModel)]="refineSearchModel.status.value" [options]="cstatus" defaultLabel="All Status"  [style]="{minWidth: '155px'}"></p-multiSelect>
+      </div></div>
+
+        <div class="col-md-3">
+          <div class="form-group">
+        <input  [(ngModel)]="refineSearchModel.creditLine.value" placeholder="CreditLine" pInputText type="text"  class="w-100">
+      </div></div>
+
+        <div class="col-md-3">
+          <div class="form-group">
+        <p-multiSelect maxSelectedLabels="1"  [(ngModel)]="refineSearchModel.mverification.value" [options]="verificationsDt" defaultLabel="All Verification"  [style]="{minWidth: '155px'}"></p-multiSelect>
+      </div></div>
+
+        <div class="col-md-3">
+          <div class="form-group">
+        <p-multiSelect maxSelectedLabels="1"  [(ngModel)]="refineSearchModel.isPaging.value" [options]="pagingCol" defaultLabel="All "  [style]="{minWidth: '155px'}"></p-multiSelect>
+      </div></div>
+
+        <div class="col-md-3">
+          <div class="form-group">
+        <p-multiSelect maxSelectedLabels="1"  [(ngModel)]="refineSearchModel.pageNo.value" [options]="pageNos" defaultLabel="All PageNo "  [style]="{minWidth: '155px'}"></p-multiSelect>
+        </div></div>
+
+        <div class="col-md-3">
+          <div class="form-group">
+        <p-multiSelect maxSelectedLabels="1"  [(ngModel)]="refineSearchModel.lesson.value" [options]="lessons" defaultLabel="All Lessons"  [style]="{minWidth: '155px'}"></p-multiSelect>
+      </div></div>
+
+        <div class="col-md-3">
+          <div class="form-group">
+        <p-multiSelect maxSelectedLabels="1" [(ngModel)]="refineSearchModel.component.value"  [options]="components" defaultLabel="All Components"
+           [style]="{minWidth: '155px'}"></p-multiSelect>
+      </div></div>
+
+           <div class="col-md-3">
+            <div class="form-group">
+           <p-multiSelect maxSelectedLabels="1"  [(ngModel)]="refineSearchModel.module.value" [options]="modules" defaultLabel="All Modules"
+           [style]="{minWidth: '155px'}"></p-multiSelect>
+      </div></div>
+
+           <div class="col-md-3">
+            <div class="form-group">
+           <p-multiSelect maxSelectedLabels="1" [(ngModel)]="refineSearchModel.grade.value" [options]="grades" defaultLabel="All Grades"
+           [style]="{minWidth: '155px'}"></p-multiSelect>
+      </div></div>
+
+           <div class="col-md-3">
+            <div class="form-group">
+           <p-multiSelect maxSelectedLabels="1"  [(ngModel)]="refineSearchModel.batch.value" [options]="batchs" defaultLabel="All Batches"
+           [style]="{minWidth: '155px'}"></p-multiSelect>
+      </div></div>
+
+           <div class="col-md-3">
+            <div class="form-group">
+           <p-multiSelect maxSelectedLabels="1"  [(ngModel)]="refineSearchModel.topic.value" [options]="topics" defaultLabel="All Topics"
+           [style]="{minWidth: '155px'}"></p-multiSelect>
+      </div></div>
+
+           <div class="col-md-3">
+            <div class="form-group">
+           <p-multiSelect  maxSelectedLabels="1"  [(ngModel)]="refineSearchModel.currentRTeam.value" [options]="GcurrentRTeam" defaultLabel="All Team"
+           [style]="{minWidth: '155px'}"></p-multiSelect>
+      </div></div>
+
+           <div class="col-md-3">
+            <div class="form-group">
+           <p-multiSelect maxSelectedLabels="1"  [(ngModel)]="refineSearchModel.curriculum.value" [options]="Gcurriculum" defaultLabel="All Curriculum"
+           [style]="{minWidth: '155px'}"></p-multiSelect>
+      </div></div>
+
+           <div class="col-md-3">
+            <div class="form-group">
+           <p-multiSelect maxSelectedLabels="1"  [(ngModel)]="refineSearchModel.revisionC.value" [options]="revisions" defaultLabel="All R.Count"
+           [style]="{minWidth: '155px'}"></p-multiSelect>
+      </div></div>
+
+           <div class="col-md-3">
+            <div class="form-group">
+           <p-multiSelect maxSelectedLabels="1"  [(ngModel)]="refineSearchModel.printAsset.value" [options]="printAssets" defaultLabel="All P.Asset"
+         [style]="{minWidth: '155px'}"></p-multiSelect>
+      </div></div>
+
+         <div class="col-md-3">
+          <div class="form-group">
+         <p-multiSelect maxSelectedLabels="1"  [(ngModel)]="refineSearchModel.printReady.value" [options]="printReadys" defaultLabel="All P.Ready"
+         [style]="{minWidth: '155px'}"></p-multiSelect>
+</div></div>
+
+         <div class="col-md-3">
+          <div class="form-group">
+         <p-multiSelect maxSelectedLabels="1"  [(ngModel)]="refineSearchModel.artcomplex.value"  [options]="Gartcomplexs" defaultLabel="Art Complexity"
+           [style]="{minWidth: '155px'}"></p-multiSelect>
+          </div></div>
+
+           <div class="col-md-3">
+            <div class="form-group">
+           <p-multiSelect maxSelectedLabels="1"  [(ngModel)]="refineSearchModel.artassion.value"  [options]="Gartassions" defaultLabel="Art Assignment"
+           [style]="{minWidth: '155px'}"></p-multiSelect>
+        </div></div>
+
+           <div class="col-md-3">
+            <div class="form-group">
+           <p-multiSelect maxSelectedLabels="1"  [(ngModel)]="refineSearchModel.risk.value"  [options]="Grisks" defaultLabel="All Risk"
+           [style]="{minWidth: '155px'}"></p-multiSelect>
+        </div></div>
+
+           <div class="col-md-3">
+            <div class="form-group">
+           <p-multiSelect maxSelectedLabels="1"  [(ngModel)]="refineSearchModel.impact.value" [options]="Gimpact" defaultLabel="All Impact"
+         [style]="{minWidth: '155px'}"></p-multiSelect>
+        </div></div>
+
+         <div class="col-md-3">
+          <div class="form-group">
+         <p-multiSelect maxSelectedLabels="1"  [(ngModel)]="refineSearchModel.facing.value" [(ngModel)]="grid.facing" [options]="facings" defaultLabel="All P.Categorys"
+           [style]="{minWidth: '155px'}"></p-multiSelect>
+        </div></div>
+
+           <div class="col-md-3">
+            <div class="form-group">
+           <p-multiSelect maxSelectedLabels="1"  [(ngModel)]="refineSearchModel.series.value" [options]="seriess" defaultLabel="All Series"
+           [style]="{minWidth: '155px'}"></p-multiSelect>
+        </div></div>
+
+           <div class="col-md-3">
+            <div class="form-group">
+           <p-multiSelect maxSelectedLabels="1"  [(ngModel)]="refineSearchModel.workflow.value"  [options]="Gworkflow" defaultLabel="All Workflow"
+         [style]="{minWidth: '155px'}"></p-multiSelect>
+        </div></div>
+
+         <div class="col-md-3">
+          <div class="form-group">
+         <p-multiSelect maxSelectedLabels="1" [(ngModel)]="refineSearchModel.permissionType.value"  [options]="permissionTypes" defaultLabel="All Permission"
+         [style]="{minWidth: '155px'}"></p-multiSelect>
+        </div></div>
+      </div>
+  </div>
+  <p-footer>
+    <button type="button" pButton  class="ui-button-success btn btn-sm" (click)="filterclearData()" label="Clear"></button>
+    <button type="button" pButton  class="ui-button-success btn btn-sm" (click)="getFilterData()" label="Search"></button>
+      
+  </p-footer>
+  
+  </p-dialog>
+
+
+
+

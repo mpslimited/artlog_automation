@@ -5,7 +5,8 @@
 
 export const environment = {
   apiUrl: 'http://localhost:3000/',
-  //apiUrl:'https://gmartlogautomation.mpstechnologies.com/',
+  // apiUrl:'https://gmartlogautomation.mpstechnologies.com/',
+  // apiUrl :'https://gmartlogautomationdemo.mpstechnologies.com/',       // demo 
   debugMode: false,
   production: false
 };

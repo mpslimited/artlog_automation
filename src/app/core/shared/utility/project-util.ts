@@ -75,7 +75,7 @@ export class ProjectUtils extends Utils {
       //
       public static getMetainfo(value, key){
             return function (value: any ) {
-                  debugger
+                  // debugger
 
                   if( typeof value.getValue()=="object" ){
                         for (let [key, val] of Object.entries( value.getValue())) {
